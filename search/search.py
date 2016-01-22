@@ -16,7 +16,6 @@ def get_files(path):
             files_path+=get_files(fi_path)
     return files_path
 
-# Count lines and blank lines and note lines in designated files
 def search(files):
     find_file=[]
     for filename in files:
