@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#查找某个文本内容里还有某字段
 
 #list all the files in your path(完整路径名path\**.py)
 import os
