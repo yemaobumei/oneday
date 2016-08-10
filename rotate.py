@@ -12,6 +12,7 @@ Subscribe to see which companies asked this question
 
 
 
+<<<<<<< HEAD
     class Solution(object):
         def rotate(self,matrix):
         n=len(matrix)
@@ -27,3 +28,20 @@ Subscribe to see which companies asked this question
     a=Solution()
     b=a.rotate([[1]])
     print b
+=======
+class Solution(object):
+	def rotate(self,matrix):
+		n=len(matrix)
+		if n==1:
+			return  [[1]]
+		new_matrix = [[0 for col in range(n)] for row in range(n)]
+
+		for i in range(n):
+			for j in range(n):
+				#print j,i,n-i-1,j
+				new_matrix[j][i]=matrix[n-i-1][j]
+		return new_matrix
+a=Solution()
+b=a.rotate([[1]])
+print b
+>>>>>>> f712bd6e281f4f4d876e9edb4acda30d55812d02
