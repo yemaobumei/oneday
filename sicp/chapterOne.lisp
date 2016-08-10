@@ -152,3 +152,25 @@
     (fixed-point (lambda (x) 
                      (+ 1 (/ 1 x)))
                  1.0))
+
+//1.37
+//迭代模式
+(define (cont-frac  n d k)
+	(define (iter i result)
+		(if (= i 1)
+		     (/ (n 1) result)
+		     (iter (- i 1) (+ (d (- i 1)) (/(n i) result))  )	
+		)	
+	)
+	(iter k (d k) )
+)
+//递归模式
+(define (cont-frac n d k)
+	
+	(define (recur i)
+		(if (= i k)
+		     0
+		     (/(n i) (+ (d i) (recur (+i1)) ) )	)	
+	)
+	(recur 1)
+)
