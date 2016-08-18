@@ -245,7 +245,7 @@
 )
 
 "2.5"
-(define (exp x y)
+(define (exp2 x y)
 	(define (iter i product)
 		(if (= i y)
 		     product
@@ -254,7 +254,7 @@
 	)
 	(iter 0 1)
 )
-(define (cons x y)
+(define (cons2 x y)
 	(*(exp 2 x) (exp 3 y))
 )
 "求余数"
@@ -267,7 +267,7 @@
 	)
 	(iter a)
 )
-(define (car c)
+(define (car2 c)
 	(define (iter-a i)
 		(if  (> (remainder c (exp 2 i)) 0)
 			(- i 1)
@@ -276,7 +276,7 @@
 	)
 	(iter-a 0)
 )
-(define (cdr c)
+(define (cdr2 c)
 	(define (iter-a i)
 		(if  (> (remainder c (exp 3 i)) 0)
 			(- i 1)
@@ -284,4 +284,81 @@
 		)
 	)
 	(iter-a 0)
+
+
+''2.7''
+(define (upper-bound interval)
+	(max     (car interval)
+		(cdr interval)))
+
+(define (upper-bound interval)
+	(min     (car interval)
+		(cdr interval)))
+
+"2.8"
+(define (sub-interval x y)
+    (make-interval (- (lower-bound x) (upper-bound y))
+                             (- (upper-bound x)  (lower-bound y))))
+
+"2.9"
+(define (width interval)
+     (*0.5 
+         (- (upper-bound interval)  
+             (lower-bound interval))))
+
+''2.10''
+ (define (div-interval x y) 
+   (if (>= 0 (* (lower-bound y) (upper-bound y))) 
+       (error "Division error (interval spans 0)" y) 
+       (mul-interval x  
+                     (make-interval (/ 1. (upper-bound y)) 
+                                    (/ 1. (lower-bound y)))))) 
+
+ ''2.12''
+  (define (make-interval-center-percent c pct) 
+   (let ((width (* c (/ pct 100.0)))) 
+     (make-interval (- c width) (+ c width)))) 
+  
+ (define (percent i) 
+   (let ((center (/ (+ (upper-bound i) (lower-bound i)) 2.0)) 
+         (width (/ (- (upper-bound i) (lower-bound i)) 2.0))) 
+     (* (/ width center) 100))) 
+
+"2.13"
+(x,p1)*(y,p2)=>(xy,p1+p2)
+
+"2.28"
+(define (fringe items)
+  (if (null? items)
+	(list )
+	 (if (pair? (car items))
+	      (append (fringe (car items)) (fringe (cdr items)))
+	      (cons (car items) (fringe (cdr items)))	
+	 )
+  )
+)
+
+"2.9"
+(define (make-mobile left right)
+   (list left right)
+)
+(define (make-branch len structure)
+  (list len structure)
+)
+(define (left-branch mobile)
+    (car mobile)
+)
+(define (right-branch mobile)
+	(car (cdr mobile))
+)
+(define (brach-length branch)
+  (car branch)
+)
+(define (branch-structure branch)
+   (car (cdr branch))
+)
+(define (total-weight mobile)
+	(if (not (pair? (branch-structure mobile)))
+		(branch-structure mobile)
+		(+ (total-weight (left-branch mobile)) (total-weight (right-branch mobile)) )	
 )
