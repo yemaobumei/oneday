@@ -444,3 +444,21 @@
                         (cons x (union-set (cdr set) another)))
                       ((> x y)
                         (cons y (union-set set (cdr another)))))))))
+
+(define (install-derive-package)
+	(define (derive-sum exp var)
+		(make-sum (derive (addend exp) var)
+			       (derive (augend exp)  var))
+	)
+	(define (derive-product exp var)
+		(make-sum
+
+			(make-product (mulyiplier exp)(derive (multiplicand exp) var))
+			(make-product (derive (multiplier exp) var) (multiplicand exp))
+		)
+	)
+
+	(put 'derive '+ derive-sum)
+	(put 'derive '* derive-product)
+
+)
