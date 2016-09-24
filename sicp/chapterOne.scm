@@ -486,5 +486,32 @@
     )
   )
 )
+"3,6"
+
+(define rand
+	(let ((init 1))
+		(lambda (parameter) 
+		  (cond ((eq? parameter 'generate) (begin (set! init (rand-update init)) init))
+		  	  ((eq? parameter 'reset) (lambda (new-value) (set! init new-value))) 
+		  	  (else (error 'unkown_input)))
+
+		)
+	) 
+	
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
