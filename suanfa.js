@@ -60,3 +60,21 @@ function sorts(arr){
 	}
 	return quchong(arr);
 }
+
+//生成数组
+function range(){
+	var start=0,
+		end,
+		inc=1;
+	if(arguments.length==1){end=arguments[0]};
+	if(arguments.length==2){start=arguments[0];end=arguments[1]}
+	if(arguments.length==3){start=arguments[0];end=arguments[1];inc=arguments[2]}
+
+	var arr=[];
+	for(var i=start;i<end;i+=inc){
+		arr.push(i);
+	}
+	return arr;
+}
+
+
