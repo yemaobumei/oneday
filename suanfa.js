@@ -76,5 +76,39 @@ function range(){
 	}
 	return arr;
 }
+//插入排序
+function insert_sort(arr){
+	function iter(sortedArray,i){
+		if(i==arr.length){return sortedArray};
+		var temp=arr[i];
+		sortedArray[i]=arr[i]
+		for(var j=i;j>0;j--){
+			if(temp<sortedArray[j-1]){
+				sortedArray[j]=sortedArray[j-1]; 
+			}else{
+				sortedArray[j]=temp;
+				break;
+			}
+		};
+		return iter(sortedArray,i+1)
+	}
+	return iter([],0)
+}
 
 
+//列出数组内所有元素
+function list(array){
+	return iter([],0,array)
+}
+
+//遍历数组array,生成一维数组
+function iter(result,n,array){
+	if(n==array.length){return result};
+	if (array[n] instanceof Array){
+		Array.prototype.push.apply(result,list(array[n]));
+		return iter(result,n+1,array);
+	}else{
+		Array.prototype.push.call(result,array[n]);
+		return iter(result,n+1,array);
+	}
+}
