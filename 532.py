@@ -5,7 +5,7 @@ import os
 import re
 
 #视频播放地址
-url=r'http://532movie.bnu.edu.cn/player/1600-1.html'
+url=r'http://532movie.bnu.edu.cn/player/2560-4.html'
 
 #下载视频存放位置
 path=r'c:\\'
@@ -20,7 +20,7 @@ def get_url(video_url):
     except Exception,e:
         print '该视频地址不存在'
         return None
-    print '视频下载地址前缀'+URL
+    print '视频下载地址前缀: '+URL
     return URL
 
 #获取视频片段地址的后缀
