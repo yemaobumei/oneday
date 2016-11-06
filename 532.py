@@ -36,7 +36,7 @@ def f(number):
 def download(url_prefix):
     if not url_prefix:
         return 
-    i=650
+    i=1
     video=open(path+r'target.mp4','wb')        
     while(True):
         #完整视频片段下载地址
@@ -73,4 +73,4 @@ if __name__ == '__main__':
     URL=get_url(url)
     download(URL)
     endtime=datetime.datetime.now()
-    print '用时: '+str((endtime-starttime).seconds/60.0)+'分钟'
+    print 'use'+str((endtime-starttime).seconds/60.0)+'minutes'
