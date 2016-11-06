@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 #encoding=utf-8
-import urllib
-import os
-import re
+import urllib,os,re,datetime
 
 #视频播放地址
 url=r'http://532movie.bnu.edu.cn/player/2560-4.html'
@@ -12,8 +10,10 @@ path=r'c:\\'
 
 #获取视频下载地址前缀
 def get_url(video_url):
+    #正则表达式匹配地址
     reg2="uploads/video.*?wl"
     reg1="http://172.16.215.*?/"
+    reg3=u'正在播放'
     html=urllib.urlopen(video_url).read()
     try:
         URL=re.findall(reg1,html)[0]+re.findall(reg2,html)[0]+'_'
@@ -36,7 +36,7 @@ def f(number):
 def download(url_prefix):
     if not url_prefix:
         return 
-    i=1
+    i=650
     video=open(path+r'target.mp4','wb')        
     while(True):
         #完整视频片段下载地址
@@ -69,6 +69,8 @@ def download(url_prefix):
 
 
 if __name__ == '__main__':
+    starttime=datetime.datetime.now()
     URL=get_url(url)
     download(URL)
-    
+    endtime=datetime.datetime.now()
+    print '用时: '+str((endtime-starttime).seconds/60.0)+'分钟'
