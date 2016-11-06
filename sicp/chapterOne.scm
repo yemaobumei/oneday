@@ -1,4 +1,4 @@
-“1.2”
+"1.2"
 (define (min x y z)
 	(if (< x y)
 		(if (< x z) x z)
@@ -8,7 +8,7 @@
 (define (f x y z)
 	(- (+ x y z) (min x y z) ))
 
-“1.7”
+"1.7"
 (define (good-enough? guess x)
 	(< (/ (abs (- (improve guess x) guess))  
 	        guess)  
@@ -16,7 +16,7 @@
 ”其他不变“
 
 
-“1.8”
+"1.8"
 (define (good-enough? guess x)
 	(< (/ (abs (- (improve guess x) guess))  
 	        guess)  
@@ -33,8 +33,8 @@
 (define (cubic x)
              (cubic-iter 1.0 x))
 
-”1.31“
-“递归过程”
+"”1.31“"
+"“递归过程”"
 (define (producut term  a next b)
  	(if (>a b)
  	     1		
@@ -57,7 +57,7 @@
 	(product term 1 next n)
 
 )
-“迭代过程”
+"“迭代过程”"
 (define (product term a next b)
 	(define (iter a result)
 		(if (>a b)
@@ -70,8 +70,8 @@
 
 )
 
-“1.32”
-“递归过程”
+"“1.32”
+“递归过程”"
 (define (accumulate combiner null-value term a next b)
     (if (> a b)
         null-value
@@ -99,7 +99,7 @@
                 next
                 b))
 
-“迭代过程”
+"“迭代过程”"
 (define (accumulate combiner null-value term a next b)
     (define (iter a result)
         (if (> a b)
@@ -108,8 +108,8 @@
                   (combiner result (term a)))))
     (iter a null-value))
 
-”1.33“
-
+"”1.33“
+"
 (define (filtered-accumulate combine null-value term a next b valid?)
     (if (> a b)
         null-value
@@ -123,7 +123,7 @@
             (if (valid? a)
                 (combine (term a) rest-terms)
                 rest-terms)   )))
-”计算素数和“
+"”计算素数和“"
 (define (primes-sum a b)
     (filtered-accumulate + 
                          0
@@ -147,14 +147,14 @@
 
 )
 
-”1.35“
+"”1.35“"
 (define golden-ratio
     (fixed-point (lambda (x) 
                      (+ 1 (/ 1 x)))
                  1.0))
 
-”1.37“
-”迭代模式“
+"”1.37“
+”迭代模式“"
 (define (cont-frac  n d k)
 	(define (iter i result)
 		(if (= i 1)
@@ -164,7 +164,8 @@
 	)
 	(iter k (d k) )
 )
-”递归模式“
+
+"”递归模式“"
 (define (cont-frac n d k)
 	
 	(define (recur i)
@@ -175,7 +176,7 @@
 	(recur 1)
 )
 
-”1.46“
+"”1.46“"
 (define (iterative-improve good-enough? improve)
 	(lambda (guess)
 		(let ((next (improve guess)))
@@ -185,7 +186,7 @@
 				)
 			
 			)))
-”另一种定义方法“
+"”另一种定义方法“"
 (define (iterative-improve close-enough? improve)
     (lambda (first-guess)
         (define (try guess)
@@ -195,7 +196,7 @@
                     (try next))))
         (try first-guess)))
 
-”重写sqrt函数“
+"”重写sqrt函数“"
 (define (sqrt x)
 	(define dx 0.000001)
 	(define (close-enough? v1 v2) 
@@ -283,10 +284,10 @@
 			(iter-a (+ i 1))
 		)
 	)
-	(iter-a 0)
+	(iter-a 0))
 
 
-''2.7''
+"''2.7''"
 (define (upper-bound interval)
 	(max     (car interval)
 		(cdr interval)))
@@ -361,4 +362,156 @@
 	(if (not (pair? (branch-structure mobile)))
 		(branch-structure mobile)
 		(+ (total-weight (left-branch mobile)) (total-weight (right-branch mobile)) )	
+))
+
+
+"2.41"
+(define (accumulate op initial sequence)
+ (if (null? sequence)
+      initial
+      (op (car sequence)
+             (accumulate op initial (cdr sequence)))
+ )
 )
+(define (enumerate-interval low high)
+  (if (> low high)
+      (list )
+      (cons low (enumerate-interval (+ low 1) high))
+  )
+)
+
+(define (tri n s)
+    (define (tri-tupple j k)
+          (map (lambda (i)   (list i j k))  
+          	(enumerate-interval 1 (- j 1))))
+
+    (define (equal-s li )
+    	(= s (accumulate + 0 li))
+    )
+    (define (iter1 k )
+    	(define (iter-2 j)
+    	     (if (< j 2)
+    	          (list )
+    	          (append (tri-tupple j k) (iter-2 (- j 1))))
+    	)
+             (iter-2 (- k 1))
+    )
+    (define (iter n)
+         (if (< n 3)
+             (list )
+             (append (iter1 n)  (iter (- n 1) ))
+         )
+    )
+    (filter less-s (iter n))
+
+)
+
+"2.54"
+(define (equal? a b)
+	(cond    ((and (null? a) (null? b)) #t)
+		((or (null? a) (null? b))  #f)
+		((and (not (pair? a))   (not (pair? b))  )   (eq? a b))
+	             ((and (pair? a) (pair?b) (equal? (car a) (car b)))  (equal? (cdr a) (cdr b)))
+	             (else #f)
+	)
+)
+
+
+"2.61"
+(define (adjoin-set x set)
+	(if (null? set)
+                  (list x)
+                  (let  ((x1 (car set)))
+                     (cond ((= x x1  set)
+
+                             ((< x x1  (cons x set))
+                             (else (cons ( x1 (adjoin-set x (cdr set)))))
+                      ))
+
+             )
+	
+)))
+"2.62"
+(define (union-set set another)
+    (cond ((and (null? set) (null? another))
+            '())
+          ((null? set)
+            another)
+          ((null? another)
+            set)
+          (else
+            (let ((x (car set)) (y (car another)))
+                (cond ((= x y)
+                        (cons x (union-set (cdr set) (cdr another))))
+                      ((< x y)
+                        (cons x (union-set (cdr set) another)))
+                      ((> x y)
+                        (cons y (union-set set (cdr another)))))))))
+
+(define (install-derive-package)
+	(define (derive-sum exp var)
+		(make-sum (derive (addend exp) var)
+			       (derive (augend exp)  var))
+	)
+	(define (derive-product exp var)
+		(make-sum
+			(make-product (mulyiplier exp)(derive (multiplicand exp) var))
+			(make-product (derive (multiplier exp) var) (multiplicand exp))
+		)
+	)
+
+	(put 'derive '+ derive-sum)
+	(put 'derive '* derive-product)
+
+)
+
+"2.79"
+(define (equ? x y)
+    (apply-generic 'equ? x y))
+"然后分别在几个包中实现这个 equ? 函数的数据导向操作。"
+
+"3.1"
+(define (make-accumulator init)
+  (lambda (x)  (begin (set! init (+ init x))  init) )
+)
+"3.2"
+(define (make-monitored f)
+  (begin (set! count 0)
+    (lambda (op)
+
+      (cond ((eq? op 'how-many-calls) count)
+        ((eq? op 'reset-count) (begin (set! count 0) count))
+        (else (begin (set! count (+ count 1)) (f op))) 
+      )
+    )
+  )
+)
+"3,6"
+
+(define rand
+	(let ((init 1))
+		(lambda (parameter) 
+		  (cond ((eq? parameter 'generate) (begin (set! init (rand-update init)) init))
+		  	  ((eq? parameter 'reset) (lambda (new-value) (set! init new-value))) 
+		  	  (else (error 'unkown_input)))
+
+		)
+	) 
+	
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
