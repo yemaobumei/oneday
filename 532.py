@@ -2,7 +2,7 @@
 import urllib,os,re,datetime
 
 #视频播放地址
-url=r'http://532movie.bnu.edu.cn/movie/2594.html'
+url=r'http://532movie.bnu.edu.cn/movie/2560.html'
 #下载从第几集开始到第几集结束
 start=1
 end=4
@@ -37,16 +37,16 @@ def f(number):
     return url_suffix #0000001.ts
 
 #下载视频,合并视频
-def download(url_prefix,filename,index):
+def download(url_prefix,filename):
     if not url_prefix:
         return 
     i=1
-    print '目标位置: ',filename     
+    print filename      
     video=open(filename,'wb')        
     while(True):
         #完整视频片段下载地址
         URL=url_prefix+f(i)
-        print '正在下载第%s集片段%s '%(index,i)
+        print '正在下载片段： '+str(i)
         #存储视频片段的完整路径名
         file_name=path+str(i)+r'.ts'
         i+=1
@@ -74,18 +74,20 @@ def main():
     reg=ur'title.*?([/\s0-9a-zA-Z\u4e00-\u9fa5]+).*?'
     html=urllib.urlopen(url).read()
     to_dir=re.findall(reg,html.decode('utf-8'))[0]+r'\\'
+    print to_dir
     to_dir=path+re.sub('[\s/]+','-',to_dir)
+    print to_dir
     if not os.path.exists(to_dir):
         os.mkdir(to_dir)
     video_url=url
     video_url=video_url.replace('.html','-'+str(1)+'.html').replace('/movie','/player')
-    #print video_url
+    print video_url
     URL=get_url(video_url)
-    #print URL
+    print URL
     while (i<=end and i<=len(URL)):
         print '第%s集开始下载'%(i)
         filename=to_dir+str(i)+'.mp4'
-        download(URL[i-1],filename,i) 
+        download(URL[i-1],filename) 
         i+=1
     print 'finished'   
     return None
