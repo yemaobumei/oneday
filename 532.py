@@ -9,6 +9,7 @@ end=4
 #下载视频存放位置
 path=r'c:\\'
 
+#-----------------------------------------------------------------------------------------------------------------------------
 #获取视频下载地址前缀
 def get_url(video_url):
     #正则表达式匹配地址
@@ -26,7 +27,7 @@ def get_url(video_url):
         return None
     temp.close()    
     return URL
-
+#-----------------------------------------------------------------------------------------------------------------------------
 #获取视频片段地址的后缀
 def f(number):
     string=str(number)
@@ -36,6 +37,7 @@ def f(number):
     url_suffix=temp+string+r'.ts'
     return url_suffix #0000001.ts
 
+#-----------------------------------------------------------------------------------------------------------------------------
 #下载视频,合并视频
 def download(url_prefix,filename,index):
     if not url_prefix:
@@ -47,8 +49,6 @@ def download(url_prefix,filename,index):
         #完整视频片段下载地址
         URL=url_prefix+f(i)
         print '正在下载第%s集片段%s '%(index,i)
-        #存储视频片段的完整路径名
-        file_name=path+str(i)+r'.ts'
         i+=1
         #判断视频片段遍历是否到头
         try:
@@ -57,10 +57,7 @@ def download(url_prefix,filename,index):
                 break
         except Exception, e:
             print '发生错误: '+e
-            break
-        #下载视频片段      
-        #urllib.urlretrieve(URL,file_name) #直接将视频片段下载到本地
-        
+            break      
         #合并视频
         file_=urllib.urlopen(URL)#打开远程视频，像本地文件一样操作这个文件对象来获取远程数据，
         video.write(file_.read())
@@ -68,6 +65,7 @@ def download(url_prefix,filename,index):
         #删除视频片段
         #os.remove(file_name)      
     video.close()
+#-----------------------------------------------------------------------------------------------------------------------------
 #启动程序
 def main():
     i=start  
@@ -89,7 +87,7 @@ def main():
         i+=1
     print 'finished'   
     return None
-
+#-----------------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
     starttime=datetime.datetime.now()
     main()
