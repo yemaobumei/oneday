@@ -38,12 +38,16 @@ var webPage = require('webpage');
 var page = webPage.create();
 var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1182444'
 var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1183885'
+var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1184579'
+
+var page;
 function iter(){
 	//随机产生user-agent
 	//settings.headers['User-Agent']=DESKTOP_USER_AGENTS[Math.floor(Math.random()*7)]
 	i=i+1;
 	console.log(i);	
-	var page=null;
+//	var page=null;
+	page=null;
 	page = webPage.create();
 	page.open(url, settings,function (s) {
 		console.log(s==='success');

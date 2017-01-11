@@ -5,7 +5,7 @@ var settings={
 			'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 			'Connection': 'keep-alive',
 			'Upgrade-Insecure-Requests': '1',
-			'Cookie': 'totoro_cookie=1484149204907_6788; totoro_share_click_cookie=1484149179564_6433; JSESSIONID=3E990894B816CECE08A1141E36AA5468',
+			'Cookie': 'totoro_share_click_cookie=1484158006060_6783; totoro_cookie=1484158006067_492; JSESSIONID=3520E44EC33773FABF56BD0B46820553',
 			'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 10_1_1 like Mac OS X) AppleWebKit/602.2.14 (KHTML, like Gecko) Mobile/14B100 MicroMessenger/6.5.3 NetType/WIFI Language/zh_CN',
 			'Accept-Language': 'zh-cn',
 			'Accept-Encoding': 'gzip, deflate',
@@ -36,7 +36,7 @@ var i=0;
 //var phantom = require('phantom');
 var webPage = require('webpage');
 var page = webPage.create();
-var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1182444'
+var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1184579'
 function iter(){
 	//随机产生user-agent
 	//settings.headers['User-Agent']=DESKTOP_USER_AGENTS[Math.floor(Math.random()*7)]
@@ -48,6 +48,6 @@ function iter(){
 	i=i+1;
 	console.log(i);
 	if(i>=1000){phantom.exit();}
-	setTimeout(arguments.callee, 1000)
+	setTimeout(arguments.callee, 5000)
 }
 iter()
