@@ -1,0 +1,695 @@
+    
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+	<meta charset="utf-8">
+	<title>小小梦依✌️✌️正在直播</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="format-detection" content="telephone=no">
+	<!-- uc强制竖屏 -->
+	<meta name="screen-orientation" content="portrait">
+	<!-- QQ强制竖屏 -->
+	<meta name="x5-orientation" content="portrait">
+	<!-- UC强制全屏 -->
+	<meta name="full-screen" content="yes">
+	<!-- QQ强制全屏 -->
+	<meta name="x5-fullscreen" content="true">
+	<!-- UC应用模式 -->
+	<meta name="browsermode" content="application">
+	<!-- QQ应用模式 -->
+	<meta name="x5-page-mode" content="app">
+	<!-- windows phone 点击无高光 -->
+	<meta name="msapplication-tap-highlight" content="no">
+	<!-- 适应移动端end -->
+	<link rel="stylesheet" href="css/wx_share.css?v6" />
+	<link rel="stylesheet" href="css/mui.min.css?v6">
+	<script type="text/javascript" src="js/videojj.js?v15"></script>
+
+		<style>
+			.maincontainer{overflow: hidden;}
+			.maincontainer .live_friends ul .msg_f{ background:none;padding:0;border-radius: 0; }
+			.maincontainer .live_friends ul .msg_f div{ float:left;background:rgba(0,0,0,0.3);padding: 5px;border-radius: 15px; }
+			.maincontainer .live_friends ul .msg_new{ padding:0; }
+			.maincontainer .live_friends ul .msg_new .msg_a{ color:#e0e0e0 }
+			.maincontainer .live_friends ul .msg_name{ margin-left:4px;color:#e0e0e0 }
+		/*	.right_corner{ position: absolute; top:12px; right:0px;width:110px; height:65px;}
+			.right_corner b{ display: block; width:90%; height:49px; background:url(img/mxzb.png) no-repeat;background-size:98% 84%; }
+			.right_corner .iphone7{ display: block; width:90%; height:14px; background:url(img/iphone7.png) no-repeat;background-size:98% 100%; }*/
+            .right_corner{ position: absolute; top: 5%; right:10%; width:14%; height:20px;}
+            .right_corner b{ display: block; width:100%; height: 100%; background: red; border-radius: 10px;}
+			.tan_box{ display: none; }
+			.close3{ position: absolute; top:14px; right:14px;width:15px;height:15px; background:url(img/btn_close.png) no-repeat;background-size:15px 15px;  }
+			.maincontainer .live_friends ul .msg_new .guanzhu1{ float: initial; position: relative; top:3px; width:16px; height:16px; margin:0 0 0 3px; }
+			.bottom1{ position: absolute; left:0; bottom:0; width:100%; height:50px; }
+			.bottom1 .im1{ display:inline-block; position: relative; left:12px; width:40px; height:40px; background:url(img/im.png) no-repeat;background-size:40px 40px; }
+			.bottom1 .gift1{ display:inline-block;position: absolute; left:50%; width:40px; height:40px; margin:0 0 0 -20px; background:url(img/gift1.png) no-repeat;background-size:40px 40px; }
+			.bottom1 .sixin{ display:inline-block;position: absolute; right:12px; width:40px; height:40px; margin:0 0 0 -20px; background:url(img/sixin.png) no-repeat;background-size:40px 40px; }
+			.live_friends{ width:100%;overflow: hidden; }
+			.live_auto{ position: absolute;top:0; left: 0;width:110%; height:100%;overflow-y: auto;overflow-x: hidden;}
+			.share_play .my_pic{ border-radius: 22px; }
+			.my_name .my_name1{ text-align: left; }
+			.share_play .my_name2{ text-align: left; }
+			.share_play .left-top{ background:rgba(0,0,0,0.3) }
+			.mask1{ display:none; position: absolute;top:0;left:0;width:100%;background:rgba(0,0,0,0.4);z-index:99; }
+			.click_right{position:absolute;top:12px;right:15px; width:192px;height:140px;background:url(img/click_right.png) no-repeat;background-size:192px 140px; }
+			.app_des{background: url(img/app_des.png) no-repeat; background-size:contain;}
+			.bottom_link{
+				height: 58px;
+			}
+			body,html{
+				width: 100%;
+				height: 100%;
+
+			}
+			.bottom_link button{
+				margin: 6px 10px 0 0;
+			}
+			.icom{
+				position: absolute;
+				bottom: 13%;
+				right: 0px;
+				width: 15%;
+				z-index: 25;
+			}
+			.share_play .app_des, .app_des {
+				float: left;
+				width: 40%;
+				height: 50px;
+				margin: 7px 0 0 5px;
+				color: #fff;
+				font-weight: 400;
+			}
+			.share_play .bottom_link, .bottom_link {
+				height: 53px;
+			}
+			.player-btn{
+				width:80px;
+				height:80px;
+				position:fixed;
+				left:0;
+				top:0;
+				right:0;
+				bottom:0;
+				margin:auto;
+				z-index:999;
+			}
+		</style>
+		<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+	</head>
+	<body class="share_play" style="background-image: url('http://staticlive.dreamlive.tv/upload/jpg/350x350/e684b5a63b0d61731cebd2e0d62cae98.jpg'); background-repeat: no-repeat; background-size:cover; background-color:#000; width:100%; height:100%; overflow:hidden; ">
+	<img id="player-btn" class="player-btn" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTkyNzdENjAwODgwMTFFNjk5QTk4MzUyMjBBMjA3MjMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTkyNzdENjEwODgwMTFFNjk5QTk4MzUyMjBBMjA3MjMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5OTI3N0Q1RTA4ODAxMUU2OTlBOTgzNTIyMEEyMDcyMyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5OTI3N0Q1RjA4ODAxMUU2OTlBOTgzNTIyMEEyMDcyMyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgreEpoAAAq8SURBVHja7J35T1Pp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">
+	<div class="maincontainer">
+		<!--左上角主播信息-->
+		<div class="left-top">
+			<img src="http://staticlive.dreamlive.tv/upload/jpg/150x150/e684b5a63b0d61731cebd2e0d62cae98.jpg" alt="" class="my_pic" />
+			<div class="my_name">
+				<div class="my_name1">小小梦依✌️✌️</div>
+				<div class="my_name2">我在梦想直播等你</div>
+			</div>
+			<span class="my_link"></span>
+		</div>
+		<!--右上角梦想直播-->
+		 <!--直播进行时-->
+		 <div class="wx_play_section"  id="my-video">
+			 <video webkit-playsinline x-webkit-airplay="true" x5-video-player-type="h5" playsinline autoplay="autoplay" width="100%" height="100%" preload="auto" poster="" src="http://hls.weiyingonline.com/live/d86226caa56f70912b1aa96b75a0f4e1/playlist.m3u8" x5nativepanel="" style="object-fit: fill;"></video>
+		 </div>
+		 
+		 <div class="mask"></div>
+		 <div class="tan_box">
+		 	<div class="close3"></div>
+		 	<!-- <div class="top_dream">客户端体验更佳，<br/>是否在App中观看直播？</div> -->
+		 	<!-- <div class="top_dream top_dream2">更多精彩，请下载App体验！</div> -->
+		 	<!-- <div class="app_icon open"></div> -->
+		 <!-- 	<div class="app_des">
+		 		<div>梦想直播</div>
+		 		<div>梦想直播 直播梦想</div>
+		 	</div> -->
+               <div class="box_textC" >
+               </div>
+            <!--<a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.dreamer.tv" id="open_btn">-->
+		 	    <button class="open_btn" style="background: #FFA200; border: 1px solid #FFA200;z-index: 20; font-family: '微软雅黑'; font-size: 18px;" >立即打开</button>
+            <!--</a>-->
+		 	<div class="close_btn"></div>
+		 </div>
+		 
+		<!--网友留言-->
+		 <div id="chat_div" class="live_friends">
+		 	<ul id="chat_ul">
+		 		<li class="msg_f">
+		 			<img src="img/level_1.png" alt="" width="50px" /><b>8</b><span class="msg_a">主播，俺最稀饭你！！主播，俺最稀饭你！！主播，俺最稀饭你！！</span>
+		 		</li>
+		 		<li class="msg_new">
+		 			<img src="img/level_3.png" alt="" /><b>31</b><span  class="msg_a">我是神经病我是神经病我是神经病我是神经病</span><span class="msg_b">关注了主播</span>
+		 		</li><li class="msg_new">
+		 			<img src="img/level_2.png" alt="" /><b>21</b><span  class="msg_upgrade">zhuzhu升到了2级</span>
+		 		</li>
+		 	</ul>
+		 </div>
+		 </div>
+		 
+		 <!-- 底部分享链接-->
+		 <div class="bottom_link" style="background:rgba(0,0,0,0.5);">
+		 	<div class="app_des"></div>
+		 	<button class="liji_download open_btn" style="color: #fff; background: #ffa200; border-color: #ffa200; -webkit-border-radius: 5px;">立即下载</button>
+		 </div>
+		<div class="icom">
+            <div class="app_erweima"></div>
+            <div class="app_icon" style="margin-left:1px;"></div>
+            <div class="app_icon1" style="margin-left:1px;"></div>      
+        </div>    
+		 <div class="mask1"><div class="click_right"></div></div>
+		<script src="js/mui.min.js"></script>
+		<script>
+			$('#player-btn').on('click',function(){
+				$(this).css('display','none');
+				$('video').get(0).play();
+			})
+			//$('video').on('click',function(){
+			//	$(this).get(0).play();
+			//	$('#player-btn').css('display','none');
+			//});
+			//$('#player-btn').trigger('click');
+		</script>
+		<script>
+			mui.init();
+			(function($) {
+				//阻尼系数
+				var deceleration = mui.os.ios?0.003:0.0009;
+				$('.mui-scroll-wrapper').scroll({
+					bounce: false,
+					indicators: true, //是否显示滚动条
+					deceleration:deceleration
+				});
+				$.ready(function() {
+					//循环初始化所有下拉刷新，上拉加载。
+					$.each(document.querySelectorAll('.mui-slider-group .mui-scroll'), function(index, pullRefreshEl) {
+						$(pullRefreshEl).pullToRefresh({
+							// down: {
+							// 	callback: function() {
+							// 		var self = this;
+							// 		setTimeout(function() {
+							// 			var ul = self.element.querySelector('.mui-table-view');
+							// 			ul.insertBefore(createFragment(ul, index, 10, true), ul.firstChild);
+							// 			self.endPullDownToRefresh();
+							// 		}, 1000);
+							// 	}
+							// },
+							up: {
+								callback: function() {
+									var self = this;
+									setTimeout(function() {
+										var ul = self.element.querySelector('.mui-table-view');
+										ul.appendChild(createFragment(ul, index, 5));
+										self.endPullUpToRefresh();
+									}, 1000);
+								}
+							}
+						});
+					});
+					var createFragment = function(ul, index, count, reverse) {
+						var length = ul.querySelectorAll('li').length;
+						var fragment = document.createDocumentFragment();
+						var li;
+						for (var i = 0; i < count; i++) {
+							li = document.createElement('li');
+							li.className = 'mui-table-view-cell';
+							//li.innerHTML = '第' + (index + 1) + '个选项卡子项-' + (length + (reverse ? (count - i) : (i + 1)));
+							li.innerHTML = '<a href="#" class="link_my_family">'+
+										'<span class="fl4" style="margin-top:0;">' + (length + (reverse ? (count - i) : (i + 1))) + '</span>'+
+										'<span class="fl2"><img src="img/upload_pic.png" alt=""></span>'+
+										'<div class="fl3">'+
+											'<span class="fl3_name"><b class="level level_4">89</b>蜀山小仙女儿阿拉</span>'+
+											'<span class="fl3_num">粉丝：<span>89452356</span></span>'+
+										'</div>'+
+										'<div class="my_rank">'+
+												'<div class="mui-content-padded">'+
+													'<span class="icon-add"></span>'+
+												'</div>'+
+											'</div>'+
+										'</a>';
+							fragment.appendChild(li);
+						}
+						return fragment;
+					};
+				});
+			})(mui);
+		</script>
+        <script type="text/javascript">
+            /**1203
+             * 补充：对应的立即打开按钮ios唤起ios客户端，Android直接转入应用宝
+             *
+            
+            var u = navigator.userAgent;
+            var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+            var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+            var $openBtn=$('#open_btn');
+            if(isiOS){
+                $openBtn.on('click',function() {
+                    var ifr = document.createElement('iframe');
+                    ifr.src ='webDreamApp://';
+                    ifr.style.display = 'none';
+                    document.body.appendChild(ifr);
+                    setTimeout(function(){
+                        document.body.removeChild(ifr);
+                    }, 3000);
+                });
+            }
+            else if(isAndroid){
+                $openBtn.on('click',function(){
+                    window.location.href="http://a.app.qq.com/o/simple.jsp?pkgname=com.dreamer.tv";
+                })
+            } */
+        </script>
+		<script>
+			function isWeiXin(){
+				var ua = window.navigator.userAgent.toLowerCase();
+				if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+					return true;
+				}else{
+					return false;
+				}
+			}
+			$(".mask").height(  $(document).height() );
+			$(".mask1").height( $(document).height() );
+			/* $(".share_btn2").click(function(){
+				$(this).addClass("active2")
+			}) */
+			function show1(){
+				$(".tan_box").css("display","block");
+				$(".mask").css("display","block");
+			}
+			function hide1(){
+				$(".tan_box").css("display","none");
+				$(".mask").css("display","none");
+			}
+			$(".left-top").click(function(){
+				show1();
+			})
+            $(".icom").click(function(){
+                show1();
+            })
+			$(".mask1").click(function(){
+				$(".mask1").css("display","none");
+			})
+             hide();
+			function hide(){
+                $(".close3").click(function(){
+                    hide1();
+                    return false;
+                });
+            }
+			$(".im1").click(function(){
+				show1();
+			})
+			$(".gift1").click(function(){
+				show1();
+			})
+			$(".sixin").click(function(){
+				show1();
+			})
+			$(".live_friends").click(function(){
+				show1();
+			})
+            //替换打开iOS/app/android下载
+			$(".open_btn").click(function(){
+			 	jumpMy();
+			 })
+             function jumpMy(){
+                 if(isWeiXin()){
+                    
+                     //$(".mask1").css("display","block");
+                     //应用宝打开
+                    window.location.href="http://a.app.qq.com/o/simple.jsp?pkgname=com.dreamer.tv";
+                 }else{
+                    window.location.href="http://a.app.qq.com/o/simple.jsp?pkgname=com.dreamer.tv";
+                }
+             }
+            //倒计时
+            myTime();
+            function myTime(){
+                var myT = 50;
+                var time = setInterval(function (){
+                    myT--;
+                    if(myT === 0){
+                      show1();
+                      clearInterval(time);
+                    }
+                },1000);
+            }
+            //图层跳转
+            jumpMy1();
+            function jumpMy1(){
+                $(".app_erweima").on('click',function (){
+                    jumpMy();
+                    return false;
+                }); 
+                $(".app_icon").on('click',function (){
+                    jumpMy();
+                    return false;
+                })
+                $(".app_icon1").on('click',function (){
+                    jumpMy();
+                    return false;
+                })
+           }
+		</script>
+	</body>
+
+</html>
+<script>
+var util={
+	h :function(){
+		return window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+	},
+	w:function(){
+		 return  window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+	}
+}
+//全局保存拉流地址信息
+video="";
+// video标签
+var $video=$('#my-video video');
+//TODO poster
+//
+/*微信中把http截取*/
+window._DATA={
+	video:video,
+	//TODO
+	poster:'',
+	height:util.h(),
+	width:util.w()
+}
+$('#my-video').css({
+	width:_DATA.width,
+	height:_DATA.height
+})
+// $video.attr({
+// 	'src':_DATA.video,
+// 	'poster':_DATA.poster
+// })
+$(window).on('resize',function(){
+	$('#my-video').css({
+		width:util.w(),
+		height:util.h()
+	})
+})
+
+
+var video="";
+var u = navigator.userAgent;
+var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+if(isiOS || isAndroid){
+	video="hls.weiyingonline.com/live/d86226caa56f70912b1aa96b75a0f4e1/playlist.m3u8";
+}else{
+	video="rtmp://flv.weiyingonline.com/live/d86226caa56f70912b1aa96b75a0f4e1";
+}
+// var ivaInstance = new Iva(
+// 		 'my-video',//父容器id或者父容器DOM对象，给父容器设置宽高640px*480px以上可以获得最佳的浏览体验；
+//  {
+//    appkey: 'Vy8BwY1T-',//必填，请在控制台查看应用标识
+//    live: true,//选填，是否是直播流，默认为false
+//    video: video,//必填，播放地址（http://www.tudou.com/programs/view/tM_vZCQy2uM/）或者资源地址（http://7xi4ig.com2.z0.glb.qiniucdn.com/shapuolang_ts.mp4）
+//    title: '',//选填，视频标题
+//    cover: '',//选填，视频封面url
+//    videoStartPrefixSeconds: 0,//选填，跳过片头，默认为0
+//    videoEndPrefixSeconds: 0,//选填，跳过片尾，默认为0
+//    /* 以下参数可以在“控制台->项目看板->应用管理->播放器设置”进行全局设置，前端设置可以覆盖全局设置 */
+//    skinSelect: 0,//选填，播放器皮肤，可选0、1、2，默认为0，
+//    autoplay: true,//选填，是否自动播放，默认为false
+//    rightHand: true,//选填，是否开启右键菜单，默认为false
+//    autoFormat: false,//选填，是否自动选择最高清晰度，默认为false
+//    bubble: true,//选填，是否开启云泡功能，默认为true
+//    jumpStep: 10,//选填，左右方向键快退快进的时间
+//    tagTrack: false,//选填，云链是否跟踪，默认为false
+//    tagShow: false,//选填，云链是否显示，默认为false
+//    tagDuration: 5,//选填，云链显示时间，默认为5秒
+//    tagFontSize: 16//选填，云链文字大小，默认为16像素
+//  }
+// );var oHeight =  document.body.clientWidth;
+// var oWidth =  document.body.clientHeight;
+// $(".iva-canvasParent").height( oHeight );
+// $(".iva-canvasParent").width( oWidth );
+// $(".zr-element").height( oHeight );
+// $(".zr-element").width( oWidth );
+
+</script>
+<script type="text/javascript">
+	//替换为sewise播放器
+</script>
+<!--
+	作者：88106188@qq.com
+	时间：2016-07-21
+	描述：IM
+-->
+<script src="im/Web_SDK_Base_v2.5.0.js"></script>
+<script src="im/Web_SDK_NIM_v2.5.0.js"></script>
+<script src="im/Web_SDK_Chatroom_v2.5.0.js"></script>
+<script>
+
+/************************初始化*****************************/
+var data = {};
+var nim = NIM.getInstance({
+    // debug: true,
+    appKey: 'd8f7866e5f3d8177d9d083b757399fd1',
+    account: 'totoro_guest1238719',
+    token: 'ae564ce81f543cb40810f06fdf159530',
+    onconnect: onConnect,
+    onwillreconnect: onWillReconnect,
+    ondisconnect: onDisconnect,
+    onerror: onError
+});
+function onConnect() {
+    console.log('连接成功');
+
+    nim.getChatroomAddress({
+        chatroomId: '5383989',
+        done: getChatroomAddressDone
+    });
+}
+function onWillReconnect(obj) {
+    // 此时说明 SDK 已经断开连接, 请开发者在界面上提示用户连接已断开, 而且正在重新建立连接
+    console.log('即将重连');
+    console.log(obj.retryCount);
+    console.log(obj.duration);
+}
+function onDisconnect(error) {
+    // 此时说明 SDK 处于断开状态, 开发者此时应该根据错误码提示相应的错误信息, 并且跳转到登录页面
+    console.log('丢失连接');
+    console.log(error);
+    if (error) {
+        switch (error.code) {
+        // 账号或者密码错误, 请跳转到登录页面并提示错误
+        case 302:
+            break;
+        // 被踢, 请提示错误后跳转到登录页面
+        case 'kicked':
+            break;
+        default:
+            break;
+        }
+    }
+}
+function onError(error) {
+    console.log(error);
+}
+
+/****************************聊天室**************************/
+
+var chatroom=null;
+function getChatroomAddressDone(error, obj) {
+    console.log('获取聊天室地址' + (!error?'成功':'失败'), error, obj);
+    chatroom = Chatroom.getInstance({
+        appKey: 'd8f7866e5f3d8177d9d083b757399fd1',
+        account: 'totoro_guest1238719',
+        token: 'ae564ce81f543cb40810f06fdf159530',
+        chatroomId: '5383989',
+        chatroomAddresses: obj.address,
+        onconnect: onChatroomConnect,
+        onerror: onChatroomError,
+        onwillreconnect: onChatroomWillReconnect,
+        ondisconnect: onChatroomDisconnect,
+        // 消息
+        onmsgs: onChatroomMsgs,
+        chatroomEnterCustom:"{\"uid\":\"2000\",\"level\":\"1\",\"headImageUrl\":\"http:\/\/staticlive.yuncc.cc\/upload\/head.png?v1\"}"
+    });
+}
+function onChatroomConnect(chatroom) {
+    console.log('进入聊天室', chatroom);
+}
+function onChatroomWillReconnect(obj) {
+    // 此时说明 `SDK` 已经断开连接, 请开发者在界面上提示用户连接已断开, 而且正在重新建立连接
+    console.log('即将重连', obj);
+}
+function onChatroomDisconnect(error) {
+    // 此时说明 `SDK` 处于断开状态, 开发者此时应该根据错误码提示相应的错误信息, 并且跳转到登录页面
+    console.log('连接断开', error);
+    if (error) {
+        switch (error.code) {
+        // 账号或者密码错误, 请跳转到登录页面并提示错误
+        case 302:
+            break;
+        // 被踢, 请提示错误后跳转到登录页面
+        case 'kicked':
+            break;
+        default:
+            break;
+        }
+    }
+}
+function onChatroomError(error, obj) {
+    console.log('发生错误', error, obj);
+}
+function onChatroomMsgs(msgs) {
+    console.log('收到聊天室消息', msgs);
+    for(var i=0;i<msgs.length;i++){
+	    switch(msgs[i].type){
+	    	case "notification"://通知消息
+	    		msgNotification(msgs[i]);
+	    		break;
+	    	case "text"://文本消息
+	    		msgText(msgs[i]);
+	    		break;
+	    	case "custom":
+	    		msgCustom(msgs[i]);
+	    		break;
+	    }
+    }
+}
+function msgCustom(msg){
+	var json=JSON.parse(msg.content);
+	switch (parseInt(json.custom_type)){
+		case 1020://下麦
+			window.location.reload(); 
+			break;
+		case 1090://关注主播
+			var follow_li="<li class=\"msg_new\"><div>"
+			+"	<img src=\"img/level_【pic_level】.png\" /><b>【level】</b><span class='msg_a'>【name】</span><span class='msg_b'>关注了主播</span><img src=\"img/guanzhu.png\" class=\"guanzhu1\" alt=\"\" />"
+			+"</div></li>";
+			var pic_level=getPicLevel(json.level);
+			follow_li=follow_li.replace("【pic_level】",pic_level);
+			follow_li=follow_li.replace("【level】",json.level);
+			follow_li=follow_li.replace("【name】",json.nickname);
+			showMessage(follow_li);
+			break;
+		case 1130://升级消息
+			var show_li="<li class=\"msg_new\"><div>"
+			+"	<img src=\"img/level_【pic_level】.png\" /><b>【level】</b><span class='msg_upgrade'>【name】&nbsp;升到了&nbsp;【new_level】级</span>"
+			+"</div></li>";
+			var pic_level=getPicLevel(json.new_level);
+			show_li=show_li.replace("【pic_level】",pic_level);
+			show_li=show_li.replace("【level】",json.new_level);
+			show_li=show_li.replace("【name】",json.nickname);
+			show_li=show_li.replace("【new_level】",json.new_level);
+			showMessage(show_li);
+			break;
+		default:
+			break; 
+	}
+}
+
+function msgNotification(msg){
+	//进入房间li
+	var room_li="<li class=\"msg_f\"><div>"
+	+"	<img src=\"img/level_【pic_level】.png\" /><b>【level】</b><span class='msg_name'>【name】</span><span class='msg_a'>【msg】</span>"
+	+"</div></li>";
+	if("out"==msg.flow){//自己进入房间
+		nim.getUser({
+	    account: msg.from,
+	    done: function(error, user){
+			room_li=room_li.replace("【pic_level】",1);
+			room_li=room_li.replace("【level】",1);
+			room_li=room_li.replace("【name】",user.nick);
+			room_li=room_li.replace("【msg】","进入房间");
+			showMessage(room_li);
+	    }
+		});
+		return;
+	}
+	
+	switch (msg.attach.type){
+		case "memberEnter"://其他用户进入房间
+			var json1=JSON.parse(msg.attach.custom);
+			var pic_level=getPicLevel(json1.level);
+			room_li=room_li.replace("【pic_level】",pic_level);
+			room_li=room_li.replace("【level】",json1.level);
+			room_li=room_li.replace("【name】",msg.attach.fromNick);
+			room_li=room_li.replace("【msg】","进入房间");
+			showMessage(room_li);
+			break;
+		default:
+			break;
+	}
+}
+function getPicLevel(level){
+	return parseInt(level/10+1);
+}
+
+function msgText(msg){
+	//文本li
+	var text_li="<li class=\"msg_f\"><div>"
+	+"	<img src=\"img/level_【pic_level】.png\" /><b>【level】</b><span class='msg_name'>【name】</span><span class='msg_a'>【msg】</span>"
+	+"</div></li>";
+	var json1=JSON.parse(msg.custom);
+	var pic_level=getPicLevel(json1.level);
+	text_li=text_li.replace("【pic_level】",pic_level);
+	text_li=text_li.replace("【level】",json1.level);
+	text_li=text_li.replace("【name】",msg.fromNick);
+	text_li=text_li.replace("【msg】",msg.text);
+	showMessage(text_li);
+}
+</script>
+
+<script>
+//二次分享处理
+//;(function (){
+//	getUrl();
+//	function getUrl(){
+//		var str = window.location.href;
+//		console.log(str);
+//	}
+//})();
+</script>
+<!--
+	作者：88106188@qq.com
+	时间：2016-07-21
+	描述：聊天框动态变化
+-->
+<script>
+	//聊天外边框高度
+	var divHeight=parseInt($("#chat_div").css("height") );
+	$("#chat_ul").html("");
+	var sum=1;
+	var oldHeight=0;
+	function showMessage(li){
+		var top=0;
+		$("#chat_ul").append(li);
+		//总聊天框高度
+		var height = parseInt( $("#chat_ul").css("height") );
+		//滚动条距离顶部
+		var scTop=parseInt($(".live_friends").scrollTop());
+
+		if(scTop>0){
+			//容错5
+			var chazhi=oldHeight-divHeight-scTop;
+			console.log("容错"+chazhi);
+			if(chazhi<5){
+				$(".live_friends").scrollTop(height);
+			}
+		}else{
+			$(".live_friends").scrollTop(height);
+		}
+		oldHeight=height;
+		
+		//最多显示多少条
+		if(sum>50){
+			$("#chat_ul").find("li")[0].remove();
+			return;
+		}
+		sum++;
+	}
+</script>

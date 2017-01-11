@@ -82,7 +82,7 @@ def loop(times=30):
 		startTime=time.time()
 		top()
 		endTime=time.time()
-		#time.sleep(24*60*60-endTime+startTime)
+		time.sleep(24*60*60-endTime+startTime)
 		#time.sleep(20)	
 	f_Tuijian.close()
 	f_descri.close()
@@ -105,7 +105,7 @@ def word_frequency():
 		t='{0:#<20}{1:->10} '.format(word.encode('utf-8'),str(freq))
 		freqFile.write(str(t)+'\n')
 	freqFile.close()
-
+#获取排行榜上的书的ID
 def popular():
 	headers={
 	'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.98 Safari/537.36',
@@ -113,16 +113,18 @@ def popular():
 	}
 	recorder=open(r'./recoder.html','wb')
 	url=r'http://wap.tyread.com/pindao/shucheng/paihang/index.html?is_ctwap=0&y=0&id=749&q=1&pageNo=#'
+	url=r'http://wap.tyread.com/pindao/shucheng/paihang/index.html?is_ctwap=0&y=0&fromModule=J-index-nav-rank'
 	for i in range(1):
 		desUrl=re.sub('#',str(i+1),url)
 		regx=r'li[\s\S]*?bookdetail/(\d+?)/gobook'
-		response=requests.get(url,headers=headers)
+		response=requests.get(url)
 		if response.status_code==200:
 			print (re.findall(regx,response.content))
 			recorder.write(response.content)
+	recorder.close()
 if __name__ == '__main__':
-	#loop(1)
-	#word_frequency()
+	loop()
+	word_frequency()
 	popular()
 
 
