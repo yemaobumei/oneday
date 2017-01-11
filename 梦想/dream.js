@@ -36,18 +36,23 @@ var i=0;
 //var phantom = require('phantom');
 var webPage = require('webpage');
 var page = webPage.create();
-var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1181700'
+var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1182444'
+var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1183885'
 function iter(){
 	//随机产生user-agent
 	//settings.headers['User-Agent']=DESKTOP_USER_AGENTS[Math.floor(Math.random()*7)]
+	i=i+1;
+	console.log(i);	
 	var page=null;
 	page = webPage.create();
 	page.open(url, settings,function (s) {
-	  console.log(s);
+		console.log(s==='success');
+		while(s!=="success"){
+			console.log('wait a minute');
+		}
+
 	});
-	i=i+1;
-	console.log(i);
 	if(i>=1000){phantom.exit();}
-	setTimeout(arguments.callee, 3000)
+	setTimeout(arguments.callee, 1000)
 }
 iter()
