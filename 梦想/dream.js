@@ -41,7 +41,9 @@ var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDeta
 //var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1190267'//JYH
 //var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1191474'//依yi
 //url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1195712'
-url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1197200'//doubao
+//url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1197200'//doubao
+url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1205966'//捉鱼
+//url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1206155'
 function iter(count){
 	//随机产生user-agent
 	//settings.headers['User-Agent']=DESKTOP_USER_AGENTS[Math.floor(Math.random()*7)]		
@@ -55,14 +57,17 @@ function iter(count){
 		page=null;
 */	});
 //	if(count>=1000){phantom.exit();}
-//	setTimeout(function(){iter(count+1)}, 5000)
+	//setTimeout(function(){iter(count+1)}, 5000)
+	return true;
 }
 
 
 function test(){
-	for(var j=0;j<30;j++){
-		iter(1);	
+	var status;
+	for(var j=0;j<3;j++){
+		status=iter(1);
 	}
+	setTimeout(function(){phantom.exit();},4000);
 }
 test()
 
