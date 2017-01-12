@@ -35,28 +35,34 @@ DESKTOP_USER_AGENTS = [ "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWe
 var i=0;
 //var phantom = require('phantom');
 var webPage = require('webpage');
-var page = webPage.create();
-var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1182444'
-var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1183885'
-var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1184579'
 
-var page;
-function iter(){
+var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1182444'//喵小兔
+//var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1183885'
+//var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1190267'//JYH
+//var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1191474'//依yi
+//url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1195712'
+url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1197200'//doubao
+function iter(count){
 	//随机产生user-agent
-	//settings.headers['User-Agent']=DESKTOP_USER_AGENTS[Math.floor(Math.random()*7)]
-	i=i+1;
-	console.log(i);	
-//	var page=null;
-	page=null;
-	page = webPage.create();
+	//settings.headers['User-Agent']=DESKTOP_USER_AGENTS[Math.floor(Math.random()*7)]		
+	var page = webPage.create();
 	page.open(url, settings,function (s) {
-		console.log(s==='success');
+		console.log(count,s);
 		while(s!=="success"){
 			console.log('wait a minute');
 		}
-
-	});
-	if(i>=1000){phantom.exit();}
-	setTimeout(arguments.callee, 1000)
+/*		page.close()
+		page=null;
+*/	});
+//	if(count>=1000){phantom.exit();}
+//	setTimeout(function(){iter(count+1)}, 5000)
 }
-iter()
+
+
+function test(){
+	for(var j=0;j<30;j++){
+		iter(1);	
+	}
+}
+test()
+
