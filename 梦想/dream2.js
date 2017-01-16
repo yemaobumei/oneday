@@ -33,21 +33,36 @@ DESKTOP_USER_AGENTS = [ "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWe
 
 //循环访问直播网页	
 var i=0;
-//var phantom = require('phantom');
 var webPage = require('webpage');
 var page = webPage.create();
-var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1242299'
+var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1275006'//2471'
 function iter(){
 	//随机产生user-agent
-	settings.headers['User-Agent']=DESKTOP_USER_AGENTS[Math.floor(Math.random()*7)]
-	var page=null;
-	page = webPage.create();
-	page.open(url, settings,function (s) {
-	  console.log(i,s);
-	});
+//	settings.headers['User-Agent']=DESKTOP_USER_AGENTS[Math.floor(Math.random()*7)]	
+	if(i>=1000){
+		phantom.exit();
+	}
 	i=i+1;
-	if(i>=1000){phantom.exit();}
-	setTimeout(arguments.callee, 3000)
-	//setTimeout(function(){phantom.exit();},5000);
+	var page = webPage.create();
+	page.onLoadFinished=function(status){
+		page.clearCookies();
+		console.log(i,status);
+		//iter();
+		setTimeout(function(){
+			iter();
+		}, 5000)
+	}
+	page.open(url, settings,function (s) {
+	  	//var cookies=page.cookies;
+		// console.log(cookies[0].name+":"+cookies[0].value);
+		// console.log(cookies[1].name+":"+cookies[1].value);
+		// console.log(cookies[2].name+":"+cookies[2].value);
+		//page.clearCookies();
+		//phantom.clearCookies();
+	});
+	
+	// for(x in cookies[0]){
+	// 	console.log(x,cookies[0][x]);
+	// }
 }
 iter()

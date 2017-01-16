@@ -36,7 +36,7 @@ var i=0;
 //var phantom = require('phantom');
 var webPage = require('webpage');
 
-var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1242131'//monkey
+var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1249049'
 
 function iter(count){
 	//随机产生user-agent
