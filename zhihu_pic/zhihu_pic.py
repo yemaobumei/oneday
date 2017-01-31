@@ -8,7 +8,7 @@
 
 商业转载请联系作者获得授权，非商业转载请注明出处。
 
-作者：yf
+作者：xlzd
 
 链接：http://www.zhihu.com/question/20399991/answer/62551736
 
@@ -17,7 +17,6 @@
 """
 
 
-import re, requests
 import re, requests
 
 
