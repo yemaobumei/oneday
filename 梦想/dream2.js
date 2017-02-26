@@ -35,7 +35,7 @@ DESKTOP_USER_AGENTS = [ "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWe
 var i=0;
 var webPage = require('webpage');
 var page = webPage.create();
-var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1629465'
+var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1887921'
 function iter(){
 	//随机产生user-agent
 //	settings.headers['User-Agent']=DESKTOP_USER_AGENTS[Math.floor(Math.random()*7)]	
