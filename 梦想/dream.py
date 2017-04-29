@@ -19,15 +19,23 @@ headers={
 	'User-Agent': 'Dreamer/2.0.9 (iPhone; iOS 10.1.1; Scale/2.00)',
 	'Connection': 'keep-alive',
 	'app_type': '0',
-	'Cookie': 'JSESSIONID=F9F975F8153A46BEAC2BB0F70CAE3B0E',
+#	'Cookie': 'JSESSIONID=F9F975F8153A46BEAC2BB0F70CAE3B0E',
 	'app_dev': '5C8448A1-1D70-4541-A9D3-37187C1382CA'
 }
-t=str(int(time.time()))
+
+
+deviceId='5C8448A1-1D70-4541-A9D3-37187C1382CA'
+account='13126772351'
+u='/passport/login/AccountLoginAction.a'
+
+t=str(int(time.time()*1000))
+print t
 md5 = hashlib.md5()
-md5.update(t)
-m_check=md5.hexdigest()
-print m_check
-data='account=13126772351&deviceId=5C8448A1-1D70-4541-A9D3-37187C1382CA&mcheck='+m_check+'&password=9ef1969d6ed8fc9a289ef6b0e48e13b6&r='+str(int(time.time()))
+md5.update(u)
+mcheck=md5.hexdigest()
+print mcheck
+
+data='account=13126772351&deviceId=5C8448A1-1D70-4541-A9D3-37187C1382CA&mcheck='+mcheck+'&password=9ef1969d6ed8fc9a289ef6b0e48e13b6&r='+t
 # params={
 # 	'account':'13126772351',
 # 	'deviceId':'5C8448A1-1D70-4541-A9D3-37187C1382CA',
@@ -37,7 +45,7 @@ data='account=13126772351&deviceId=5C8448A1-1D70-4541-A9D3-37187C1382CA&mcheck='
 # }
 # cookies={'JSESSIONID':'58E63DB365210FD77B1C1BC2E2CD3F5B'}
 url='http://app0.dreamlive.tv/passport/login/AccountLoginAction.a'
-requests.post(url,headers=headers,data=data)
+print requests.post(url,headers=headers,data=data)
 
 
 

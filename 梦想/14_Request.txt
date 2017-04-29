@@ -1,0 +1,17 @@
+POST http://app0.dreamlive.tv/passport/login/AccountLoginAction.a HTTP/1.1
+Host: app0.dreamlive.tv
+Accept: */*
+Connection: keep-alive
+app_ct: CN
+app_v: 2.0.9
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-Hans-CN;q=1, en-CN;q=0.9
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 163
+User-Agent: Dreamer/2.0.9 (iPhone; iOS 10.1.1; Scale/2.00)
+Connection: keep-alive
+app_type: 0
+Cookie: JSESSIONID=D7F0C5EAE700F366074964B4AF5B6804
+app_dev: 5C8448A1-1D70-4541-A9D3-37187C1382CA
+
+account=13126772351&deviceId=5C8448A1-1D70-4541-A9D3-37187C1382CA&mcheck=1640ee830dfd3c0997c19dcea4c3b7c2&password=9ef1969d6ed8fc9a289ef6b0e48e13b6&r=1484580992445
