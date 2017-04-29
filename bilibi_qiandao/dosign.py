@@ -18,7 +18,7 @@ def read_cookie(cookiepath):
 	with open(cookiepath, 'r') as fid:
 		cookies = fid.readlines()
 	return cookies
-@loop
+#@loop
 def do_sign(headers):
 	log=open('./log.txt','a')
 	url = "http://live.bilibili.com/sign/doSign"
@@ -26,7 +26,7 @@ def do_sign(headers):
 	data = json.loads(r.text)
 	print data['code']
 	if data['code']!=-500:
-		log.write(time.strftime("%Y-%m-%d ", time.localtime())+data['code']+'\n')
+		log.write(time.strftime("%Y-%m-%d ", time.localtime())+str(data['code'])+'\n')
 	else:
 		log.write(time.strftime("%Y-%m-%d ", time.localtime())+'success'+'\n')
 	log.close()
