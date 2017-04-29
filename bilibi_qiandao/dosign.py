@@ -32,7 +32,7 @@ def do_sign(headers):
 	log.close()
 
 if __name__=='__main__':
-	cookies = read_cookie('./bilicookies')[0]
+	cookies = read_cookie('./bilicookies.txt')[0]
 	headers = {
 	    'accept-encoding': 'gzip, deflate, sdch',
 	    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.16 Safari/537.36',
