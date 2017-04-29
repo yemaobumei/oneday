@@ -18,7 +18,7 @@ def read_cookie(cookiepath):
 	with open(cookiepath, 'r') as fid:
 		cookies = fid.readlines()
 	return cookies
-#@loop
+@loop
 def do_sign(headers):
 	log=open('./log.txt','a')
 	url = "http://live.bilibili.com/sign/doSign"
