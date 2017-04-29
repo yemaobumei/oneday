@@ -35,7 +35,7 @@ DESKTOP_USER_AGENTS = [ "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWe
 var i=0;
 var webPage = require('webpage');
 var page = webPage.create();
-var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1275006'//2471'
+var url='http://h5.weiyingonline.com/share_play/SharePlayClickAction.a?shareDetailId=1887921'
 function iter(){
 	//随机产生user-agent
 //	settings.headers['User-Agent']=DESKTOP_USER_AGENTS[Math.floor(Math.random()*7)]	
@@ -47,10 +47,10 @@ function iter(){
 	page.onLoadFinished=function(status){
 		page.clearCookies();
 		console.log(i,status);
+		iter();
+		// setTimeout(function(){
 		//iter();
-		setTimeout(function(){
-			iter();
-		}, 5000)
+		// }, 5000)
 	}
 	page.open(url, settings,function (s) {
 	  	//var cookies=page.cookies;
