@@ -24,11 +24,7 @@ def do_sign(headers):
 	url = "http://live.bilibili.com/sign/doSign"
 	r = requests.get(url,headers=headers)
 	data = json.loads(r.text)
-	print data['code']
-	if data['code']!=-500:
-		log.write(time.strftime("%Y-%m-%d ", time.localtime())+str(data['code'])+'\n')
-	else:
-		log.write(time.strftime("%Y-%m-%d ", time.localtime())+'success'+'\n')
+	log.write(time.strftime("%Y-%m-%d ", time.localtime())+str(data['code'])+'\n')
 	log.close()
 
 if __name__=='__main__':
