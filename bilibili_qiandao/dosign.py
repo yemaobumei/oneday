@@ -17,6 +17,7 @@ def loop(func):
 def read_cookie(cookiepath):
 	with open(cookiepath, 'r') as fid:
 		cookies = fid.readlines()
+		print cookies
 	return cookies
 @loop
 def do_sign(headers):
