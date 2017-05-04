@@ -25,6 +25,9 @@ var observer = new MutationObserver(function(mutations) {
     		thank($node.find('.gift-msg'),'.user-name','.gift-count','.action');
     	}else if($node.find('.guard-sys').length>0) {
     		welcome($node);	
+    	}else if($node.find('.chat-msg').length>0) {
+    		reply($node);
+    		console.log(1)
     	}   	
     });
   });    
@@ -36,8 +39,6 @@ var  single_gift={};//{'x':1,'y':2}记录单个礼物赠送次数，提示不要
 function thank($giftMsg,uname,giftCount,action) {
 	gift_num+=1;
 	if(gift_num%20==0){single_gift={}};
-	if(gift_num%100==0){sendDanmu("主播666，主播带我。")};
-	if(gift_num%40==0){sendDanmu("主播今天和往常一样漂亮。")};
 	if($giftMsg.length>0) {
 		var uname=$giftMsg.find(uname).text();
 		var count=$giftMsg.find(giftCount).text().match(/\d+/)[0];
@@ -70,7 +71,21 @@ function welcome($node)	{
 		}
 	})
 }
-
+//弹幕礼仪
+function reply($node){
+	if(gift_num%40==0){sendDanmu("主播游戏这么厉害，不上波船吗。")};
+	var uname=$node.find('.user-name').text();
+	var msg=$node.find('.msg-content').text();
+	console.log(msg)
+	var database={'背景音乐':'左上角网易云关注有歌单','bgm':'左上角网易云关注有歌单','666':'主播这么厉害不点拨关注吗',
+	  '胸':'请大家注意弹幕礼仪!','鸡':'请大家注意弹幕礼仪','菜':'这只是发挥失常，大家看久点就知道了。',
+	  '段位':'主播钻石水平，日常AD。想看什么英雄可以跟主播说。'	
+	}
+	$.each(database,function(key,val){
+		if(msg.search(key)>-1){
+			sendDanmu(val);
+		}
+	})
 //发送弹幕消息
 function sendDanmu(danmu)	{
 	$('#danmu-textbox').val(danmu);
