@@ -18,6 +18,8 @@ import binascii
 from bs4 import BeautifulSoup
 import urllib
 
+#compare str
+import difflib
 
 class DanmuWebsocket():
 	def __init__(self):
@@ -43,7 +45,27 @@ class DanmuWebsocket():
 		}
 		self.userdata = ''
 		self.isLogin=False
+#---辅助弹幕部分--------------------------------------------------------------------------
 		self.danmu_num=0
+		self.gift_dic={}
+		self.gift_num=0
+		self.gift_inc=20
+		self.database={'背景音乐':'网易云ID:喵咭喵呜QAQ,关注有歌单','求bgm网易云':'网易云ID:喵咭喵呜QAQ,关注有歌单','喵咭6666':'主播这么厉害不点拨关注吗',
+		  '主播的胸好小':'请大家注意弹幕礼仪!','做鸡巴儿':'请大家注意弹幕礼仪','主播真的菜水':'这只是发挥失常，大家看久点就知道了',
+		  '主播玩什么段位英雄':'主播钻石水平，日常AD。想看什么英雄可以跟主播说',
+		  '主播下路炸了':'主播加油，胜利在望，决不动摇',
+		  'gay玩弹幕姬':'不要调戏我，会坏的',
+		  '小姐姐漂亮':'喵咭和往常一样漂亮',
+		  '主播真漂亮':'喵咭和往常一样漂亮',
+		  '主播日常修仙吗':'不要休闲哟，对身体不好呢',
+		  '主播唱歌好听':'主播唱歌贼好听',
+		  '废话在哪里呢':'废话被麻麻gank了',
+		  '夜猫大佬不在了':'不要趁我不在就gay我，我与喵咭共存亡',
+		  '小乖漂亮':'小乖最美了',
+		  '蚂蚱大佬':'蚂蚱好帅，好想给你生猴子',
+		  '克拉领个勋章':'送个b克拉领个勋章,周末一起水友赛',
+		  '怎么戴勋章':'pc端右上角直播中心佩戴中心,手机端直播中心我的勋章',	
+	}
 	#密码执行加密
 	def _encrypt(self, password):
 		#获取加密的token
@@ -159,15 +181,39 @@ class DanmuWebsocket():
 		res = self.session.post(send_url,data)
 		if res.status_code==200:
 			self.danmu_num+=1
-			print('弹幕发送成功',self.danmu_num)
+			print(msg,self.danmu_num)
 
 
-	def robot(self,msg):
-		data={'info':msg,'key':'a85845213d8f41fc9685fff9c675ec5d'} 
+	def robot(self,username,msg):
+		s=['夜猫','废话','主播','喵咭','up','弹幕姬','机器人','小乖']
+		#data={'info':msg,'key':'a85845213d8f41fc9685fff9c675ec5d'}
+		data={'info':msg,'key':'fef3ad124da348419db60d502d43bcf2'}
 		url="http://www.tuling123.com/openapi/api"
-		r=requests.post(url,data=data)
-		response=json.loads(r.content.decode('utf-8'))['text']
-		self.sendDanmu(response)
+		temp_ratio = 0
+		temp_key=""
+		try:
+			for key in self.database:
+				seq = difflib.SequenceMatcher(None, msg,key)
+				ratio = seq.ratio()
+				if ratio > temp_ratio :
+					temp_ratio = ratio
+					temp_key = key
+			print(temp_ratio,temp_key)
+
+		except Exception as e:
+			print(e)
+	
+		if temp_ratio > 0.38:
+			self.sendDanmu(self.database[temp_key])
+			return
+		elif any([1  for each in s if each in msg]):
+			r=requests.post(url,data=data)
+			response=json.loads(r.content.decode('utf-8'))['text']
+			self.sendDanmu(response+'@'+username)
+
+		return
+
+
 
 
 
@@ -288,7 +334,6 @@ class DanmuWebsocket():
 			commentUser = dic['info'][2][1]
 			isAdmin = dic['info'][2][2] == '1'
 			isVIP = dic['info'][2][3] == '1'
-			print(commentUser)
 			if "喵咭大佬弹幕姬专用の夜猫" in commentUser:
 				return 
 			if isAdmin:
@@ -296,19 +341,35 @@ class DanmuWebsocket():
 			if isVIP:
 				commentUser = 'VIP ' + commentUser
 			try:
-				#print (commentUser + ' say: ' + commentText)
-				self.robot(commentUser+'说'+commentText)
+				print (commentUser + ' say: ' + commentText)
+				self.robot(commentUser,commentText)
 			except:
 				pass
 			return
 		if cmd == 'SEND_GIFT' and config.TURN_GIFT == 1:
+			#累计多次礼物后，情况礼物清单栏,{'a':3,'b':5}
+			self.gift_num+=1
+			if self.gift_num%self.gift_inc==0:
+				self.gift_dic={}
+			#获取送礼信息		
 			GiftName = dic['data']['giftName']
 			GiftUser = dic['data']['uname']
 			Giftrcost = dic['data']['rcost']
 			GiftNum = dic['data']['num']
+			print (GiftName)
+			#单次送礼记录礼物清单内，连续多次后触发不弹幕'打包投喂'。
+			if GiftNum==1:
+				self.gift_dic[GiftUser] = self.gift_dic[GiftUser] + 1 if  GiftUser in self.gift_dic else 1
 			try:
+				if self.gift_dic[GiftUser] >= 5:
+					self.gift_dic[GiftUser]=0
+					res='谢谢'+GiftUser+'的礼物'+',请尽量打包投喂'
+				elif '辣条' not in GiftName or GiftNum >= 10:
+					res='谢谢' + GiftUser + ' 送的 ' + GiftName + 'x' + str(GiftNum)
+				else:
+					return
 				#print(GiftUser + ' 送出了 ' + str(GiftNum) + ' 个 ' + GiftName)
-				self.sendDanmu('谢谢' + GiftUser + ' 送的 ' + GiftName + 'x' + str(GiftNum) )
+				self.sendDanmu(res)
 			except:
 				pass
 			return
