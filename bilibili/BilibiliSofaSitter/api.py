@@ -14,6 +14,7 @@ import rsa
 import binascii
 from bs4 import BeautifulSoup
 import urllib
+import asyncio
 
 headers = {
 	'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
@@ -25,6 +26,7 @@ class Client():
 		self.session = requests.Session()
 		self.session.headers = headers
 		self.userdata = ''
+		self.isLogin=False
 
 	#密码执行加密
 	def _encrypt(self, password):
@@ -48,24 +50,6 @@ class Client():
 			cookies_dic = requests.utils.dict_from_cookiejar(self.session.cookies)
 			pickle.dump(cookies_dic, f)
 
-	#利用直播接口登陆，无需验证码
-	def live_login(self, username, password):
-		#密码加密
-		password = self._encrypt(password)
-		preload = {
-			'userid': username,
-			'pwd': password,
-			'captcha':"",
-			'keep':1
-		}
-		response = self.session.post('https://passport.bilibili.com/ajax/miniLogin/login', data=preload)
-		data = json.loads(response.content.decode('utf-8'))
-		try:
-			return data['status']	
-		except Exception as e:
-			#登陆失败
-			print('live login error', e)
-			return False
 
 	#普通网页接口登陆，需要验证码
 	def login(self, username, password, captcha_path):
@@ -100,6 +84,7 @@ class Client():
 			return False
 		except Exception as e:
 			#登陆成功
+			self.isLogin=True
 			return True
 			
 	#使用cookies登陆
@@ -126,6 +111,7 @@ class Client():
 			print(username + '.cookies失效，请重新执行一次login.py')
 			sys.exit()
 		print('欢迎您:', self.userdata['uname'])
+		self.isLogin=True
 		return self.userdata['uname']
 
 	#获取个人信息
@@ -135,10 +121,29 @@ class Client():
 		try:
 			if data['status'] == True:
 				self.userdata = data['data']
+				self.isLogin=True
 				return True
 		except Exception as e:
 			print(e)
 		return False
+
+
+
+	async def sendDanmu(self,roomid,msg):
+		send_url="http://live.bilibili.com/msg/send"
+		method="POST"
+		data={
+			'color':'16772431',
+			'fontsize':25,
+			'mode':1,
+			'msg':msg,
+			'rnd':'1493972251',
+			'roomid':roomid		
+		}
+		res = await self.session.post(send_url,data=data)
+		if res.status_code==200:
+			print('弹幕发送成功')
+
 
 	#获取个人通知消息个数
 	def get_notify_count(self):
@@ -171,15 +176,22 @@ class Client():
 		except Exception as e:
 			print('error', e)
 
-	def sendDanmu(self):
-		send_url="http://live.bilibili.com/msg/send"
-		method="POST"
-		data={
-			'color':'16772431',
-			'fontsize':25,
-			'mode':1,
-			'msg':'弹幕姬测试',
-			'rnd':'1493972251',
-			'roomid':'1273106'		
+
+		#利用直播接口登陆，无需验证码
+	def live_login(self, username, password):
+		#密码加密
+		password = self._encrypt(password)
+		preload = {
+			'userid': username,
+			'pwd': password,
+			'captcha':"",
+			'keep':1
 		}
-		self.session.post(send_url,data=data)
+		response = self.session.post('https://passport.bilibili.com/ajax/miniLogin/login', data=preload)
+		data = json.loads(response.content.decode('utf-8'))
+		try:
+			return data['status']	
+		except Exception as e:
+			#登陆失败
+			print('live login error', e)
+			return False
