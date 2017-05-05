@@ -140,7 +140,7 @@ class Client():
 			'rnd':'1493972251',
 			'roomid':roomid		
 		}
-		res = await self.session.post(send_url,data=data)
+		res = self.session.post(send_url,data=data)
 		if res.status_code==200:
 			print('弹幕发送成功')
 
