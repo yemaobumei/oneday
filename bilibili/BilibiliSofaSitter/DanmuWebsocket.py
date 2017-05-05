@@ -291,7 +291,7 @@ class DanmuWebsocket():
                 commentUser = 'VIP ' + commentUser
             try:
                 print (commentUser + ' say: ' + commentText)
-                self.sendDanmu(commentUser + ' say: ' + commentText)
+                #self.sendDanmu(commentUser + ' say: ' + commentText)
             except:
                 pass
             return
@@ -302,7 +302,7 @@ class DanmuWebsocket():
             GiftNum = dic['data']['num']
             try:
                 #print(GiftUser + ' 送出了 ' + str(GiftNum) + ' 个 ' + GiftName)
-                return GiftUser + ' 送出了 ' + str(GiftNum) + ' 个 ' + GiftName
+                self.sendDanmu(GiftUser + ' 送出了 ' + str(GiftNum) + ' 个 ' + GiftName)
             except:
                 pass
             return
@@ -310,6 +310,7 @@ class DanmuWebsocket():
             commentUser = dic['data']['uname']
             try:
                 print ('欢迎 ' + commentUser + ' 进入房间。。。。')
+                self.sendDanmu('欢迎 ' + commentUser + ' 进入房间。。。。')
             except:
                 pass
             return
