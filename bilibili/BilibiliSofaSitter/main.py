@@ -1,13 +1,16 @@
 #!/usr/bin/python3
 #coding=utf-8
 import asyncio
+import sys
 from DanmuWebsocket import DanmuWebsocket
 
 #首先进行B站登录,建立直播弹幕websocket,返回发送弹幕姬
 danmuji = DanmuWebsocket()
-danmuji.cookies_login()
+if not danmuji.cookies_login():
+	print('请手动登录')
+	sys.exit()
 print(danmuji.isLogin)
-danmuji.sendDanmu('lala')
+danmuji.sendDanmu('小夜猫来看你了')
 
 
 tasks = [
