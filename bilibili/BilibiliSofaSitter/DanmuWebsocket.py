@@ -21,6 +21,9 @@ import urllib
 #compare str
 import difflib
 
+#helper
+import math
+
 class DanmuWebsocket():
 	def __init__(self):
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
@@ -33,7 +36,7 @@ class DanmuWebsocket():
 		self._UserCount = 0
 		self._ChatHost = 'livecmt-1.bilibili.com'
 
-		self._roomId = input('请输入房间号：')
+		self._roomId = "1273106"  #"1619217"
 		self._roomId = int(self._roomId)
 
 
@@ -50,21 +53,24 @@ class DanmuWebsocket():
 		self.gift_dic={}
 		self.gift_num=0
 		self.gift_inc=20
-		self.database={'背景音乐':'网易云ID:喵咭喵呜QAQ,关注有歌单','求bgm网易云':'网易云ID:喵咭喵呜QAQ,关注有歌单','喵咭6666':'主播这么厉害不点拨关注吗',
-		  '主播的胸好小':'请大家注意弹幕礼仪!','做鸡巴儿':'请大家注意弹幕礼仪','主播真的菜水':'这只是发挥失常，大家看久点就知道了',
-		  '主播玩什么段位英雄':'主播钻石水平，日常AD。想看什么英雄可以跟主播说',
-		  '主播下路炸了':'主播加油，胜利在望，决不动摇',
-		  'gay玩弹幕姬':'不要调戏我，会坏的',
-		  '小姐姐漂亮':'喵咭和往常一样漂亮',
-		  '主播真漂亮':'喵咭和往常一样漂亮',
-		  '主播日常修仙吗':'不要休闲哟，对身体不好呢',
-		  '主播唱歌好听':'主播唱歌贼好听',
-		  '废话在哪里呢':'废话被麻麻gank了',
-		  '夜猫大佬不在了':'不要趁我不在就gay我，我与喵咭共存亡',
-		  '小乖漂亮':'小乖最美了',
-		  '蚂蚱大佬':'蚂蚱好帅，好想给你生猴子',
-		  '克拉领个勋章':'送个b克拉领个勋章,周末一起水友赛',
-		  '怎么戴勋章':'pc端右上角直播中心佩戴中心,手机端直播中心我的勋章',	
+		self.database={
+		'背景音乐':'网易云ID:喵咭喵呜QAQ,关注有歌单',
+		'求bgm网易云':'网易云ID:喵咭喵呜QAQ,关注有歌单',
+		'66666':'主播这么厉害不点拨关注吗',
+		'做鸡巴儿':'请大家注意弹幕礼仪',
+		'真的菜水':'这只是发挥失常，大家看久点就知道了',
+		'玩什么段位英雄':'主播钻石水平，日常AD。想看什么英雄可以跟主播说',
+		 '下路炸了超鬼':'主播加油，胜利在望，决不动摇',
+		 'gay玩弹幕姬':'不要调戏我，会坏的',
+		 '小姐姐漂亮':'喵咭和往常一样漂亮',
+		 '主播真漂亮':'喵咭和往常一样漂亮',
+		 '日常修仙吗':'不要休闲哟，对身体不好呢',
+		 '唱歌好听':'主播唱歌贼好听',
+		 '废话大佬在哪呢':'废话被麻麻gank了',
+		 '夜猫大佬不在了':'不要趁我不在就gay我，我与喵咭共存亡',
+		 '蚂蚱':'蚂蚱好帅，好想给你生猴子',
+		 'b克拉领个勋章':'送个b克拉领个勋章,周末一起水友赛',
+		 '怎么戴勋章':'pc端右上角直播中心佩戴中心,手机端直播中心我的勋章',	
 	}
 	#密码执行加密
 	def _encrypt(self, password):
@@ -169,7 +175,8 @@ class DanmuWebsocket():
 	def sendDanmu(self,msg):
 		send_url="http://live.bilibili.com/msg/send"
 		method="POST"
-
+		if len(msg) > 38:
+			self.send_long_danmu(msg)
 		data={
 			'color':'16772431',
 			'fontsize':25,
@@ -183,15 +190,32 @@ class DanmuWebsocket():
 			self.danmu_num+=1
 			print(msg,self.danmu_num)
 
-
+	def send_long_danmu(self,msg):
+		length=len(msg)
+		c=math.ceil(length/30.0)
+		for i in range(c):
+			self.sendDanmu(msg[i*30:(i+1)*30-1])
+					
 	def robot(self,username,msg):
-		s=['夜猫','废话','主播','喵咭','up','弹幕姬','机器人','小乖']
-		#data={'info':msg,'key':'a85845213d8f41fc9685fff9c675ec5d'}
-		data={'info':msg,'key':'fef3ad124da348419db60d502d43bcf2'}
+		s=['夜猫','主播','喵咭','up','弹幕姬','小姐姐']
+		danmu_liyi=['胸','奶','鸡儿','脱衣']
+		data={'info':msg,'key':'a85845213d8f41fc9685fff9c675ec5d'}
+		#data={'info':msg,'key':'fef3ad124da348419db60d502d43bcf2'}
 		url="http://www.tuling123.com/openapi/api"
 		temp_ratio = 0
 		temp_key=""
 		try:
+			if any([1 for i in danmu_liyi if i in msg]):
+				self.sendDanmu('请大家注意弹幕礼仪')
+				return
+			if '晚安' in msg :				
+				if '晚安'!= msg and '主播晚安'!= msg and '喵咭晚安' != msg:
+					return
+				self.sendDanmu(username+'晚安') 
+				return
+			if '去睡' in msg :
+				self.sendDanmu(username+'晚安')
+				return
 			for key in self.database:
 				seq = difflib.SequenceMatcher(None, msg,key)
 				ratio = seq.ratio()
@@ -203,13 +227,19 @@ class DanmuWebsocket():
 		except Exception as e:
 			print(e)
 	
-		if temp_ratio > 0.38:
+		if (temp_ratio > 0.49 and len(msg) <= 10) or (temp_ratio > 0.34 and len(msg) > 10) or (temp_ratio >0.2 and len(msg)>20) :
 			self.sendDanmu(self.database[temp_key])
 			return
-		elif any([1  for each in s if each in msg]):
-			r=requests.post(url,data=data)
-			response=json.loads(r.content.decode('utf-8'))['text']
-			self.sendDanmu(response+'@'+username)
+		else:
+			contains=[each for each in s if each in msg]
+			if any(contains):
+				for con in contains:
+					msg=msg.replace(con,' ')
+				data['info'] = msg
+				print(msg)
+				r=requests.post(url,data=data)
+				response=json.loads(r.content.decode('utf-8'))['text']
+				self.sendDanmu(response+'@'+username)
 
 		return
 
@@ -351,6 +381,7 @@ class DanmuWebsocket():
 			self.gift_num+=1
 			if self.gift_num%self.gift_inc==0:
 				self.gift_dic={}
+				self.sendDanmu('谢谢大家的关注和礼物,主播认真打游戏有些弹幕可能会漏掉,多见谅')
 			#获取送礼信息		
 			GiftName = dic['data']['giftName']
 			GiftUser = dic['data']['uname']
