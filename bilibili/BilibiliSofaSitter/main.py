@@ -10,6 +10,7 @@ if not danmuji.cookies_login():
 	print('请手动登录')
 	sys.exit()
 print(danmuji.isLogin)
+danmuji.connection_info()
 danmuji.sendDanmu('小夜猫来看你了')
 
 

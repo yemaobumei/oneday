@@ -36,7 +36,7 @@ class DanmuWebsocket():
 		self._UserCount = 0
 		self._ChatHost = 'livecmt-1.bilibili.com'
 
-		self._roomId = "1273106"  #"1619217"
+		self._roomId = "2570641"  #"1619217"
 		self._roomId = int(self._roomId)
 
 
@@ -175,8 +175,9 @@ class DanmuWebsocket():
 	def sendDanmu(self,msg):
 		send_url="http://live.bilibili.com/msg/send"
 		method="POST"
-		if len(msg) > 38:
+		if len(msg) > 30:
 			self.send_long_danmu(msg)
+			return
 		data={
 			'color':'16772431',
 			'fontsize':25,
@@ -194,11 +195,11 @@ class DanmuWebsocket():
 		length=len(msg)
 		c=math.ceil(length/30.0)
 		for i in range(c):
-			self.sendDanmu(msg[i*30:(i+1)*30-1])
+			self.sendDanmu(msg[i*30:(i+1)*30])
 					
 	def robot(self,username,msg):
-		s=['夜猫','主播','喵咭','up','弹幕姬','小姐姐']
-		danmu_liyi=['胸','奶','鸡儿','脱衣']
+		s=['夜猫','弹幕姬']#'主播','喵咭',
+		danmu_liyi=['胸','奶子','鸡儿','脱衣']
 		data={'info':msg,'key':'a85845213d8f41fc9685fff9c675ec5d'}
 		#data={'info':msg,'key':'fef3ad124da348419db60d502d43bcf2'}
 		url="http://www.tuling123.com/openapi/api"
@@ -254,22 +255,33 @@ class DanmuWebsocket():
 
 
 
-
+	def connection_info(self):
+		r=self.session.get('http://live.bilibili.com/' + str(self._roomId))
+		html=r.content.decode('utf8')
+		m = re.findall(r'ROOMID\s=\s(\d+)', html)
+		ROOMID = m[0]
+		self._roomId = int(ROOMID)
+		r2=self.session.get(self._CIDInfoUrl + ROOMID)
+		xml_string = '<root>' + r2.content.decode('utf8') + '</root>'
+		dom = xml.dom.minidom.parseString(xml_string)
+		root = dom.documentElement
+		server = root.getElementsByTagName('server')
+		self._ChatHost = server[0].firstChild.data
 
 	async def connectServer(self):
 		print ('正在进入房间。。。。。')
-		with aiohttp.ClientSession() as s:
-			async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
-				html = await r.text()
-				m = re.findall(r'ROOMID\s=\s(\d+)', html)
-				ROOMID = m[0]
-			self._roomId = int(ROOMID)
-			async with s.get(self._CIDInfoUrl + ROOMID) as r:
-				xml_string = '<root>' + await r.text() + '</root>'
-				dom = xml.dom.minidom.parseString(xml_string)
-				root = dom.documentElement
-				server = root.getElementsByTagName('server')
-				self._ChatHost = server[0].firstChild.data
+		# with aiohttp.ClientSession() as s:
+		# 	async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
+		# 		html = await r.text()
+		# 		m = re.findall(r'ROOMID\s=\s(\d+)', html)
+		# 		ROOMID = m[0]
+		# 	self._roomId = int(ROOMID)
+		# 	async with s.get(self._CIDInfoUrl + ROOMID) as r:
+		# 		xml_string = '<root>' + await r.text() + '</root>'
+		# 		dom = xml.dom.minidom.parseString(xml_string)
+		# 		root = dom.documentElement
+		# 		server = root.getElementsByTagName('server')
+		# 		self._ChatHost = server[0].firstChild.data
 
 
 
@@ -381,7 +393,7 @@ class DanmuWebsocket():
 			self.gift_num+=1
 			if self.gift_num%self.gift_inc==0:
 				self.gift_dic={}
-				self.sendDanmu('谢谢大家的关注和礼物,主播认真打游戏有些弹幕可能会漏掉,多见谅')
+				self.sendDanmu('谢谢大家的关注和礼物,主播认真打游戏弹幕可能会漏掉,多见谅')
 			#获取送礼信息		
 			GiftName = dic['data']['giftName']
 			GiftUser = dic['data']['uname']
@@ -396,7 +408,7 @@ class DanmuWebsocket():
 					self.gift_dic[GiftUser]=0
 					res='谢谢'+GiftUser+'的礼物'+',请尽量打包投喂'
 				elif '辣条' not in GiftName or GiftNum >= 10:
-					res='谢谢' + GiftUser + ' 送的 ' + GiftName + 'x' + str(GiftNum)
+					res='谢谢 ' + GiftUser + ' 送的 ' + GiftName + 'x' + str(GiftNum)
 				else:
 					return
 				#print(GiftUser + ' 送出了 ' + str(GiftNum) + ' 个 ' + GiftName)
