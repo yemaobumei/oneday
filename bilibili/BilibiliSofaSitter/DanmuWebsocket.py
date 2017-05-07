@@ -23,6 +23,8 @@ import difflib
 
 #helper
 import math
+import datetime
+import random
 headers={
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -39,42 +41,50 @@ class DanmuWebsocket():
 		self._UserCount = 0
 		self._ChatHost = 'livecmt-1.bilibili.com'
 
-		self._roomId = "2570641"  #"1619217"
+		self._roomId = "1273106" #"2570641"  #"1619217"
 		self._roomId = int(self._roomId)
 
 
 
 		self.cookies=cookies
 #---辅助弹幕部分--------------------------------------------------------------------------
-		self.danmu_num=0
+		self.send_danmu_num=0
 		self.gift_dic={}
 		self.gift_num=0
-		self.gift_inc=20
+
+		self.recevie_danmu_num=0
 		self.database={
 		'背景音乐':'网易云ID:喵咭喵呜QAQ,关注有歌单',
 		'求bgm网易云':'网易云ID:喵咭喵呜QAQ,关注有歌单',
-		'66666':'主播这么厉害不点拨关注吗',
-		'做鸡巴儿':'请大家注意弹幕礼仪',
 		'真的菜水':'这只是发挥失常，大家看久点就知道了',
 		'玩什么段位英雄':'主播钻石水平，日常AD。想看什么英雄可以跟主播说',
 		 '下路炸了超鬼':'主播加油，胜利在望，决不动摇',
-		 'gay玩弹幕姬':'不要调戏我，会坏的',
-		 '小姐姐漂亮':'喵咭和往常一样漂亮',
-		 '主播真漂亮':'喵咭和往常一样漂亮',
-		 '日常修仙吗':'不要休闲哟，对身体不好呢',
+		 'gay玩弹幕姬':'放马过来调戏我',
+		 '主播小姐姐真漂亮美':'喵咭和往常一样漂亮',
+		 '今晚日常修仙吗':'不要修仙哟，对身体不好呢',
 		 '唱歌好听':'主播唱歌贼好听',
 		 '废话大佬在哪呢':'废话被麻麻gank了',
-		 '夜猫大佬不在了':'不要趁我不在就gay我，我与喵咭共存亡',
-		 '蚂蚱':'蚂蚱好帅，好想给你生猴子',
-		 'b克拉领个勋章':'送个b克拉领个勋章,周末一起水友赛',
-		 '怎么戴勋章':'pc端右上角直播中心佩戴中心,手机端直播中心我的勋章',	
+		 '夜猫大佬不在了去哪了':'不要趁我不在就gay我，我与喵咭共存亡',
+		 '欢迎蚂蚱晚上好':'蚂蚱好帅，好想给你生猴子',
+		 'Bb克拉领个勋章':'送个b克拉领个勋章,周末一起水友赛',
+		 '怎么戴勋章':'pc端右下角发送弹幕框下有个"勋"字,手机端直播中心我的勋章',
+		 '直播群粉丝群':'粉丝QQ群:339145940',	
 	}
 
-
+		self.setTimeDanmu=[ '大家多和主播交流,也可以@夜猫和我聊天哟,我可是百事通呢',
+							'喜欢主播右上角点点关注,送点小礼物帮主播升升级',
+							'主播人美声甜游戏打的贼6,喜欢的朋友点点关注,加加粉丝群',
+							'喜欢主播的大佬可以上波船,船上风景别有一番滋味呢',
+							'点关注不迷路，主播带你上高速',
+							'想和主播一起玩游戏吗，还不快上船'
+						]
 
 	async def sendDanmu(self,msg):
 		send_url="http://live.bilibili.com/msg/send"
 		method="POST"
+		msg=msg.strip()
+		if len(msg) == 0:
+			return
 		if len(msg) > 30:
 			await self.send_long_danmu(msg)
 			return
@@ -90,8 +100,8 @@ class DanmuWebsocket():
 			async with  s.post(send_url,headers=headers,data=data) as res:
 				await res.text()
 				if res.status==200:
-					self.danmu_num+=1
-					print(msg,self.danmu_num)
+					self.send_danmu_num+=1
+					print(104,msg,self.send_danmu_num)
 
 	async def send_long_danmu(self,msg):
 		length=len(msg)
@@ -101,7 +111,7 @@ class DanmuWebsocket():
 					
 	async def robot(self,username,msg):
 		s=['夜猫','弹幕姬']#'主播','喵咭',
-		danmu_liyi=['胸','奶子','鸡儿','脱衣']
+		danmu_liyi=['胸','奶子','脱衣','鸡巴']
 		data={'info':msg,'key':'a85845213d8f41fc9685fff9c675ec5d'}
 		#data={'info':msg,'key':'fef3ad124da348419db60d502d43bcf2'}
 		url="http://www.tuling123.com/openapi/api"
@@ -125,10 +135,10 @@ class DanmuWebsocket():
 				if ratio > temp_ratio :
 					temp_ratio = ratio
 					temp_key = key
-			print(temp_ratio,temp_key)
+			#print(temp_ratio,temp_key)
 
 		except Exception as e:
-			print(e)
+			print(141,e)
 	
 		if (temp_ratio > 0.49 and len(msg) <= 10) or (temp_ratio > 0.34 and len(msg) > 10) or (temp_ratio >0.2 and len(msg)>20) :
 			await self.sendDanmu(self.database[temp_key])
@@ -139,10 +149,9 @@ class DanmuWebsocket():
 				for con in contains:
 					msg=msg.replace(con,' ')
 				data['info'] = msg
-				print(username,'say:',msg)
 				r=requests.post(url,data=data)
 				response=json.loads(r.content.decode('utf-8'))['text']
-				print(response)
+				#print(152,response)
 				await self.sendDanmu(response+'@'+username)
 
 		return
@@ -265,7 +274,8 @@ class DanmuWebsocket():
 	async def parseDanMu(self, messages):
 		try:
 			dic = json.loads(messages)
-		except: # 有些情况会 jsondecode 失败，未细究，可能平台导致
+		except Exception as e: # 有些情况会 jsondecode 失败，未细究，可能平台导致
+			print(276,e)
 			return
 		cmd = dic['cmd']
 		if cmd == 'LIVE':
@@ -275,6 +285,14 @@ class DanmuWebsocket():
 			print ('房主准备中。。。')
 			return
 		if cmd == 'DANMU_MSG':
+			self.recevie_danmu_num+=1
+			if self.recevie_danmu_num % 40 == 0:
+				le=len(self.setTimeDanmu)
+				rand=random.randint(0,le-1)
+				try:
+					await self.sendDanmu(self.setTimeDanmu[rand])
+				except Exception as e:
+					pass
 			commentText = dic['info'][1]
 			commentUser = dic['info'][2][1]
 			isAdmin = dic['info'][2][2] == '1'
@@ -286,45 +304,75 @@ class DanmuWebsocket():
 			if isVIP:
 				commentUser = 'VIP ' + commentUser
 			try:
-				print (commentUser + ' say: ' + commentText)
+				print (307,commentUser + ' say: ' + commentText)
 				await self.robot(commentUser,commentText)
-			except:
+			except Exception as e:
+				print(308,e)
 				pass
 			return
 		if cmd == 'SEND_GIFT' and config.TURN_GIFT == 1:
 			#累计多次礼物后，情况礼物清单栏,{'a':3,'b':5}
 			self.gift_num+=1
-			if self.gift_num%self.gift_inc==0:
+			if self.gift_num%20==0:
 				self.gift_dic={}
-				await self.sendDanmu('谢谢大家的关注和礼物,主播认真打游戏弹幕可能会漏掉,多见谅')
+				await self.sendDanmu('谢谢大家的关注和礼物,弹幕滑动太快主播可能会漏看,多见谅')
 			#获取送礼信息		
 			GiftName = dic['data']['giftName']
 			GiftUser = dic['data']['uname']
 			Giftrcost = dic['data']['rcost']
 			GiftNum = dic['data']['num']
-			print (GiftName)
+			uid=dic['data']['uid']
+			gifts=['B坷垃','喵娘','节奏风暴','普通拳']
+			gifts_low=['233','666','小拳拳','亿圆']
+			res=""
+			print (326,GiftName,GiftNum)
+
 			#单次送礼记录礼物清单内，连续多次后触发不弹幕'打包投喂'。
-			if GiftNum==1:
-				self.gift_dic[GiftUser] = self.gift_dic[GiftUser] + 1 if  GiftUser in self.gift_dic else 1
 			try:
-				if self.gift_dic[GiftUser] >= 5:
-					self.gift_dic[GiftUser]=0
-					res='谢谢'+GiftUser+'的礼物'+',请尽量打包投喂'
-				elif '辣条' not in GiftName or GiftNum >= 10:
+				if GiftNum==1:
+					if not uid in self.gift_dic:
+						self.gift_dic[uid]={'uname':GiftUser,'num':1}
+					else:	
+						self.gift_dic[uid]['num']	+= 1					
+					if self.gift_dic[uid]['num'] >= 5:
+						self.gift_dic[uid]['num'] = 0
+						res='谢谢'+GiftUser+'的礼物'+',请尽量打包投喂'
+				elif GiftName in gifts or ('辣条' == GiftName and GiftNum >= 10) or ( GiftName in gifts_low and GiftNum >= 3):
+				#elif '辣条' not in GiftName or GiftNum >= 10:
 					res='谢谢 ' + GiftUser + ' 送的 ' + GiftName + 'x' + str(GiftNum)
 				else:
 					return
-				#print(GiftUser + ' 送出了 ' + str(GiftNum) + ' 个 ' + GiftName)
 				await self.sendDanmu(res)
-			except:
+			except Exception as e:
+				print(344,e,GiftUser)
 				pass
 			return
 		if cmd == 'WELCOME' and config.TURN_WELCOME == 1:
 			commentUser = dic['data']['uname']
 			try:
-				print ('欢迎 ' + commentUser + ' 进入房间。。。。')
+				print (351,'欢迎 ' + commentUser + ' 进入房间。。。。')
 				await self.sendDanmu('欢迎 ' + commentUser + ' 进入房间。。。。')
-			except:
+			except Exception as e:
+				print(353,e)
+				pass
+			return
+		if cmd == 'WELCOME_GUARD' and config.TURN_WELCOME == 1:
+			commentUser = dic['data']['uname']
+			time_hour=datetime.datetime.now().hour
+			res=""
+			if  time_hour <= 6 :
+				res = commentUser + ',半夜好'
+			elif time_hour <= 12 :
+				res = commentUser + ",早上好"
+			elif time_hour <= 18 :
+				res = commentUser + ",下午好"
+			else:
+				res = commentUser + ",晚上好"
+			try:
+				print (370,res)
+				await self.sendDanmu(res)
+			except Exception as e:
+				print(372,e)
 				pass
 			return
 		return

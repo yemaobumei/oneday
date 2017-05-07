@@ -13,7 +13,7 @@ from api import Client
 #登录B站获取cookies
 username="13126772351"
 password="ye06021123"
-LoginClient-Client()
+LoginClient=Client()
 cookies=LoginClient.cookies_login()
 #LoginClient.login(username,password,'./captcha.png')
 
