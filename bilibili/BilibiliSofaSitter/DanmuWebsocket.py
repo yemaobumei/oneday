@@ -338,10 +338,10 @@ class DanmuWebsocket():
 						self.gift_dic[uid]={'uname':GiftUser,'num':1}
 					else:	
 						self.gift_dic[uid]['num']	+= 1					
-					if self.gift_dic[uid]['num'] >= 5:
+					if self.gift_dic[uid]['num'] >= 6:
 						self.gift_dic[uid]['num'] = 0
 						res='谢谢'+GiftUser+'的礼物'+',请尽量打包投喂'
-				elif GiftName in gifts or ('辣条' == GiftName and GiftNum >= 10) or ( GiftName in gifts_low and GiftNum >= 3):
+				elif GiftName in gifts or ('辣条' == GiftName and GiftNum >= 11) or ( GiftName in gifts_low and GiftNum >= 4):
 				#elif '辣条' not in GiftName or GiftNum >= 10:
 					res='谢谢 ' + GiftUser + ' 送的 ' + GiftName + 'x' + str(GiftNum)
 				else:
