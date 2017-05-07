@@ -18,17 +18,22 @@ import binascii
 from bs4 import BeautifulSoup
 import urllib
 
-#compare str
-import difflib
-
 #helper
+import difflib
 import math
 import datetime
 import random
+import logging
+
 headers={
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
 		}
+logging.basicConfig(level=logging.DEBUG,
+        format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+        datefmt='%a, %d %b %Y %H:%M:%S',
+        filename='bilibili.log',
+        filemode='w')
 class DanmuWebsocket():
 	def __init__(self,cookies):
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
@@ -65,7 +70,6 @@ class DanmuWebsocket():
 		 '唱歌好听':'主播唱歌贼好听',
 		 '废话大佬在哪呢':'废话被麻麻gank了',
 		 '夜猫大佬不在了去哪了':'不要趁我不在就gay我，我与喵咭共存亡',
-		 '欢迎蚂蚱晚上好':'蚂蚱好帅，好想给你生猴子',
 		 'Bb克拉领个勋章':'送个b克拉领个勋章,周末一起水友赛',
 		 '怎么戴勋章':'pc端右下角发送弹幕框下有个"勋"字,手机端直播中心我的勋章',
 		 '直播群粉丝群':'粉丝QQ群:339145940',	
@@ -101,7 +105,7 @@ class DanmuWebsocket():
 				await res.text()
 				if res.status==200:
 					self.send_danmu_num+=1
-					print(104,msg,self.send_danmu_num)
+					print(108,msg,self.send_danmu_num)
 
 	async def send_long_danmu(self,msg):
 		length=len(msg)
@@ -138,7 +142,7 @@ class DanmuWebsocket():
 			#print(temp_ratio,temp_key)
 
 		except Exception as e:
-			print(141,e)
+			print(145,e)
 	
 		if (temp_ratio > 0.49 and len(msg) <= 10) or (temp_ratio > 0.34 and len(msg) > 10) or (temp_ratio >0.2 and len(msg)>20) :
 			await self.sendDanmu(self.database[temp_key])
@@ -304,10 +308,10 @@ class DanmuWebsocket():
 			if isVIP:
 				commentUser = 'VIP ' + commentUser
 			try:
-				print (307,commentUser + ' say: ' + commentText)
+				print (311,commentUser + ' say: ' + commentText)
 				await self.robot(commentUser,commentText)
 			except Exception as e:
-				print(308,e)
+				print(314,e)
 				pass
 			return
 		if cmd == 'SEND_GIFT' and config.TURN_GIFT == 1:
@@ -325,7 +329,7 @@ class DanmuWebsocket():
 			gifts=['B坷垃','喵娘','节奏风暴','普通拳']
 			gifts_low=['233','666','小拳拳','亿圆']
 			res=""
-			print (326,GiftName,GiftNum)
+			print (332,GiftName,GiftNum)
 
 			#单次送礼记录礼物清单内，连续多次后触发不弹幕'打包投喂'。
 			try:
@@ -344,32 +348,32 @@ class DanmuWebsocket():
 					return
 				await self.sendDanmu(res)
 			except Exception as e:
-				print(344,e,GiftUser)
+				print(355,e,GiftUser)
 				pass
 			return
 		if cmd == 'WELCOME' and config.TURN_WELCOME == 1:
 			commentUser = dic['data']['uname']
 			try:
-				print (351,'欢迎 ' + commentUser + ' 进入房间。。。。')
+				print (357,'欢迎 ' + commentUser + ' 进入房间。。。。')
 				await self.sendDanmu('欢迎 ' + commentUser + ' 进入房间。。。。')
 			except Exception as e:
-				print(353,e)
+				print(360,e)
 				pass
 			return
 		if cmd == 'WELCOME_GUARD' and config.TURN_WELCOME == 1:
-			commentUser = dic['data']['uname']
-			time_hour=datetime.datetime.now().hour
-			res=""
-			if  time_hour <= 6 :
-				res = commentUser + ',半夜好'
-			elif time_hour <= 12 :
-				res = commentUser + ",早上好"
-			elif time_hour <= 18 :
-				res = commentUser + ",下午好"
-			else:
-				res = commentUser + ",晚上好"
 			try:
-				print (370,res)
+				commentUser = dic['data']['username']
+				time_hour=datetime.datetime.now().hour
+				res=""
+				if  time_hour <= 6 :
+					res = commentUser + ',半夜好'
+				elif time_hour <= 12 :
+					res = commentUser + ",早上好"
+				elif time_hour <= 18 :
+					res = commentUser + ",下午好"
+				else:
+					res = commentUser + ",晚上好"
+
 				await self.sendDanmu(res)
 			except Exception as e:
 				print(372,e)
