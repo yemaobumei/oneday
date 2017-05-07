@@ -61,7 +61,6 @@ class DanmuWebsocket():
 		self.database={
 		'背景音乐':'网易云ID:喵咭喵呜QAQ,关注有歌单',
 		'求bgm网易云':'网易云ID:喵咭喵呜QAQ,关注有歌单',
-		'真的菜水':'这只是发挥失常，大家看久点就知道了',
 		'玩什么段位英雄':'主播钻石水平，日常AD。想看什么英雄可以跟主播说',
 		 '下路炸了超鬼':'主播加油，胜利在望，决不动摇',
 		 'gay玩弹幕姬':'放马过来调戏我',
@@ -71,7 +70,7 @@ class DanmuWebsocket():
 		 '废话大佬在哪呢':'废话被麻麻gank了',
 		 '夜猫大佬不在了去哪了':'不要趁我不在就gay我，我与喵咭共存亡',
 		 'Bb克拉领个勋章':'送个b克拉领个勋章,周末一起水友赛',
-		 '怎么戴勋章':'pc端右下角发送弹幕框下有个"勋"字,手机端直播中心我的勋章',
+		 '怎么喵咭戴勋章':'pc端右下角发送弹幕框下有个"勋"字,手机端直播中心我的勋章',
 		 '直播群粉丝群':'粉丝QQ群:339145940',	
 	}
 
@@ -317,11 +316,11 @@ class DanmuWebsocket():
 		if cmd == 'SEND_GIFT' and config.TURN_GIFT == 1:
 			#累计多次礼物后，情况礼物清单栏,{'a':3,'b':5}
 			self.gift_num+=1
-			if self.gift_num%20==0:
+			if self.gift_num % 40 == 0:
 				self.gift_dic={}
 				await self.sendDanmu('谢谢大家的关注和礼物,弹幕滑动太快主播可能会漏看,多见谅')
 			#获取送礼信息		
-			GiftName = dic['data']['giftName']
+			GiftName = dic['data']['giftName'].strip()
 			GiftUser = dic['data']['uname']
 			Giftrcost = dic['data']['rcost']
 			GiftNum = dic['data']['num']
@@ -341,7 +340,7 @@ class DanmuWebsocket():
 					if self.gift_dic[uid]['num'] >= 6:
 						self.gift_dic[uid]['num'] = 0
 						res='谢谢'+GiftUser+'的礼物'+',请尽量打包投喂'
-				elif GiftName in gifts or ('辣条' == GiftName and GiftNum >= 11) or ( GiftName in gifts_low and GiftNum >= 4):
+				elif GiftName in gifts or ('辣条' == GiftName and GiftNum >= 20) or ( GiftName in gifts_low and GiftNum >= 8):
 				#elif '辣条' not in GiftName or GiftNum >= 10:
 					res='谢谢 ' + GiftUser + ' 送的 ' + GiftName + 'x' + str(GiftNum)
 				else:
