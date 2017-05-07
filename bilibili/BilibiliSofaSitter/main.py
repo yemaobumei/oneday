@@ -1,20 +1,30 @@
 #!/usr/bin/python3
 #coding=utf-8
-import asyncio
+
 import sys
+import os
+import asyncio
+import aiohttp
+
 from DanmuWebsocket import DanmuWebsocket
-
-#首先进行B站登录,建立直播弹幕websocket,返回发送弹幕姬
-danmuji = DanmuWebsocket()
-if not danmuji.cookies_login():
-	print('请手动登录')
-	sys.exit()
-print(danmuji.isLogin)
-danmuji.connection_info()
-danmuji.sendDanmu('小夜猫来看你了')
+from api import Client
 
 
+#登录B站获取cookies
+username="13126772351"
+password="ye06021123"
+LoginClient-Client()
+cookies=LoginClient.cookies_login()
+#LoginClient.login(username,password,'./captcha.png')
+
+#建立直播弹幕websocket,返回发送弹幕姬
+danmuji = DanmuWebsocket(cookies=cookies)
+
+
+#执行异步任务
 tasks = [
+
+			danmuji.sendDanmu('小夜猫来看你了'),
             danmuji.connectServer(),
             danmuji.HeartbeatLoop()
         ]

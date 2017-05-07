@@ -27,6 +27,7 @@ class Client():
 		self.session.headers = headers
 		self.userdata = ''
 		self.isLogin=False
+		self.cookies={}
 
 	#密码执行加密
 	def _encrypt(self, password):
@@ -42,8 +43,10 @@ class Client():
 
 	def load_cookies(self, path):
 		with open(path, 'rb') as f:
-			self.session.cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
+			self.cookies=pickle.load(f)
+			self.session.cookies = requests.utils.cookiejar_from_dict(self.cookies)
 			self.userdata = {}
+
 
 	def save_cookies(self, path):
 		with open(path, 'wb') as f:
@@ -112,7 +115,8 @@ class Client():
 			sys.exit()
 		print('欢迎您:', self.userdata['uname'])
 		self.isLogin=True
-		return self.userdata['uname']
+		#return self.userdata['uname']
+		return self.cookies
 
 	#获取个人信息
 	def get_account_info(self):
@@ -128,21 +132,6 @@ class Client():
 		return False
 
 
-
-	async def sendDanmu(self,roomid,msg):
-		send_url="http://live.bilibili.com/msg/send"
-		method="POST"
-		data={
-			'color':'16772431',
-			'fontsize':25,
-			'mode':1,
-			'msg':msg,
-			'rnd':'1493972251',
-			'roomid':roomid		
-		}
-		res = self.session.post(send_url,data=data)
-		if res.status_code==200:
-			print('弹幕发送成功')
 
 
 	#获取个人通知消息个数
@@ -176,22 +165,3 @@ class Client():
 		except Exception as e:
 			print('error', e)
 
-
-		#利用直播接口登陆，无需验证码
-	def live_login(self, username, password):
-		#密码加密
-		password = self._encrypt(password)
-		preload = {
-			'userid': username,
-			'pwd': password,
-			'captcha':"",
-			'keep':1
-		}
-		response = self.session.post('https://passport.bilibili.com/ajax/miniLogin/login', data=preload)
-		data = json.loads(response.content.decode('utf-8'))
-		try:
-			return data['status']	
-		except Exception as e:
-			#登陆失败
-			print('live login error', e)
-			return False

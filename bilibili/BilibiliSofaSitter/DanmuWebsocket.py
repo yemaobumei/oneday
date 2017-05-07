@@ -23,9 +23,12 @@ import difflib
 
 #helper
 import math
-
+headers={
+			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+		}
 class DanmuWebsocket():
-	def __init__(self):
+	def __init__(self,cookies):
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
 		self._roomId = 0
 		self._ChatPort = 788
@@ -36,18 +39,12 @@ class DanmuWebsocket():
 		self._UserCount = 0
 		self._ChatHost = 'livecmt-1.bilibili.com'
 
-		self._roomId = "1273106"  #"1619217"
+		self._roomId = "2570641"  #"1619217"
 		self._roomId = int(self._roomId)
 
 
-#---login.py部分-----------------------------------------------------------------------
-		self.session = requests.Session()
-		self.session.headers = {
-			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
-			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-		}
-		self.userdata = ''
-		self.isLogin=False
+
+		self.cookies=cookies
 #---辅助弹幕部分--------------------------------------------------------------------------
 		self.danmu_num=0
 		self.gift_dic={}
@@ -73,110 +70,113 @@ class DanmuWebsocket():
 		 '怎么戴勋章':'pc端右上角直播中心佩戴中心,手机端直播中心我的勋章',	
 	}
 	#密码执行加密
-	def _encrypt(self, password):
-		#获取加密的token
-		response = self.session.get('http://passport.bilibili.com/login?act=getkey')
-		token = json.loads(response.content.decode('utf-8'))
-		password = str(token['hash'] + password).encode('utf-8')
-		pub_key = token['key']
-		pub_key = rsa.PublicKey.load_pkcs1_openssl_pem(pub_key)
-		message = rsa.encrypt(password, pub_key)
-		message = binascii.b2a_base64(message)
-		return message
+	# def _encrypt(self, password):
+	# 	#获取加密的token
+	# 	response = self.login_session.get('http://passport.bilibili.com/login?act=getkey')
+	# 	token = json.loads(response.content.decode('utf-8'))
+	# 	password = str(token['hash'] + password).encode('utf-8')
+	# 	pub_key = token['key']
+	# 	pub_key = rsa.PublicKey.load_pkcs1_openssl_pem(pub_key)
+	# 	message = rsa.encrypt(password, pub_key)
+	# 	message = binascii.b2a_base64(message)
+	# 	return message
 
-	def load_cookies(self, path):
-		with open(path, 'rb') as f:
-			self.session.cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
-			self.userdata = {}
+	# def load_cookies(self, path):
+	# 	with open(path, 'rb') as f:
+	# 		self.session.cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
+	# 		self.userdata = {}
 
-	def save_cookies(self, path):
-		with open(path, 'wb') as f:
-			cookies_dic = requests.utils.dict_from_cookiejar(self.session.cookies)
-			pickle.dump(cookies_dic, f)
+	# def save_cookies(self, path):
+	# 	with open(path, 'wb') as f:
+	# 		cookies_dic = requests.utils.dict_from_cookiejar(self.session.cookies)
+	# 		pickle.dump(cookies_dic, f)
 
 
-	#普通网页接口登陆，需要验证码
-	def login(self, username, password, captcha_path):
-		#访问登陆页面
-		response = self.session.get('https://passport.bilibili.com/login')
-		#请求验证码图片
-		response = self.session.get('https://passport.bilibili.com/captcha')
-		#保存验证码
-		f = open(captcha_path,'wb')
-		f.write(response.content)
-		f.close()
-		#密码加密
-		password = self._encrypt(password)
-		captcha_code = input("请输入图片上的验证码：")
-		#请求登陆
-		preload = {
-			'act': 'login',
-			'gourl': '',
-			'keeptime': '2592000',
-			'userid': username,
-			'pwd': password,
-			'vdcode':captcha_code
-		}
-		response = self.session.post('https://passport.bilibili.com/login/dologin', data=preload)
-		try:
-			#解析返回的html，判断登陆成功与否
-			soup = BeautifulSoup(response.text, "html.parser")
-			center = soup.find('center').find('div')
-			info = list(center.strings)[0]
-			info = info.strip()
-			print("登陆失败", info)
-			return False
-		except Exception as e:
-			#登陆成功
-			self.isLogin=True
-			return True
-			
+	# #普通网页接口登陆，需要验证码
+	# async def login(self, username, password, captcha_path):
+	# 	#访问登陆页面
+	# 	async with self.session.get('https://passport.bilibili.com/login') as response1:
+	# 	#请求验证码图片
+	# 		async with self.session.get('https://passport.bilibili.com/captcha') as response2:
+	# 			#保存验证码
+	# 			f = open(captcha_path,'wb')
+	# 			f.write(await response2.text())
+	# 			f.close()
+	# 			#密码加密
+	# 			password = self._encrypt(password)
+	# 			captcha_code = input("请输入图片上的验证码：")
+	# 			#请求登陆
+	# 			preload = {
+	# 				'act': 'login',
+	# 				'gourl': '',
+	# 				'keeptime': '2592000',
+	# 				'userid': username,
+	# 				'pwd': password,
+	# 				'vdcode':captcha_code
+	# 			}
+	# 			async with  self.session.post('https://passport.bilibili.com/login/dologin', data=preload) as response3:
+	# 				try:
+	# 					#解析返回的html，判断登陆成功与否
+	# 					soup = BeautifulSoup(await response3.text(), "html.parser")
+	# 					center = soup.find('center').find('div')
+	# 					info = list(center.strings)[0]
+	# 					info = info.strip()
+	# 					print("登陆失败", info)
+	# 					return False
+	# 				except Exception as e:
+	# 					#登陆成功
+	# 					self.isLogin=True
+	# 					return True
+		
 	#使用cookies登陆
-	def cookies_login(self):
-		root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
-		#读取配置文件中的username
-		config_path = os.path.join(root_path, 'username.config')
-		try:
-			f = open(config_path, 'r')
-			config = json.load(f)
-			username = config['username']
-		except Exception as e:
-			print("username.config文件不存在或内容错误，请重新执行一次login.py")
-			sys.exit()
-		finally:
-			f.close()
-		#读取cookies文件
-		cookies_file = os.path.join(root_path, username + ".cookies")
-		if not os.path.exists(cookies_file):
-			print(username + '.cookies不存在，请重新执行一次login.py')
-			sys.exit()
-		self.load_cookies(cookies_file)
-		if not self.get_account_info():
-			print(username + '.cookies失效，请重新执行一次login.py')
-			sys.exit()
-		print('欢迎您:', self.userdata['uname'])
-		self.isLogin=True
-		return self.userdata['uname']
+	# async def cookies_login(self):
+	# 	root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+	# 	#读取配置文件中的username
+	# 	config_path = os.path.join(root_path, 'username.config')
+	# 	try:
+	# 		f = open(config_path, 'r')
+	# 		config = json.load(f)
+	# 		username = config['username']
+	# 	except Exception as e:
+	# 		print("username.config文件不存在或内容错误，请重新执行一次login.py")
+	# 		sys.exit()
+	# 	finally:
+	# 		f.close()
+	# 	#读取cookies文件
+	# 	cookies_file = os.path.join(root_path, username + ".cookies")
+	# 	if not os.path.exists(cookies_file):
+	# 		print(username + '.cookies不存在，请重新执行一次login.py')
+	# 		sys.exit()
+	# 	self.load_cookies(cookies_file)
+	# 	if not await self.get_account_info():
+	# 		print(username + '.cookies失效，请重新执行一次login.py')
+	# 		sys.exit()
+	# 	print('欢迎您:', self.userdata['uname'])
+	# 	self.isLogin=True
+	# 	return self.userdata['uname']
 
-	#获取个人信息
-	def get_account_info(self):
-		response = self.session.get('https://account.bilibili.com/home/userInfo')
-		data = json.loads(response.content.decode('utf-8'))
-		try:
-			if data['status'] == True:
-				self.userdata = data['data']
-				self.isLogin=True
-				return True
-		except Exception as e:
-			print(e)
-		return False
+	# #获取个人信息
+	# async def get_account_info(self):
+	# 	async with self.session.get('https://account.bilibili.com/home/userInfo') as r:
+	# 	#response = self.session.get('https://account.bilibili.com/home/userInfo')
+	# 		data = await r.text()
+	# 		data=json.loads(data)
+	# 		print(type(data))
+	# 		try:
+	# 			if data['status'] == True:
+	# 				self.userdata = data['data']
+	# 				self.isLogin=True
+	# 				return True
+	# 		except Exception as e:
+	# 			print('获取个人信息出错',e)
+	# 		return False
 
 
-	def sendDanmu(self,msg):
+	async def sendDanmu(self,msg):
 		send_url="http://live.bilibili.com/msg/send"
 		method="POST"
 		if len(msg) > 30:
-			self.send_long_danmu(msg)
+			await self.send_long_danmu(msg)
 			return
 		data={
 			'color':'16772431',
@@ -186,18 +186,20 @@ class DanmuWebsocket():
 			'rnd':'1493972251',
 			'roomid':self._roomId     
 		}
-		res = self.session.post(send_url,data)
-		if res.status_code==200:
-			self.danmu_num+=1
-			print(msg,self.danmu_num)
+		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
+			async with  s.post(send_url,headers=headers,data=data) as res:
+				await res.text()
+				if res.status==200:
+					self.danmu_num+=1
+					print(msg,self.danmu_num)
 
-	def send_long_danmu(self,msg):
+	async def send_long_danmu(self,msg):
 		length=len(msg)
 		c=math.ceil(length/30.0)
 		for i in range(c):
-			self.sendDanmu(msg[i*30:(i+1)*30])
+			await self.sendDanmu(msg[i*30:(i+1)*30])
 					
-	def robot(self,username,msg):
+	async def robot(self,username,msg):
 		s=['夜猫','弹幕姬']#'主播','喵咭',
 		danmu_liyi=['胸','奶子','鸡儿','脱衣']
 		data={'info':msg,'key':'a85845213d8f41fc9685fff9c675ec5d'}
@@ -207,15 +209,15 @@ class DanmuWebsocket():
 		temp_key=""
 		try:
 			if any([1 for i in danmu_liyi if i in msg]):
-				self.sendDanmu('请大家注意弹幕礼仪')
+				await self.sendDanmu('请大家注意弹幕礼仪')
 				return
 			if '晚安' in msg :				
 				if '晚安'!= msg and '主播晚安'!= msg and '喵咭晚安' != msg:
 					return
-				self.sendDanmu(username+'晚安') 
+				await self.sendDanmu(username+'晚安') 
 				return
 			if '去睡' in msg :
-				self.sendDanmu(username+'晚安')
+				await self.sendDanmu(username+'晚安')
 				return
 			for key in self.database:
 				seq = difflib.SequenceMatcher(None, msg,key)
@@ -229,7 +231,7 @@ class DanmuWebsocket():
 			print(e)
 	
 		if (temp_ratio > 0.49 and len(msg) <= 10) or (temp_ratio > 0.34 and len(msg) > 10) or (temp_ratio >0.2 and len(msg)>20) :
-			self.sendDanmu(self.database[temp_key])
+			await self.sendDanmu(self.database[temp_key])
 			return
 		else:
 			contains=[each for each in s if each in msg]
@@ -237,10 +239,11 @@ class DanmuWebsocket():
 				for con in contains:
 					msg=msg.replace(con,' ')
 				data['info'] = msg
-				print(msg)
+				print(username,'say:',msg)
 				r=requests.post(url,data=data)
 				response=json.loads(r.content.decode('utf-8'))['text']
-				self.sendDanmu(response+'@'+username)
+				print(response)
+				await self.sendDanmu(response+'@'+username)
 
 		return
 
@@ -255,33 +258,33 @@ class DanmuWebsocket():
 
 
 
-	def connection_info(self):
-		r=self.session.get('http://live.bilibili.com/' + str(self._roomId))
-		html=r.content.decode('utf8')
-		m = re.findall(r'ROOMID\s=\s(\d+)', html)
-		ROOMID = m[0]
-		self._roomId = int(ROOMID)
-		r2=self.session.get(self._CIDInfoUrl + ROOMID)
-		xml_string = '<root>' + r2.content.decode('utf8') + '</root>'
-		dom = xml.dom.minidom.parseString(xml_string)
-		root = dom.documentElement
-		server = root.getElementsByTagName('server')
-		self._ChatHost = server[0].firstChild.data
+	# def connection_info(self):
+	# 	r=self.session.get('http://live.bilibili.com/' + str(self._roomId))
+	# 	html=r.content.decode('utf8')
+	# 	m = re.findall(r'ROOMID\s=\s(\d+)', html)
+	# 	ROOMID = m[0]
+	# 	self._roomId = int(ROOMID)
+	# 	r2=self.session.get(self._CIDInfoUrl + ROOMID)
+	# 	xml_string = '<root>' + r2.content.decode('utf8') + '</root>'
+	# 	dom = xml.dom.minidom.parseString(xml_string)
+	# 	root = dom.documentElement
+	# 	server = root.getElementsByTagName('server')
+	# 	self._ChatHost = server[0].firstChild.data
 
 	async def connectServer(self):
 		print ('正在进入房间。。。。。')
-		# with aiohttp.ClientSession() as s:
-		# 	async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
-		# 		html = await r.text()
-		# 		m = re.findall(r'ROOMID\s=\s(\d+)', html)
-		# 		ROOMID = m[0]
-		# 	self._roomId = int(ROOMID)
-		# 	async with s.get(self._CIDInfoUrl + ROOMID) as r:
-		# 		xml_string = '<root>' + await r.text() + '</root>'
-		# 		dom = xml.dom.minidom.parseString(xml_string)
-		# 		root = dom.documentElement
-		# 		server = root.getElementsByTagName('server')
-		# 		self._ChatHost = server[0].firstChild.data
+		with aiohttp.ClientSession() as s:
+			async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
+				html = await r.text()
+				m = re.findall(r'ROOMID\s=\s(\d+)', html)
+				ROOMID = m[0]
+			self._roomId = int(ROOMID)
+			async with s.get(self._CIDInfoUrl + ROOMID) as r:
+				xml_string = '<root>' + await r.text() + '</root>'
+				dom = xml.dom.minidom.parseString(xml_string)
+				root = dom.documentElement
+				server = root.getElementsByTagName('server')
+				self._ChatHost = server[0].firstChild.data
 
 
 
@@ -348,7 +351,7 @@ class DanmuWebsocket():
 						messages = tmp.decode('utf-8')
 					except:
 						continue
-					self.parseDanMu(messages)
+					await self.parseDanMu(messages)
 					continue
 				elif num==5 or num==6 or num==7:
 					tmp = await self._reader.read(num2)
@@ -359,7 +362,7 @@ class DanmuWebsocket():
 					else:
 						continue
 
-	def parseDanMu(self, messages):
+	async def parseDanMu(self, messages):
 		try:
 			dic = json.loads(messages)
 		except: # 有些情况会 jsondecode 失败，未细究，可能平台导致
@@ -384,7 +387,7 @@ class DanmuWebsocket():
 				commentUser = 'VIP ' + commentUser
 			try:
 				print (commentUser + ' say: ' + commentText)
-				self.robot(commentUser,commentText)
+				await self.robot(commentUser,commentText)
 			except:
 				pass
 			return
@@ -393,7 +396,7 @@ class DanmuWebsocket():
 			self.gift_num+=1
 			if self.gift_num%self.gift_inc==0:
 				self.gift_dic={}
-				self.sendDanmu('谢谢大家的关注和礼物,主播认真打游戏弹幕可能会漏掉,多见谅')
+				await self.sendDanmu('谢谢大家的关注和礼物,主播认真打游戏弹幕可能会漏掉,多见谅')
 			#获取送礼信息		
 			GiftName = dic['data']['giftName']
 			GiftUser = dic['data']['uname']
@@ -412,7 +415,7 @@ class DanmuWebsocket():
 				else:
 					return
 				#print(GiftUser + ' 送出了 ' + str(GiftNum) + ' 个 ' + GiftName)
-				self.sendDanmu(res)
+				await self.sendDanmu(res)
 			except:
 				pass
 			return
@@ -420,7 +423,7 @@ class DanmuWebsocket():
 			commentUser = dic['data']['uname']
 			try:
 				print ('欢迎 ' + commentUser + ' 进入房间。。。。')
-				self.sendDanmu('欢迎 ' + commentUser + ' 进入房间。。。。')
+				await self.sendDanmu('欢迎 ' + commentUser + ' 进入房间。。。。')
 			except:
 				pass
 			return
