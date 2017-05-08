@@ -15,9 +15,12 @@ sudo pip3 install rsa
 ```
 
 ## 使用说明
-* 首次运行请执行 login.py ，该脚本会进行登录操作并保存cookies和登录状态。
+* 首次运行请执行 login.py ，该脚本会进行登录操作并保存 cookies 和登录状态。
 * 运行 danmuji.py 启动弹幕姬脚本。
-
+* 运行 dosign.py 开启每天自动签到功能，鉴于需要每天签到，可选择找一个服务器shell下执行
+```
+nohup python3 dosign.py
+```
 
 
 ## 计划实现功能（二期）
