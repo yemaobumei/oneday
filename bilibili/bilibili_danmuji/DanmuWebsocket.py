@@ -26,18 +26,14 @@ import difflib
 import math
 import datetime
 import random
-import logging
+
 
 headers={
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
 		}
 
-logging.basicConfig(level=logging.DEBUG,
-		format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-		datefmt='%a, %d %b %Y %H:%M:%S',
-		filename='bilibili.log',
-		filemode='w')
+
 class DanmuWebsocket():
 	def __init__(self,cookies):
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
@@ -257,7 +253,7 @@ class DanmuWebsocket():
 				if num==0 or num==1 or num==2:
 					tmp = await self._reader.read(4)
 					num3, = unpack('!I', tmp)
-					print ('房间人数为 %s' % num3)
+					#print ('房间人数为 %s' % num3)
 					self._UserCount = num3
 					continue
 				elif num==3 or num==4:
@@ -344,7 +340,9 @@ class DanmuWebsocket():
 					if self.gift_dic[uid]['num'] >= 6:
 						self.gift_dic[uid]['num'] = 0
 						res='谢谢'+GiftUser+'的礼物'+',请尽量打包投喂'
-				elif GiftName in gifts or ('辣条' == GiftName and GiftNum >= 20) or ( GiftName in gifts_low and GiftNum >= 8):
+						await self.sendDanmu(res)
+						return
+				if GiftName in gifts or ('辣条' == GiftName and GiftNum >= 20) or ( GiftName in gifts_low and GiftNum >= 8):
 				#elif '辣条' not in GiftName or GiftNum >= 10:
 					res='谢谢 ' + GiftUser + ' 送的 ' + GiftName + 'x' + str(GiftNum)
 				else:
