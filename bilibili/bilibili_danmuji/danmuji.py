@@ -11,12 +11,13 @@ from api import Client
 
 
 #登录B站获取cookies
-username="979365217@qq.com"
+username="13126772351"
 password="ye06021123"
-LoginClient=Client()
+
+LoginClient=Client(username,password)
 cookies=LoginClient.cookies_login()
 while not LoginClient.isLogin:
-	LoginClient.login(username,password)
+	LoginClient.login()
 	if LoginClient.isLogin:
 		cookies=LoginClient.cookies_login()
 		break

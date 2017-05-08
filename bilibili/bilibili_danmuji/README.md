@@ -15,18 +15,19 @@ sudo pip3 install rsa
 ```
 
 ## 使用说明
-* 首次运行请执行main.py，该脚本会进行登录操作并保存cookies和登录状态，启动弹幕姬脚本。
+* 首次运行请执行 login.py ，该脚本会进行登录操作并保存cookies和登录状态。
+* 运行 danmuji.py 启动弹幕姬脚本。
 
 
 
 ## 计划实现功能（二期）
 * 接入图灵机器人智能回复弹幕
-* 利用aiohttp实现异步发送弹幕
-
+* 利用 aiohttp 实现异步发送弹幕
+* dosign.py 加入每天自动签到功能，需要执行login.py登录之后才行
 
 ## 计划实现功能（一期）
 * 实现websocket监听某直播间弹幕
 * 根据自己设定的内容回复弹幕
 
 
-本项目同时托管在[Github.com](https://github.com/ookcode/BilibiliSofaSitter)与[Coding.net](https://coding.net/u/ookcode/p/bilibili/git)中
+本项目托管在[Github.com](https://github.com/yemaobumei/oneday/tree/master/bilibili/bilibili_danmuji)中

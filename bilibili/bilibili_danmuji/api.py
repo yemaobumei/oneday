@@ -14,27 +14,34 @@ import rsa
 import binascii
 from bs4 import BeautifulSoup
 import urllib
-
+import time
 
 headers = {
 	'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 	'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
 }
-
+# headers = {
+# 	'Accept-Language': 'zh-CN,zh;q=0.8',
+# 	'Accept-Encoding': 'gzip',
+# 	'Referer': 'http://www.bilibili.com/',
+# 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:45.0) Gecko/20100101 Firefox/45.0'
+# }
 class Client():
-	def __init__(self):
+	def __init__(self,username,password):
 		self.session = requests.Session()
 		self.session.headers = headers
-		self.userdata = ''
+		self.userdata={}
 		self.isLogin=False
 		self.cookies={}
+		self.username=username
+		self.password=password
 
 	#密码执行加密
-	def _encrypt(self, password):
+	def _encrypt(self):
 		#获取加密的token
 		response = self.session.get('http://passport.bilibili.com/login?act=getkey')
 		token = json.loads(response.content.decode('utf-8'))
-		password = str(token['hash'] + password).encode('utf-8')
+		password = str(token['hash'] + self.password).encode('utf-8')
 		pub_key = token['key']
 		pub_key = rsa.PublicKey.load_pkcs1_openssl_pem(pub_key)
 		message = rsa.encrypt(password, pub_key)
@@ -45,7 +52,7 @@ class Client():
 		with open(path, 'rb') as f:
 			self.cookies=pickle.load(f)
 			self.session.cookies = requests.utils.cookiejar_from_dict(self.cookies)
-			self.userdata = {}
+
 
 
 	def save_cookies(self, path):
@@ -55,7 +62,7 @@ class Client():
 
 
 	#普通网页接口登陆，需要验证码
-	def login(self, username, password):
+	def login(self):
 		print('进入登录程序.')
 		root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 		#访问登陆页面
@@ -68,14 +75,14 @@ class Client():
 		f.write(response.content)
 		f.close()
 		#密码加密
-		password = self._encrypt(password)
+		password = self._encrypt()
 		captcha_code = input("请输入图片上的验证码：")
 		#请求登陆
 		preload = {
 			'act': 'login',
 			'gourl': '',
 			'keeptime': '2592000',
-			'userid': username,
+			'userid': self.username,
 			'pwd': password,
 			'vdcode':captcha_code
 		}
@@ -91,47 +98,42 @@ class Client():
 		except Exception as e:
 			#登陆成功
 			self.isLogin=True
-			#保存cookies和用户信息
-			cookies_file = os.path.join(root_path, username + ".cookies")			
+			#保存cookies
+			cookies_file = os.path.join(root_path, self.username + ".cookies")			
 			self.save_cookies(cookies_file)
-			#存储username
-			config_file = os.path.join(root_path, 'username.config')
-			json_content = {"username": username}
-			f = open(config_file, 'w')
-			f.write(json.dumps(json_content))
-			f.close()
+
 			#提示语
-			print('欢迎您:', username)
+			print('欢迎您:', self.username)
 			print('登陆状态已储存，您现在可以使用其他功能脚本啦')
 			return True
 			
 	#使用cookies登陆
 	def cookies_login(self):
 		root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
-		#读取配置文件中的username
-		config_path = os.path.join(root_path, 'username.config')
-		try:
-			f = open(config_path, 'r')
-			config = json.load(f)
-			username = config['username']
-		except Exception as e:
-			print("username.config文件不存在或内容错误，请重新登录")
-			return False
-		finally:
-			f.close()
+
 		#读取cookies文件
-		cookies_file = os.path.join(root_path, username + ".cookies")
+		cookies_file = os.path.join(root_path, self.username + ".cookies")
 		if not os.path.exists(cookies_file):
-			print(username + '.cookies不存在，请登录')
+			print(self.username + '.cookies不存在，请登录')
 			return False
 		self.load_cookies(cookies_file)
 		if not self.get_account_info():
-			print(username + '.cookies失效，请登录')
+			print(self.username + '.cookies失效，请登录')
 			return False
-		print('欢迎您:', self.userdata['uname'])
+		print('欢迎您:', self.username)
 		self.isLogin=True
-		#return self.userdata['uname']
-		return self.cookies
+		self.do_sign()
+
+		return self.cookies #dict{}
+
+	def do_sign(self):
+		log=open('./sign.log','a')
+		url = "http://live.bilibili.com/sign/doSign"
+		r = self.session.get(url)
+		data = json.loads(r.text)
+		print(data['msg'])
+		log.write(time.strftime("%Y-%m-%d ", time.localtime())+str(data['msg'])+'\n')
+		log.close()
 
 	#获取个人信息
 	def get_account_info(self):

@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+#coding=utf-8
+
 import asyncio
 import aiohttp
 import xml.dom.minidom
@@ -29,11 +32,12 @@ headers={
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
 		}
+
 logging.basicConfig(level=logging.DEBUG,
-        format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-        datefmt='%a, %d %b %Y %H:%M:%S',
-        filename='bilibili.log',
-        filemode='w')
+		format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+		datefmt='%a, %d %b %Y %H:%M:%S',
+		filename='bilibili.log',
+		filemode='w')
 class DanmuWebsocket():
 	def __init__(self,cookies):
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
