@@ -49,9 +49,8 @@ class DanmuWebsocket():
 		self._roomId =  "1273106"　#"2570641"   #"1619217"
 		self._roomId = int(self._roomId)
 
-
-
 		self.cookies=cookies
+
 #---辅助弹幕部分--------------------------------------------------------------------------
 		self.send_danmu_num=0
 		self.gift_dic={}
@@ -113,7 +112,7 @@ class DanmuWebsocket():
 			await self.sendDanmu(msg[i*30:(i+1)*30])
 					
 	async def robot(self,username,msg):
-		s=['夜猫','弹幕姬']#'主播','喵咭',
+		s=['夜猫','弹幕姬','弹幕机','机器猫']#'主播','喵咭',
 		danmu_liyi=['胸','奶子','脱衣','鸡巴']
 		data={'info':msg,'key':'a85845213d8f41fc9685fff9c675ec5d'}
 		#data={'info':msg,'key':'fef3ad124da348419db60d502d43bcf2'}
@@ -138,8 +137,6 @@ class DanmuWebsocket():
 				if ratio > temp_ratio :
 					temp_ratio = ratio
 					temp_key = key
-			#print(temp_ratio,temp_key)
-
 		except Exception as e:
 			print(145,e)
 	
@@ -149,8 +146,9 @@ class DanmuWebsocket():
 		else:
 			contains=[each for each in s if each in msg]
 			if any(contains):
-				for con in contains:
-					msg=msg.replace(con,' ')
+				#去掉夜猫，弹幕姬，关键字
+				# for con in contains:
+				# 	msg=msg.replace(con,' ')
 				data['info'] = msg
 				r=requests.post(url,data=data)
 				response=json.loads(r.content.decode('utf-8'))['text']
@@ -158,11 +156,6 @@ class DanmuWebsocket():
 				await self.sendDanmu(response+'@'+username)
 
 		return
-
-
-
-
-
 
 
 
