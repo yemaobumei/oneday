@@ -15,8 +15,7 @@ sudo pip3 install rsa
 ```
 
 ## 使用说明
-* 首次运行请执行一次login.py，该脚本会进行登录操作并保存cookies和登录状态
-* 之后运行main.py，启动弹幕姬脚本。
+* 首次运行请执行main.py，该脚本会进行登录操作并保存cookies和登录状态，启动弹幕姬脚本。
 
 
 

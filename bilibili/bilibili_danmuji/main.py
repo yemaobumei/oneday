@@ -11,11 +11,15 @@ from api import Client
 
 
 #登录B站获取cookies
-username="13126772351"
+username="979365217@qq.com"
 password="ye06021123"
 LoginClient=Client()
 cookies=LoginClient.cookies_login()
-#LoginClient.login(username,password,'./captcha.png')
+while not LoginClient.isLogin:
+	LoginClient.login(username,password)
+	if LoginClient.isLogin:
+		cookies=LoginClient.cookies_login()
+		break
 
 #建立直播弹幕websocket,返回发送弹幕姬
 danmuji = DanmuWebsocket(cookies=cookies)

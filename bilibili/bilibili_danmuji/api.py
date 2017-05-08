@@ -55,13 +55,16 @@ class Client():
 
 
 	#普通网页接口登陆，需要验证码
-	def login(self, username, password, captcha_path):
+	def login(self, username, password):
+		print('进入登录程序.')
+		root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 		#访问登陆页面
 		response = self.session.get('https://passport.bilibili.com/login')
 		#请求验证码图片
 		response = self.session.get('https://passport.bilibili.com/captcha')
 		#保存验证码
-		f = open(captcha_path,'wb')
+		captcha_file = os.path.join(root_path, "captcha.png")
+		f = open(captcha_file,'wb')
 		f.write(response.content)
 		f.close()
 		#密码加密
@@ -88,6 +91,18 @@ class Client():
 		except Exception as e:
 			#登陆成功
 			self.isLogin=True
+			#保存cookies和用户信息
+			cookies_file = os.path.join(root_path, username + ".cookies")			
+			self.save_cookies(cookies_file)
+			#存储username
+			config_file = os.path.join(root_path, 'username.config')
+			json_content = {"username": username}
+			f = open(config_file, 'w')
+			f.write(json.dumps(json_content))
+			f.close()
+			#提示语
+			print('欢迎您:', username)
+			print('登陆状态已储存，您现在可以使用其他功能脚本啦')
 			return True
 			
 	#使用cookies登陆
@@ -100,19 +115,19 @@ class Client():
 			config = json.load(f)
 			username = config['username']
 		except Exception as e:
-			print("username.config文件不存在或内容错误，请重新执行一次login.py")
-			sys.exit()
+			print("username.config文件不存在或内容错误，请重新登录")
+			return False
 		finally:
 			f.close()
 		#读取cookies文件
 		cookies_file = os.path.join(root_path, username + ".cookies")
 		if not os.path.exists(cookies_file):
-			print(username + '.cookies不存在，请重新执行一次login.py')
-			sys.exit()
+			print(username + '.cookies不存在，请登录')
+			return False
 		self.load_cookies(cookies_file)
 		if not self.get_account_info():
-			print(username + '.cookies失效，请重新执行一次login.py')
-			sys.exit()
+			print(username + '.cookies失效，请登录')
+			return False
 		print('欢迎您:', self.userdata['uname'])
 		self.isLogin=True
 		#return self.userdata['uname']
