@@ -24,7 +24,7 @@ from bs4 import BeautifulSoup
 #helper
 import difflib
 import math
-import datetime
+import datetime,time
 import random
 
 
@@ -46,7 +46,7 @@ class DanmuWebsocket():
 		self._UserCount = 0
 		self._ChatHost = 'livecmt-1.bilibili.com'
 
-		self._roomId = "1273106" #"2570641"  #"1619217"
+		self._roomId =  "1273106"　#"2570641"   #"1619217"
 		self._roomId = int(self._roomId)
 
 
@@ -104,7 +104,7 @@ class DanmuWebsocket():
 				await res.text()
 				if res.status==200:
 					self.send_danmu_num+=1
-					print(108,msg,self.send_danmu_num)
+					#print(108,msg,self.send_danmu_num)
 
 	async def send_long_danmu(self,msg):
 		length=len(msg)
@@ -380,7 +380,7 @@ class DanmuWebsocket():
 			except Exception as e:
 				print(372,e)
 				pass
-		if cmd == 'SYS_MSG'
+		if cmd == 'SYS_MSG':
 			try:
 				if 'tv_id' in dic:
 					tv_id = dic['tv_id']
@@ -398,6 +398,7 @@ class DanmuWebsocket():
 		
 		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
 			async with  s.get(url,headers=headers) as res:
-				await res.text()
+				text = await res.text()#{"code":0,"msg":"OK","data":{"id":20122,"dtime":179,"status":1}}
 				if res.status==200:
-					print('已参加小电视抽奖')
+					print('已参加小电视抽奖',tv_id)
+					print(text)
