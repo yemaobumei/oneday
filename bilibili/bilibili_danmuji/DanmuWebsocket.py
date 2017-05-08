@@ -277,10 +277,11 @@ class DanmuWebsocket():
 	async def parseDanMu(self, messages):
 		try:
 			dic = json.loads(messages)
+			cmd = dic['cmd']
 		except Exception as e: # 有些情况会 jsondecode 失败，未细究，可能平台导致
 			print(276,e)
 			return
-		cmd = dic['cmd']
+		
 		if cmd == 'LIVE':
 			print ('直播开始。。。')
 			return
@@ -352,15 +353,15 @@ class DanmuWebsocket():
 				print(355,e,GiftUser)
 				pass
 			return
-		if cmd == 'WELCOME' and config.TURN_WELCOME == 1:
-			commentUser = dic['data']['uname']
-			try:
-				print (357,'欢迎 ' + commentUser + ' 进入房间。。。。')
-				await self.sendDanmu('欢迎 ' + commentUser + ' 进入房间。。。。')
-			except Exception as e:
-				print(360,e)
-				pass
-			return
+		# if cmd == 'WELCOME' and config.TURN_WELCOME == 1:
+		# 	commentUser = dic['data']['uname']
+		# 	try:
+		# 		print (357,'欢迎 ' + commentUser + ' 进入房间。。。。')
+		# 		await self.sendDanmu('欢迎 ' + commentUser + ' 进入房间。。。。')
+		# 	except Exception as e:
+		# 		print(360,e)
+		# 		pass
+		# 	return
 		if cmd == 'WELCOME_GUARD' and config.TURN_WELCOME == 1:
 			try:
 				commentUser = dic['data']['username']
@@ -379,5 +380,24 @@ class DanmuWebsocket():
 			except Exception as e:
 				print(372,e)
 				pass
-			return
+		if cmd == 'SYS_MSG'
+			try:
+				if 'tv_id' in dic:
+					tv_id = dic['tv_id']
+					real_roomid = dic['real_roomid']
+					roomid = dic['real_roomid']
+					URL='http://api.live.bilibili.com/SmallTV/join?roomid={0}&id={1}&_={2}'.format(real_roomid, tv_id, int(time.time()*1000))
+					await self.getAwardTv(tv_id,URL)
+			except Exception as e:
+				print(392,e)
+				pass
 		return
+
+
+	async def getAwardTv(self,tv_id,url):
+		
+		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
+			async with  s.get(url,headers=headers) as res:
+				await res.text()
+				if res.status==200:
+					print('已参加小电视抽奖')

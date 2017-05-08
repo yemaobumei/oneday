@@ -1,6 +1,7 @@
 
 .DS_Store
 .log
+*.dump
 # Created by https://www.gitignore.io/api/python
 
 ### Python ###
