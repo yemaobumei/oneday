@@ -132,7 +132,7 @@ class Client():
 		r = self.session.get(url)
 		data = json.loads(r.text)
 		print(data['msg'])
-		log.write(time.strftime("%Y-%m-%d ", time.localtime())+str(data['msg'])+'\n')
+		log.write(time.strftime("%Y-%m-%d ", time.localtime())+data['msg']+'\n')
 		log.close()
 
 	#获取个人信息

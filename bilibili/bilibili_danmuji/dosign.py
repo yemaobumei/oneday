@@ -42,12 +42,12 @@ class DoSign():
 	@loop
 	def do_sign(self):
 		self.load_cookies()
-		log=open('./singn.log','a')
+		log=open('./sign.log','a')
 		url = "http://live.bilibili.com/sign/doSign"
 		r = self.session.get(url)
 		data = json.loads(r.text)
 		print(data['msg'])
-		log.write(time.strftime("%Y-%m-%d ", time.localtime())+str(data['code'])+'\n')
+		log.write(time.strftime("%Y-%m-%d ", time.localtime())+data['msg']+'\n')
 		log.close()
 if __name__=='__main__':
 	username='13126772351'
