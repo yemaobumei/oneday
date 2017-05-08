@@ -15,7 +15,7 @@ username="13126772351"
 password="ye06021123"
 
 LoginClient=Client(username,password)
-cookies=LoginClient.cookies_login()
+cookies=LoginClient.cookies_login() #<class dic>{}
 while not LoginClient.isLogin:
 	LoginClient.login()
 	if LoginClient.isLogin:
