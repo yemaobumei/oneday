@@ -46,7 +46,7 @@ class DanmuWebsocket():
 		self._UserCount = 0
 		self._ChatHost = 'livecmt-1.bilibili.com'
 
-		self._roomId =  "1273106"　#"2570641"   #"1619217"
+		self._roomId =  "1273106"　
 		self._roomId = int(self._roomId)
 
 		self.cookies=cookies
