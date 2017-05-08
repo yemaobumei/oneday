@@ -43,6 +43,5 @@ def login():
 			else:			
 				sys.exit()
 
-	client.sendDanmu('1273106','弹幕姬测试')
 	return client
 
