@@ -147,8 +147,8 @@ class DanmuWebsocket():
 			contains=[each for each in s if each in msg]
 			if any(contains):
 				#去掉夜猫，弹幕姬，关键字
-				# for con in contains:
-				# 	msg=msg.replace(con,' ')
+				for con in contains:
+					msg=msg.replace(con,' ')
 				data['info'] = msg
 				r=requests.post(url,data=data)
 				response=json.loads(r.content.decode('utf-8'))['text']
@@ -271,15 +271,25 @@ class DanmuWebsocket():
 		try:
 			dic = json.loads(messages)
 			cmd = dic['cmd']
+			#print(dic)
 		except Exception as e: # 有些情况会 jsondecode 失败，未细究，可能平台导致
 			print(276,e)
 			return
 		
 		if cmd == 'LIVE':
-			print ('直播开始。。。')
+			try:
+				print ('直播开始。。。') #{'cmd': 'LIVE', 'roomid': 2570641}
+				await self.sendDanmu('喵咭晚上好,小夜猫终于等到你开播了') 
+				await self.sendDanmu('欢迎来到直播间'+str(dic['roomid'])+',弹幕姬小夜猫陪伴你们左右')
+			except Exception as e:
+				print(286,e)
 			return
 		if cmd == 'PREPARING':
-			print ('房主准备中。。。')
+			try:
+				print ('房主准备中。。。') #{'cmd': 'PREPARING', 'roomid': 2570641}
+				await self.sendDanmu('各位晚安,让我们明天继续相约直播间'+str(dic['roomid'])+',明天见')
+			except Exception as e:
+				print(292,e) 
 			return
 		if cmd == 'DANMU_MSG':
 			self.recevie_danmu_num+=1
@@ -310,7 +320,7 @@ class DanmuWebsocket():
 		if cmd == 'SEND_GIFT' and config.TURN_GIFT == 1:
 			#累计多次礼物后，情况礼物清单栏,{'a':3,'b':5}
 			self.gift_num+=1
-			if self.gift_num % 40 == 0:
+			if self.gift_num % 50 == 0:
 				self.gift_dic={}
 				await self.sendDanmu('谢谢大家的关注和礼物,弹幕滑动太快主播可能会漏看,多见谅')
 			#获取送礼信息		
@@ -322,7 +332,7 @@ class DanmuWebsocket():
 			gifts=['B坷垃','喵娘','节奏风暴','普通拳']
 			gifts_low=['233','666','小拳拳','亿圆']
 			res=""
-			print (332,GiftName,GiftNum)
+			#print (332,GiftName,GiftNum)
 
 			#单次送礼记录礼物清单内，连续多次后触发不弹幕'打包投喂'。
 			try:
