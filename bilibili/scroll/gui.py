@@ -54,7 +54,7 @@ class Windows(QWidget):
     # Function for check Button 
     def checkButton(self,msg):
         #self.showLogText.moveCursor(QTextCursor.End)
-        self.showLogText.insertPlainText(self.IPHostnameEdit.text())
+        self.showLogText.insertPlainText(msg)
 
     def checkButton02(self):
         self.showLogText.moveCursor(QTextCursor.End)
@@ -81,7 +81,7 @@ class Windows(QWidget):
         self.IPHostnameEdit.setPalette(pe)  
           
         self.label.setFont(QFont("Roman times",10,QFont.Bold))       
-app = QApplication(sys.argv)
-win = Windows()
-win.show()
-app.exec_()
+# app = QApplication(sys.argv)
+# win = Windows()
+# win.show()
+# app.exec_()

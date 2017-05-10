@@ -52,7 +52,7 @@ class Windows(QWidget):
 
 
     # Function for check Button 
-    def checkButton(self,msg):
+    def checkButton(self):
         #self.showLogText.moveCursor(QTextCursor.End)
         self.showLogText.insertPlainText(self.IPHostnameEdit.text())
 
