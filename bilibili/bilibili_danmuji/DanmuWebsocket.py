@@ -346,12 +346,12 @@ class DanmuWebsocket():
 						res='谢谢'+GiftUser+'的礼物'+',请尽量打包投喂'
 						await self.sendDanmu(res)
 						return
-				if GiftName in gifts or ('辣条' == GiftName and GiftNum >= 20) or ( GiftName in gifts_low and GiftNum >= 8):
-				#elif '辣条' not in GiftName or GiftNum >= 10:
-					res='谢谢 ' + GiftUser + ' 送的 ' + GiftName + 'x' + str(GiftNum)
-				else:
-					return
-				await self.sendDanmu(res)
+				# if GiftName in gifts or ('辣条' == GiftName and GiftNum >= 20) or ( GiftName in gifts_low and GiftNum >= 8):
+				# #elif '辣条' not in GiftName or GiftNum >= 10:
+				# 	res='谢谢 ' + GiftUser + ' 送的 ' + GiftName + 'x' + str(GiftNum)
+				# else:
+				# 	return
+				# await self.sendDanmu(res)
 			except Exception as e:
 				print(355,e,GiftUser)
 				pass
