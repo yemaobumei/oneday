@@ -135,9 +135,11 @@ class bilibiliClient(QThread):
 		cmd = dic['cmd']
 		if cmd == 'LIVE':
 			print ('直播开始。。。')
+			self.update_data.emit('直播开始...')
 			return
 		if cmd == 'PREPARING':
 			print ('房主准备中。。。')
+			self.update_data.emit('up准备中...')
 			return
 		if cmd == 'DANMU_MSG':
 			commentText = dic['info'][1]
@@ -174,6 +176,7 @@ class bilibiliClient(QThread):
 			GiftNum = dic['data']['num']
 			try:
 				print(GiftUser + ' 送出了 ' + str(GiftNum) + ' 个 ' + GiftName)
+				self.update_data.emit(GiftUser + ' 送出了 ' + str(GiftNum) + ' 个 ' + GiftName)
 			except:
 				pass
 			return
@@ -181,6 +184,7 @@ class bilibiliClient(QThread):
 			commentUser = dic['data']['uname']
 			try:
 				print ('欢迎 ' + commentUser + ' 进入房间。。。。')
+				self.update_data.emit('欢迎 ' + commentUser + ' 进入房间')
 			except:
 				pass
 			return

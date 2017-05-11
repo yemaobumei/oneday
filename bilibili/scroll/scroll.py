@@ -54,7 +54,7 @@ class Windows(ShadowWidget):
 
 		# Message / Log
 		self.text=Text()
-		self.text.setText("{0} initializing...".format(time.strftime("%F %T")))
+		self.text.setText("{0} 初始化...".format(time.strftime("%F %T")))
 
 		# layout for IPHostname
 		self.StatusLayout = QtGui.QHBoxLayout()
@@ -79,9 +79,14 @@ class Windows(ShadowWidget):
 	def checkButton(self,data):
 		#self.moveCursor(QtGui.QTextCursor.End)
 		#self.showLogText.append(self.IPHostnameEdit.text())
-		data=json.loads(data)
+		try:
+			data=json.loads(data)
+			self.text.append('[UL'+str(data['level'])+']'+data['commentUser']+'说: '+data['commentText']) 
+		except Exception as e:
+			print(85,e)
+			self.text.append(data)
 		#self.text.append(data['commentUser'])		
-		self.text.append(str(data['level'])+data['commentUser']+data['commentText']) 
+		
 		# data={
 		# 		'isAdmin':isAdmin,'isVIP':isVIP,'level':level,'xun_level':xun_level,'xun_name':xun_name,
 		# 		'commentUser':commentUser,'commentText':commentText,'cmd':cmd
