@@ -7,7 +7,7 @@ sys.setrecursionlimit(10000)
 class ShadowWidget(QWidget):  
     def __init__(self, parent=None):
         super(ShadowWidget, self).__init__(parent)
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
+        self.setWindowFlags(Qt.FramelessWindowHint|Qt.WindowStaysOnTopHint|Qt.SubWindow )
          
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:

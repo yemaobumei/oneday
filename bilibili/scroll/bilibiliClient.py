@@ -116,10 +116,12 @@ class bilibiliClient(QThread):
 					continue
 				elif num==5 or num==6 or num==7:
 					tmp = await self._reader.read(num2)
+					print(tmp)
 					continue
 				else:
 					if num != 16:
 						tmp = await self._reader.read(num2)
+						print(tmp)
 					else:
 						continue
 
@@ -140,14 +142,26 @@ class bilibiliClient(QThread):
 			commentUser = dic['info'][2][1]
 			isAdmin = dic['info'][2][2] == '1'
 			isVIP = dic['info'][2][3] == '1'
+			level = dic['info'][4][0]#用户等级
+									
+			if dic['info'][3]:
+				xun_level =	dic['info'][3][0] #勋章等级
+				xun_name = dic['info'][3][1]  #勋章名字
+			else:
+				xun_name=""
+				xun_level=""	
 			if isAdmin:
 				commentUser = '管理员 ' + commentUser
 			if isVIP:
 				commentUser = 'VIP ' + commentUser
+			data={
+					'isAdmin':isAdmin,'isVIP':isVIP,'level':level,'xun_level':xun_level,'xun_name':xun_name,
+					'commentUser':commentUser,'commentText':commentText,'cmd':cmd,
+				}
+			#data=commentUser + ' say: ' + commentText
 			try:
 				print (commentUser + ' say: ' + commentText)
-				self.update_data.emit(commentUser + ' say: ' + commentText)
-				
+				self.update_data.emit(json.dumps(data))	
 			except:
 				pass
 			return
