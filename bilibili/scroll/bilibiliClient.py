@@ -14,6 +14,7 @@ class Backend(QThread):
 
 class bilibiliClient(QThread):
 	update_data=pyqtSignal('QString')
+	update_info=pyqtSignal('QString')
 	def __init__(self):
 		super().__init__()
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
@@ -104,6 +105,7 @@ class bilibiliClient(QThread):
 					num3, = unpack('!I', tmp)
 					print ('房间人数为 %s' % num3)
 					self._UserCount = num3
+					self.update_info.emit(str(num3))
 					continue
 				elif num==3 or num==4:
 					tmp = await self._reader.read(num2)

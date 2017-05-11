@@ -27,6 +27,7 @@ with loop: ## context manager calls .close() when loop completes, and releases a
 
     win = Windows()
     danmuji.update_data.connect(win.checkButton)
+    danmuji.update_info.connect(win.changeInfo)
     win.show()
     loop.run_until_complete(asyncio.wait(tasks))
 

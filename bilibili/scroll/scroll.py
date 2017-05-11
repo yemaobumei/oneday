@@ -48,8 +48,8 @@ class Windows(ShadowWidget):
 	
 
 
-		self.label = QtGui.QLabel('追加')      
-		self.label2 = QtGui.QLabel('分行')
+		self.label = QtGui.QLabel('观众：')      
+		self.label2 = QtGui.QLabel('其他待定')
 
 
 		# Message / Log
@@ -87,6 +87,8 @@ class Windows(ShadowWidget):
 		# 		'commentUser':commentUser,'commentText':commentText,'cmd':cmd
 		# 	}
 
+	def changeInfo(self,info):
+		self.label.setText('观众:'+info)
 	def set_transparency(self, enabled):
 		if enabled:
 			self.setAutoFillBackground(False)
