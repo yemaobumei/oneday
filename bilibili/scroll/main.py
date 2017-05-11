@@ -1,30 +1,36 @@
 import asyncio
-from bilibiliClient import bilibiliClient
-from PyQt5.QtWidgets import QApplication
 import sys
+from bilibiliClient import bilibiliClient
 
+from scroll import Windows
+from PyQt4 import  QtGui
 
+from quamash import QEventLoop, QThreadExecutor
 
-app = QApplication(sys.argv)
 danmuji = bilibiliClient()
+
+app = QtGui.QApplication(sys.argv)
+
+loop = QEventLoop(app)
+asyncio.set_event_loop(loop)
+
 
 
 
 tasks = [
-            danmuji.connectServer() ,
-            danmuji.HeartbeatLoop(),
-            danmuji.show(),
-            app.exec_()
-        ]
+			danmuji.connectServer() ,
+			danmuji.HeartbeatLoop()
+		]
 
-loop = asyncio.get_event_loop()
-try:
-	loop.run_until_complete(asyncio.wait(tasks))
 
-except KeyboardInterrupt:
-    danmuji.connected = False
-    for task in asyncio.Task.all_tasks():
-        task.cancel()
-    loop.run_forever()
+with loop: ## context manager calls .close() when loop completes, and releases all resources
 
-loop.close()
+    win = Windows()
+    danmuji.update_data.connect(win.checkButton)
+    win.show()
+    loop.run_until_complete(asyncio.wait(tasks))
+
+
+
+
+
