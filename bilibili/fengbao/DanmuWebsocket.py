@@ -105,7 +105,7 @@ class DanmuWebsocket():
 	# 	self._ChatHost = server[0].firstChild.data
 
 	async def connectServer(self):
-		print ('正在进入房间。。。。。')
+		#print ('正在进入房间。。。。。')
 		with aiohttp.ClientSession() as s:
 			async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
 				html = await r.text()
@@ -124,11 +124,11 @@ class DanmuWebsocket():
 		reader, writer = await asyncio.open_connection(self._ChatHost, self._ChatPort)
 		self._reader = reader
 		self._writer = writer
-		print ('链接弹幕中。。。。。')
+		# print ('链接弹幕中。。。。。')
 		if (await self.SendJoinChannel(self._roomId) == True):
 			self.connected = True
-			print ('进入房间成功。。。。。',self._roomId)
-			print ('链接弹幕成功。。。。。')
+			# print ('进入房间成功。。。。。',self._roomId)
+			# print ('链接弹幕成功。。。。。')
 			await self.ReceiveMessageLoop()
 			
 	async def HeartbeatLoop(self):
