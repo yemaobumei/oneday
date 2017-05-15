@@ -25,7 +25,7 @@ while not LoginClient.isLogin:
 		break
 
 roomid=[]
-for i in range(1,5):
+for i in range(1,4):
     r=requests.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i))
     if r.status_code==200:
         data=json.loads(r.content.decode('utf8'))['data']

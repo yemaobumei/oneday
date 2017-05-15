@@ -79,7 +79,7 @@ class DanmuWebsocket():
 				await res.text()
 				if res.status==200:
 					self.send_danmu_num+=1
-					print(108,msg,self.send_danmu_num)
+					print(108,msg,self._roomId)
 
 
 					
@@ -87,22 +87,6 @@ class DanmuWebsocket():
 
 
 
-
-
-
-
-	# def connection_info(self):
-	# 	r=self.session.get('http://live.bilibili.com/' + str(self._roomId))
-	# 	html=r.content.decode('utf8')
-	# 	m = re.findall(r'ROOMID\s=\s(\d+)', html)
-	# 	ROOMID = m[0]
-	# 	self._roomId = int(ROOMID)
-	# 	r2=self.session.get(self._CIDInfoUrl + ROOMID)
-	# 	xml_string = '<root>' + r2.content.decode('utf8') + '</root>'
-	# 	dom = xml.dom.minidom.parseString(xml_string)
-	# 	root = dom.documentElement
-	# 	server = root.getElementsByTagName('server')
-	# 	self._ChatHost = server[0].firstChild.data
 
 	async def connectServer(self):
 		#print ('正在进入房间。。。。。')
@@ -229,19 +213,19 @@ class DanmuWebsocket():
 			GiftUser = dic['data']['uname']
 			Giftrcost = dic['data']['rcost']
 			GiftNum = dic['data']['num']
-			uid=dic['data']['uid']
-			gifts=['B坷垃','喵娘','节奏风暴','普通拳']
-			gifts_low=['233','666','小拳拳','亿圆']
+			# uid=dic['data']['uid']
+			# gifts=['B坷垃','喵娘','节奏风暴','普通拳']
+			# gifts_low=['233','666','小拳拳','亿圆']
 			res=""
 			#print (332,GiftName,GiftNum)
 
 			#单次送礼记录礼物清单内，连续多次后触发不弹幕'打包投喂'。
 			try:
 				if GiftName == "节奏风暴":
-					log=open('./fengbao.log','a')
-					print(GiftUser+'送出了节奏风暴',self._roomId)
-					log.write(time.strftime("%Y-%m-%d ", time.localtime())+'roomid:'+str(self._roomId)+'\n')
-					log.close()					
+					# log=open('./fengbao.log','a')
+					# print(GiftUser+'送出了节奏风暴',self._roomId)
+					# log.write(time.strftime("%Y-%m-%d ", time.localtime())+'roomid:'+str(self._roomId)+'\n')
+					# log.close()					
 					self.fengbao = True
 			except Exception as e:
 				print(355,e,GiftUser)
