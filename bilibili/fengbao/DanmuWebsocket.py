@@ -204,8 +204,8 @@ class DanmuWebsocket():
 			cmd = dic['cmd']
 			#print(dic)
 		except Exception as e: # 有些情况会 jsondecode 失败，未细究，可能平台导致
-			print(276,e)
-			print(type(messages),messages)
+			# print(276,e)
+			# print(type(messages),messages)
 			return
 		
 		if cmd == 'LIVE':
