@@ -208,19 +208,6 @@ class DanmuWebsocket():
 			# print(type(messages),messages)
 			return
 		
-		if cmd == 'LIVE':
-			try:
-				print ('直播开始。。。') #{'cmd': 'LIVE', 'roomid': 2570641}
-
-			except Exception as e:
-				print(286,e)
-			return
-		if cmd == 'PREPARING':
-			try:
-				print ('房主准备中。。。') #{'cmd': 'PREPARING', 'roomid': 2570641}
-			except Exception as e:
-				print(292,e) 
-			return
 		if cmd == 'DANMU_MSG':
 			self.recevie_danmu_num+=1
 			if self.fengbao:
@@ -251,8 +238,11 @@ class DanmuWebsocket():
 			#单次送礼记录礼物清单内，连续多次后触发不弹幕'打包投喂'。
 			try:
 				if GiftName == "节奏风暴":
+					log=open('./fengbao.log','a')
 					print(GiftUser+'送出了节奏风暴',self._roomId)
-					self.fengbao = True	
+					log.write(time.strftime("%Y-%m-%d ", time.localtime())+'roomid:'+str(self._roomId)+'\n')
+					log.close()					
+					self.fengbao = True
 			except Exception as e:
 				print(355,e,GiftUser)
 			return
