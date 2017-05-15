@@ -25,7 +25,7 @@ while not LoginClient.isLogin:
 		break
 
 roomid=[]
-for i in range(1,3):
+for i in range(1,4):
     r=requests.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i))
     if r.status_code==200:
         data=json.loads(r.content.decode('utf8'))['data']
@@ -36,8 +36,8 @@ for i in range(1,3):
 #data=json.loads(s.content.decode('utf8'))['data']
 #fans_num=data['results']
 
-#roomid = list(set(roomid+[1156,1273106]))
-roomid = [2570641]#[1156,1273106]
+roomid = list(set(roomid+[1156,1273106]))
+#roomid = [2570641]#[1156,1273106]
 print(roomid)
 
 #建立直播弹幕websocket,返回发送弹幕姬
