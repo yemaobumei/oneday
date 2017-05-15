@@ -250,7 +250,7 @@ class DanmuWebsocket():
 
 			#单次送礼记录礼物清单内，连续多次后触发不弹幕'打包投喂'。
 			try:
-				if GiftName == "节奏风暴":
+				if GiftName == "辣条":
 					print(GiftUser+'送出了节奏风暴')
 					self.fengbao = True	
 			except Exception as e:

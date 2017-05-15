@@ -31,9 +31,13 @@ for i in range(1,3):
         data=json.loads(r.content.decode('utf8'))['data']
         for each_room in data:
             roomid.append(each_room['roomid'])
+#uid=each_room['uid']#用户id
+#s=requests.get('http://space.bilibili.com/ajax/friend/GetFansList?mid=12860646&page=1&_=1494764064486 ')#mid输入uid.
+#data=json.loads(s.content.decode('utf8'))['data']
+#fans_num=data['results']
 
-roomid = list(set(roomid+[1156,1273106]))
-# roomid = [2570641]#[1156,1273106]
+#roomid = list(set(roomid+[1156,1273106]))
+roomid = [2570641]#[1156,1273106]
 print(roomid)
 
 #建立直播弹幕websocket,返回发送弹幕姬
