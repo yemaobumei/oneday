@@ -6,15 +6,16 @@ import requests.utils
 import json,pickle
 import time
 import sys,os
+import asyncio
 
 def loop(func):
 	
-	def wrap(self):
-		for i in range(1000):			
+	async def wrap(self):
+		while True:			
 			startTime=time.time()
 			func(self)
 			endTime=time.time()
-			time.sleep(24*60*60-endTime+startTime)
+			await asyncio.sleep(24*60*60-endTime+startTime)
 	return wrap
 
 class DoSign():
@@ -49,7 +50,12 @@ class DoSign():
 		print(data['msg'])
 		log.write(time.strftime("%Y-%m-%d ", time.localtime())+data['msg']+'\n')
 		log.close()
-if __name__=='__main__':
-	username='13126772351'
-	sign=DoSign(username)
-	sign.do_sign()
+# if __name__=='__main__':
+# 	username='13126772351'
+# 	sign=DoSign(username)
+# 	loop = asyncio.get_event_loop()  
+# 	tasks = [sign.do_sign()]
+# 	loop.run_until_complete(asyncio.wait(tasks))
+# 	loop.close()
+
+	
