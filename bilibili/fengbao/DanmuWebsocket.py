@@ -7,7 +7,6 @@ import xml.dom.minidom
 import random
 import json
 from struct import *
-import config
 import re
 
 #api.py
@@ -37,7 +36,6 @@ headers={
 class DanmuWebsocket():
 	def __init__(self,cookies,roomid):
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
-		self._roomId = 0
 		self._ChatPort = 788
 		self._protocolversion = 1
 		self._reader = 0
@@ -52,41 +50,10 @@ class DanmuWebsocket():
 		self.cookies=cookies
 		self.fengbao=False
 
-#---辅助弹幕部分--------------------------------------------------------------------------
-		self.send_danmu_num=0
-		self.gift_dic={}
-		self.gift_num=0
-
-		self.recevie_danmu_num=0
-
-
-	async def sendDanmu(self,msg):
-		send_url="http://live.bilibili.com/msg/send"
-		method="POST"
-		msg=msg.strip()
-		if len(msg) == 0:
-			return
-		data={
-			'color':'16772431',
-			'fontsize':25,
-			'mode':1,
-			'msg':msg,
-			'rnd':'1493972251',
-			'roomid':self._roomId     
-		}
-		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
-			async with  s.post(send_url,headers=headers,data=data) as res:
-				await res.text()
-				if res.status==200:
-					self.send_danmu_num+=1
-					print(108,msg,self._roomId)
-
-
-					
 
 
 
-
+			
 
 	async def connectServer(self):
 		#print ('正在进入房间。。。。。')
@@ -186,14 +153,14 @@ class DanmuWebsocket():
 
 			dic = json.loads(messages)
 			cmd = dic['cmd']
-			#print(dic)
+
 		except Exception as e: # 有些情况会 jsondecode 失败，未细究，可能平台导致
 			# print(276,e)
 			# print(type(messages),messages)
 			return
 		
 		if cmd == 'DANMU_MSG':
-			self.recevie_danmu_num+=1
+
 			if self.fengbao:
 				commentText = dic['info'][1]
 				commentUser = dic['info'][2][1]
@@ -204,9 +171,8 @@ class DanmuWebsocket():
 				except Exception as e:
 					print(314,e)
 				return
-		if cmd == 'SEND_GIFT' and config.TURN_GIFT == 1:
-			#累计多次礼物后，情况礼物清单栏,{'a':3,'b':5}
-			self.gift_num+=1
+		if cmd == 'SEND_GIFT' :
+
 
 			#获取送礼信息		
 			GiftName = dic['data']['giftName'].strip()
@@ -219,7 +185,7 @@ class DanmuWebsocket():
 			res=""
 			#print (332,GiftName,GiftNum)
 
-			#单次送礼记录礼物清单内，连续多次后触发不弹幕'打包投喂'。
+
 			try:
 				if GiftName == "节奏风暴":
 					# log=open('./fengbao.log','a')
@@ -230,3 +196,25 @@ class DanmuWebsocket():
 			except Exception as e:
 				print(355,e,GiftUser)
 			return
+
+#---辅助弹幕部分--------------------------------------------------------------------------
+
+	async def sendDanmu(self,msg):
+		send_url="http://live.bilibili.com/msg/send"
+		method="POST"
+		msg=msg.strip()
+		if len(msg) == 0:
+			return
+		data={
+			'color':'16772431',
+			'fontsize':25,
+			'mode':1,
+			'msg':msg,
+			'rnd':'1493972251',
+			'roomid':self._roomId     
+		}
+		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
+			async with  s.post(send_url,headers=headers,data=data) as res:
+				await res.text()
+				if res.status==200:
+					print(108,msg,self._roomId)
