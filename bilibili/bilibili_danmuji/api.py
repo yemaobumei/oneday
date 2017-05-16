@@ -15,6 +15,7 @@ import binascii
 from bs4 import BeautifulSoup
 import urllib
 import time
+import asyncio
 
 headers = {
 	'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
@@ -26,6 +27,16 @@ headers = {
 # 	'Referer': 'http://www.bilibili.com/',
 # 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:45.0) Gecko/20100101 Firefox/45.0'
 # }
+def loop(func):
+	
+	async def wrap(self):
+		while True:			
+			startTime=time.time()
+			func(self)
+			endTime=time.time()
+			await asyncio.sleep(24*60*60-endTime+startTime)
+	return wrap
+
 class Client():
 	def __init__(self,username,password):
 		self.session = requests.Session()
@@ -48,14 +59,20 @@ class Client():
 		message = binascii.b2a_base64(message)
 		return message
 
-	def load_cookies(self, path):
-		with open(path, 'rb') as f:
+	def load_cookies(self):
+		root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+		#读取cookies文件
+		cookies_file = os.path.join(root_path, self.username + ".cookies")		
+		with open(cookies_file, 'rb') as f:
 			self.cookies=pickle.load(f)
 			self.session.cookies = requests.utils.cookiejar_from_dict(self.cookies)
 
 
 
-	def save_cookies(self, path):
+	def save_cookies(self):
+		root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+		#存储cookies文件
+		cookies_file = os.path.join(root_path, self.username + ".cookies")
 		with open(path, 'wb') as f:
 			cookies_dic = requests.utils.dict_from_cookiejar(self.session.cookies)
 			pickle.dump(cookies_dic, f)
@@ -98,9 +115,8 @@ class Client():
 		except Exception as e:
 			#登陆成功
 			self.isLogin=True
-			#保存cookies
-			cookies_file = os.path.join(root_path, self.username + ".cookies")			
-			self.save_cookies(cookies_file)
+			#保存cookies			
+			self.save_cookies()
 
 			#提示语
 			print('欢迎您:', self.username)
@@ -116,17 +132,18 @@ class Client():
 		if not os.path.exists(cookies_file):
 			print(self.username + '.cookies不存在，请登录')
 			return False
-		self.load_cookies(cookies_file)
+		self.load_cookies()
 		if not self.get_account_info():
 			print(self.username + '.cookies失效，请登录')
 			return False
 		print('欢迎您:', self.username)
 		self.isLogin=True
-		self.do_sign()
+
 
 		return self.cookies #dict{}
-
+	@loop
 	def do_sign(self):
+		self.load_cookies()
 		log=open('./sign.log','a')
 		url = "http://live.bilibili.com/sign/doSign"
 		r = self.session.get(url)

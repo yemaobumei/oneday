@@ -278,7 +278,7 @@ class DanmuWebsocket():
 		
 		if cmd == 'LIVE':
 			try:
-				print ('直播开始。。。') #{'cmd': 'LIVE', 'roomid': 2570641}
+				#print ('直播开始。。。') #{'cmd': 'LIVE', 'roomid': 2570641}
 				await self.sendDanmu('喵咭晚上好,小夜猫终于等到你开播了') 
 				await self.sendDanmu('欢迎来到直播间'+str(dic['roomid'])+',弹幕姬小夜猫陪伴你们左右')
 			except Exception as e:
@@ -286,7 +286,7 @@ class DanmuWebsocket():
 			return
 		if cmd == 'PREPARING':
 			try:
-				print ('房主准备中。。。') #{'cmd': 'PREPARING', 'roomid': 2570641}
+				#print ('房主准备中。。。') #{'cmd': 'PREPARING', 'roomid': 2570641}
 				await self.sendDanmu('各位晚安,让我们明天继续相约直播间'+str(dic['roomid'])+',明天见')
 			except Exception as e:
 				print(292,e) 
@@ -311,7 +311,7 @@ class DanmuWebsocket():
 			if isVIP:
 				commentUser = 'VIP ' + commentUser
 			try:
-				print (311,commentUser + ' say: ' + commentText)
+				#print (311,commentUser + ' say: ' + commentText)
 				await self.robot(commentUser,commentText)
 			except Exception as e:
 				print(314,e)
@@ -404,4 +404,4 @@ class DanmuWebsocket():
 				text = await res.text()#{"code":0,"msg":"OK","data":{"id":20122,"dtime":179,"status":1}}
 				if res.status==200:
 					print('已参加小电视抽奖',tv_id)
-					print(text)
+

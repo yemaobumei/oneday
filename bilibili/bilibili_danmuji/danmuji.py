@@ -26,21 +26,24 @@ while not LoginClient.isLogin:
 danmuji = DanmuWebsocket(cookies=cookies)
 
 
+
 #执行异步任务
 tasks = [
-
 			danmuji.sendDanmu('小夜猫来看你了'),
+            LoginClient.do_sign(),
             danmuji.connectServer(),
             danmuji.HeartbeatLoop()
+            
         ]
 loop = asyncio.get_event_loop()
 try:
     loop.run_until_complete(asyncio.wait(tasks))
 except KeyboardInterrupt:
-    danmuji.connected = False
-    for task in asyncio.Task.all_tasks():
-        task.cancel()
-    loop.run_forever()
+    # danmuji.connected = False
+    # for task in asyncio.Task.all_tasks():
+    #     task.cancel()
+    # loop.run_forever()
+    pass
 
 loop.close()
 
