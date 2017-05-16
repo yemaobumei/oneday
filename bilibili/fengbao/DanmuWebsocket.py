@@ -49,7 +49,8 @@ class DanmuWebsocket():
 
 		self.cookies=cookies
 		self.fengbao=False
-
+		#计数		
+		self.i=0
 
 
 
@@ -161,13 +162,17 @@ class DanmuWebsocket():
 		
 		if cmd == 'DANMU_MSG':
 
-			if self.fengbao:
+			if self.fengbao:					
 				commentText = dic['info'][1]
 				commentUser = dic['info'][2][1]
 				try:
 					print (311,commentUser + ' say: ' + commentText)
 					await self.sendDanmu(commentText)
-					self.fengbao=False
+					self.i+=1
+					if self.i==2:
+						self.fengbao=False
+						self.i=0
+						return						
 				except Exception as e:
 					print(314,e)
 				return
@@ -175,7 +180,7 @@ class DanmuWebsocket():
 
 
 			#获取送礼信息		
-			GiftName = dic['data']['giftName'].strip()
+			GiftName = dic['data']['giftName']
 			GiftUser = dic['data']['uname']
 			Giftrcost = dic['data']['rcost']
 			GiftNum = dic['data']['num']
@@ -193,7 +198,7 @@ class DanmuWebsocket():
 					# log.write(time.strftime("%Y-%m-%d ", time.localtime())+'roomid:'+str(self._roomId)+'\n')
 					# log.close()					
 					self.fengbao = True
-				print(GiftName)
+				#print(GiftName,self._roomId)
 			except Exception as e:
 				print(355,e,GiftUser)
 			return
