@@ -13,7 +13,7 @@ import requests
 import json
 
 #登录B站获取cookies
-username="979365217@qq.com"
+username="13126772351"
 password="ye06021123"
 
 LoginClient=Client(username,password)
@@ -38,6 +38,7 @@ for i in range(1,10):
 
 #roomid = list(set(roomid+[1156,1273106]))
 #roomid = [2570641]#[1156,1273106]
+roomid = list(set(roomid))
 print(len(roomid))
 
 #建立直播弹幕websocket,返回发送弹幕姬

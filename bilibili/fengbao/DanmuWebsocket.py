@@ -193,6 +193,7 @@ class DanmuWebsocket():
 					# log.write(time.strftime("%Y-%m-%d ", time.localtime())+'roomid:'+str(self._roomId)+'\n')
 					# log.close()					
 					self.fengbao = True
+				print(GiftName)
 			except Exception as e:
 				print(355,e,GiftUser)
 			return
