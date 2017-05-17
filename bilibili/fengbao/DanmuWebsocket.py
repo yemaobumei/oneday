@@ -166,7 +166,7 @@ class DanmuWebsocket():
 				commentText = dic['info'][1]
 				commentUser = dic['info'][2][1]
 				try:
-					print (311,commentUser + ' say: ' + commentText)
+					print (311,commentUser + ' say: ' + commentText,self._roomId)
 					await self.sendDanmu(commentText)
 					self.i+=1
 					if self.i==2:
@@ -222,5 +222,5 @@ class DanmuWebsocket():
 		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
 			async with  s.post(send_url,headers=headers,data=data) as res:
 				await res.text()
-				if res.status==200:
-					print(108,msg,self._roomId)
+				# if res.status==200:
+				# 	print(108,msg,self._roomId)
