@@ -3,9 +3,10 @@
 from sqlalchemy import Column, String,Integer, DateTime, create_engine,engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-
 from sqlalchemy.sql import func
 
+import requests
+import json
 Base = declarative_base()
 class User(Base):
     # 表的名字
@@ -15,7 +16,7 @@ class User(Base):
     uid = Column(Integer,  primary_key=True)
     uname = Column(String(20),nullable=False)
     roomid = Column(Integer,nullable=True)
-    real_roomid = Column(Integer,nullable=True)
+    realRoomid = Column(Integer,nullable=True)
     fansnum = Column(Integer,nullable=True)
     areaName = Column(String(20),nullable=True)
     date = Column(DateTime(timezone=True), default=func.now())
@@ -31,20 +32,64 @@ class SmallTv(Base):
 class Fengbao(Base):
 	__tablename__ = 'Fengbao'
 	id = Column(Integer,primary_key=True)
-	roomid = Column(Integer)
+	roomid = Column(Integer,nullable=False)
+	send_uid = Column(Integer,nullable=True)
+	send_uname = Column(String(20),nullable=True)
 	date = Column(DateTime(timezone=True), default=func.now())
 
 
-# # 初始化数据库连接
-# engine = create_engine('sqlite:///ye.db', echo=True)
-# # 创建DBSession类型
-# DBSession = sessionmaker(bind=engine)
-
-# # # 建立表
-# Base.metadata.create_all(engine)#新建数据库文件，必须使用此语句建立表结构，以后打开可以不加此语句。
-
+# 初始化数据库连接
+engine = create_engine('sqlite:///ye.db', echo=True)
+# 创建DBSession类型
+DBSession = sessionmaker(bind=engine)
 # create_engine用来初始化数据库连接.
 # SQLAlchemy用一个字符串表示连接信息'数据库类型+数据库驱动名称://用户名:口令@机器地址:端口号/数据库名'
+
+###建立表
+Base.metadata.create_all(engine)#新建数据库表，必须使用此语句建立表结构，以后打开可以不加此语句。
+def addUser(start,end):
+	room=[]
+	session = DBSession()
+	try:
+		for i in range(start,end):
+			r=requests.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i))
+			if r.status_code==200:
+				data=json.loads(r.content.decode('utf8'))['data']
+				for each_room in data:
+					room.append(each_room['roomid'])
+					#获取主播信息
+					uid=each_room['uid']
+					uname=each_room['uname']
+					roomid=int(each_room['link'].replace('/',''))
+					realRoomid=each_room['roomid']
+					areaName=each_room['areaName']
+					#获取主播粉丝数
+					s=requests.get('http://space.bilibili.com/ajax/friend/GetFansList?mid=%s&page=1&_=1494764064486'%(uid))#mid输入uid.
+					data=json.loads(s.content.decode('utf8'))['data']
+					fansnum=data['results']
+
+					queryUser=session.query(User).filter_by(uid=uid).first()
+					if queryUser:
+						#print(queryUser)
+						#queryUser.fansnum=fansnum
+						print('exited!')
+					else:	
+						session.add(User(uid=uid,uname=uname,roomid=roomid,realRoomid=realRoomid,fansnum=fansnum,areaName=areaName))
+		session.commit()
+		session.close()
+	except Exception as e:
+		print(e,11111111)
+	return room
+
+addUser(3,10)
+
+session = DBSession()
+for instance in session.query(User).order_by(User.fansnum):
+	print(instance.uname,instance.fansnum)
+session.close()
+
+
+
 
 # # 创建session对象:
 # session = DBSession()
@@ -59,13 +104,14 @@ class Fengbao(Base):
 
 # 可见将关键是获取session, 然后把对象添加到session, 最后提交并关闭.(DBSession对象, 可以看做是当前数据库的连接)
 
-# # 查询
+# 查询
 # session = DBSession()
 # # 创建Query查询, filter是where条件, 最后调用one()返回唯一行, 如果调用all()则返回所有行.
-# user = session.query(User).filter(User.uid==12).one()
+# user = session.query(User).filter(User.uid==12722).one()
 # print('type:', type(user))
 # print('name:', user.uname)
 # session.close()
+
 
 ####Relattionship SQLAlchemy中的映射关系有四种,分别是一对多,多对一,一对一,多对多
 #####一对多(one to many） 因为外键(ForeignKey)始终定义在多的一方.如果relationship定义在多的一方,那就是多对一,一对多与多对一的区别在于其关联(relationship)的属性在多的一方还是一的一方，如果relationship定义在一的一方那就是一对多.
