@@ -1,9 +1,10 @@
 # 在Python中, 最有名的ORM框架是SQLAlchemy. 我们来看看SQLAlchemy的用法.
 
-from sqlalchemy import Column, String,Integer, create_engine,engine
+from sqlalchemy import Column, String,Integer, DateTime, create_engine,engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
+from sqlalchemy.sql import func
 
 Base = declarative_base()
 class User(Base):
@@ -12,19 +13,25 @@ class User(Base):
 
     # 表的结构
     uid = Column(Integer,  primary_key=True)
-    uname = Column(String(20))
-    roomid = Column(Integer)
-    fansnum = Column(Integer)
-    areaName = Column(String(20))
+    uname = Column(String(20),nullable=False)
+    roomid = Column(Integer,nullable=True)
+    real_roomid = Column(Integer,nullable=True)
+    fansnum = Column(Integer,nullable=True)
+    areaName = Column(String(20),nullable=True)
+    date = Column(DateTime(timezone=True), default=func.now())
 
+class SmallTv(Base):
+	__tablename__ = 'TvRecord'
+	tv_id = Column(Integer, primary_key=True)
+	roomid = Column(Integer,nullable=False)
+	real_roomid = Column(Integer,nullable=True)
+	#date = Column(Date, default=datetime.today().strftime("%Y-%m-%d"), nullable=False)
+	date = Column(DateTime(timezone=True), default=func.now())
 
-
-
-
-# # 初始化数据库连接
-# engine = create_engine('sqlite:///ye.db', echo=True)
-# # 创建DBSession类型
-# DBSession = sessionmaker(bind=engine)
+# 初始化数据库连接
+engine = create_engine('sqlite:///ye.db', echo=True)
+# 创建DBSession类型
+DBSession = sessionmaker(bind=engine)
 
 # # # 建立表
 # Base.metadata.create_all(engine)#新建数据库文件，必须使用此语句建立表结构，以后打开可以不加此语句。
@@ -53,18 +60,16 @@ class User(Base):
 # print('name:', user.uname)
 # session.close()
 
-# ORM就是把数据库表的行与相应的对象简历关联, 互相转换.
-# 由于关系数据库的多个表还可以用外键实现一对多, 多对多的关联, 相应地, ORM框架也可以提供两个对象之间的一对多, 多对多功能.
-# 例如, 如果一个User拥有多个Book, 就可以定义一对多关系如下
-# class User(Base):
-#     __tablename__ = 'user'
-#
-#     id = Column(String(20), primary_key=True)
-#     name = Column(String(20))
-#     books = relationship('BOOK')
-#
-# class BOOK(Base):
-#     __tablename__ = 'book'
-#     id = Column(String(20), primary_key=True)
-#     nam = Column(String(20))
-#     user_id = Column(String(20), ForeignKey('user.id'))
+####Relattionship SQLAlchemy中的映射关系有四种,分别是一对多,多对一,一对一,多对多
+#####一对多(one to many） 因为外键(ForeignKey)始终定义在多的一方.如果relationship定义在多的一方,那就是多对一,一对多与多对一的区别在于其关联(relationship)的属性在多的一方还是一的一方，如果relationship定义在一的一方那就是一对多.
+# 这里的例子中,一指的是Parent,一个parent有多个child.
+
+# class Parent(Base):
+#     __tablename__ = 'parent'
+#     id = Column(Integer,primary_key = True)
+#     children = relationship("Child",backref='parent')
+
+# class Child(Base):
+#     __tablename__ = 'child'
+#     id = Column(Integer,primary_key = True)
+#     parent_id = Column(Integer,ForeignKey('parent.id'))
