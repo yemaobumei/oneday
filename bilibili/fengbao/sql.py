@@ -28,10 +28,17 @@ class SmallTv(Base):
 	#date = Column(Date, default=datetime.today().strftime("%Y-%m-%d"), nullable=False)
 	date = Column(DateTime(timezone=True), default=func.now())
 
-# 初始化数据库连接
-engine = create_engine('sqlite:///ye.db', echo=True)
-# 创建DBSession类型
-DBSession = sessionmaker(bind=engine)
+class Fengbao(Base):
+	__tablename__ = 'Fengbao'
+	id = Column(Integer,primary_key=True)
+	roomid = Column(Integer)
+	date = Column(DateTime(timezone=True), default=func.now())
+
+
+# # 初始化数据库连接
+# engine = create_engine('sqlite:///ye.db', echo=True)
+# # 创建DBSession类型
+# DBSession = sessionmaker(bind=engine)
 
 # # # 建立表
 # Base.metadata.create_all(engine)#新建数据库文件，必须使用此语句建立表结构，以后打开可以不加此语句。
