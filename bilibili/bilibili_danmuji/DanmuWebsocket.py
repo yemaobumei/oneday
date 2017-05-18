@@ -35,7 +35,7 @@ headers={
 
 
 class DanmuWebsocket():
-	def __init__(self,cookies):
+	def __init__(self,cookies,roomid):
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
 		self._roomId = 0
 		self._ChatPort = 788
@@ -46,7 +46,7 @@ class DanmuWebsocket():
 		self._UserCount = 0
 		self._ChatHost = 'livecmt-1.bilibili.com'
 
-		self._roomId = "1273106"
+		self._roomId = roomid
 		self._roomId = int(self._roomId)
 
 		self.cookies=cookies
