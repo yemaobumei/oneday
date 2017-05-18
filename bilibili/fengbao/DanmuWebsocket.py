@@ -14,7 +14,6 @@ import os,sys
 import requests
 import requests.utils
 import pickle
-import json
 import rsa
 import binascii
 from bs4 import BeautifulSoup
@@ -26,6 +25,7 @@ import math
 import datetime,time
 import random
 
+from sql import  addFengbao
 
 headers={
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
@@ -49,8 +49,11 @@ class DanmuWebsocket():
 
 		self.cookies=cookies
 		self.fengbao=False
-		#计数		
+		#风暴信息		
 		self.i=0
+		self.send_uid=0
+		self.send_uname=""
+
 
 
 
@@ -172,6 +175,7 @@ class DanmuWebsocket():
 					if self.i==2:
 						self.fengbao=False
 						self.i=0
+						await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
 						return						
 				except Exception as e:
 					print(314,e)
@@ -181,22 +185,15 @@ class DanmuWebsocket():
 
 			#获取送礼信息		
 			GiftName = dic['data']['giftName']
-			GiftUser = dic['data']['uname']
-			Giftrcost = dic['data']['rcost']
-			GiftNum = dic['data']['num']
 			# uid=dic['data']['uid']
 			# gifts=['B坷垃','喵娘','节奏风暴','普通拳']
 			# gifts_low=['233','666','小拳拳','亿圆']
-			res=""
 			#print (332,GiftName,GiftNum)
-
+			self.send_uid=dic['data']['uid']
+			self.send_uname=dic['data']['uname']
 
 			try:
-				if GiftName == "节奏风暴":
-					# log=open('./fengbao.log','a')
-					# print(GiftUser+'送出了节奏风暴',self._roomId)
-					# log.write(time.strftime("%Y-%m-%d ", time.localtime())+'roomid:'+str(self._roomId)+'\n')
-					# log.close()					
+				if GiftName == "节奏风暴":				
 					self.fengbao = True
 				#print(GiftName,self._roomId)
 			except Exception as e:
@@ -224,3 +221,8 @@ class DanmuWebsocket():
 				await res.text()
 				# if res.status==200:
 				# 	print(108,msg,self._roomId)
+
+	async def addFengbaoProxy(self,realRoomid,send_uid,send_uname):
+		await asyncio.sleep(2)
+		addFengbao(realRoomid,send_uid,send_uname)
+		print("fengbao success!")

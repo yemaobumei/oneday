@@ -3,6 +3,7 @@
 
 import sys
 import os
+#异步操作
 import asyncio
 import aiohttp
 
@@ -12,7 +13,9 @@ from api import Client
 import requests
 import json
 
-#from sql import addUser
+#数据库操作
+from sql import addUser
+
 #登录B站获取cookies
 username="13126772351"
 password="ye06021123"
@@ -25,23 +28,38 @@ while not LoginClient.isLogin:
 		cookies=LoginClient.cookies_login()
 		break
 
-roomid=[]
+room=[]
 for i in range(0,7):
-    r=requests.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i))
-    if r.status_code==200:
-        data=json.loads(r.content.decode('utf8'))['data']
-        for each_room in data:
-            roomid.append(each_room['roomid'])
+	r=requests.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i))
+	if r.status_code==200:
+		data=json.loads(r.content.decode('utf8'))['data']
+		for each_room in data:
+			room.append(each_room['roomid'])
+			#获取主播信息
+			# uid=int(each_room['uid'])
+			# uname=each_room['uname']
+			# roomid=int(each_room['link'].replace('/',''))
+			# realRoomid=int(each_room['roomid'])
+			# areaName=each_room['areaName']
+			# online=each_room['online']
+			#获取主播粉丝数
+			# s=requests.get('http://space.bilibili.com/ajax/friend/GetFansList?mid=%s&page=1&_=1494764064486'%(uid))#mid输入uid.
+			# data=json.loads(s.content.decode('utf8'))['data']#可能是字典，也可能是"粉丝列表中没有值"
+			# fansnum=int(data['results']) if 'results' in data else 0
+			#print(i,uname,online)
+			#数据库添加用户信息
+			# addUser(uid,uname,roomid,realRoomid,fansnum,areaName)
+			
 
-roomid = list(set(roomid))
-print(len(roomid))
+room = list(set(room))
+print(len(room))
 
 
 
 
 #建立直播弹幕websocket,返回发送弹幕姬
 danmuji=[]
-for each in roomid:
+for each in room:
 	danmuji.append(DanmuWebsocket(cookies=cookies,roomid=each))
 
 
