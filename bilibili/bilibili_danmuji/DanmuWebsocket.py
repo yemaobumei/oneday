@@ -28,7 +28,7 @@ import datetime,time
 import random
 
 #添加数据库操作
-# from sql import addSmallTv
+from sql import addSmallTv
 headers={
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -389,12 +389,12 @@ class DanmuWebsocket():
 				if 'tv_id' in dic:
 					tv_id = dic['tv_id']
 					real_roomid = dic['real_roomid']
-					roomid = dic['real_roomid']
+					roomid = dic['roomid']
 					URL='http://api.live.bilibili.com/SmallTV/join?roomid={0}&id={1}&_={2}'.format(real_roomid, tv_id, int(time.time()*1000))
 					await self.getAwardTv(tv_id,URL)
+					addSmallTv(tv_id,roomid,real_roomid)
 			except Exception as e:
 				print(392,e)
-				pass
 		return
 
 

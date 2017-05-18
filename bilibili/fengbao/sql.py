@@ -110,8 +110,14 @@ def addSmallTv(tv_id,roomid,real_roomid):
 	session = DBSession()
 	try:
 		session.add(SmallTv(tv_id=tv_id,roomid=roomid,real_roomid=real_roomid))
+		queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
+		if queryUser:
+			queryUser.TvNum+=1
+		else:
+			session.add(User(realRoomid=realRoomid,roomid=roomid,TvNum=1))
 		session.commit()
-		session.close()	
+		session.close()
+		print('小电视成功！')	
 	except Exception as e:
 		print(95,e)
 

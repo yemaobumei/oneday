@@ -2,6 +2,14 @@
 .DS_Store
 .log
 *.dump
+__pycache__
+
+*.png
+*.json
+*.log
+*.db
+*.db-journal
+
 # Created by https://www.gitignore.io/api/python
 
 ### Python ###
