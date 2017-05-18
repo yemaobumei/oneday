@@ -3,3 +3,4 @@ aiohttp
 requests
 bs4
 rsa
+sqlalchemy

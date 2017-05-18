@@ -12,7 +12,7 @@ from api import Client
 import requests
 import json
 
-from sql import addUser
+#from sql import addUser
 #登录B站获取cookies
 username="13126772351"
 password="ye06021123"
@@ -25,15 +25,17 @@ while not LoginClient.isLogin:
 		cookies=LoginClient.cookies_login()
 		break
 
-roomid=addUser(0,10)
-         
+roomid=[]
+for i in range(0,7):
+    r=requests.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i))
+    if r.status_code==200:
+        data=json.loads(r.content.decode('utf8'))['data']
+        for each_room in data:
+            roomid.append(each_room['roomid'])
 
-
-
-#roomid = list(set(roomid+[1156,1273106]))
-#roomid = [2570641]#[1156,1273106]
 roomid = list(set(roomid))
 print(len(roomid))
+
 
 
 
