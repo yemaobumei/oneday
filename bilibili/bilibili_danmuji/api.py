@@ -80,7 +80,7 @@ class Client():
 
 	#普通网页接口登陆，需要验证码
 	def login(self):
-		print('进入登录程序.')
+		print(self.username+' 进入登录程序.')
 		root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 		#访问登陆页面
 		response = self.session.get('https://passport.bilibili.com/login')
@@ -93,7 +93,7 @@ class Client():
 		f.close()
 		#密码加密
 		password = self._encrypt()
-		captcha_code = input("请输入图片上的验证码：")
+		captcha_code = input(self.username+" 请输入图片上的验证码：")
 		#请求登陆
 		preload = {
 			'act': 'login',
