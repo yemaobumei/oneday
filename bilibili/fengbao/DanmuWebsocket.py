@@ -34,7 +34,7 @@ headers={
 
 
 class DanmuWebsocket():
-	def __init__(self,cookies,roomid):
+	def __init__(self,cookies_list,roomid):
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
 		self._ChatPort = 788
 		self._protocolversion = 1
@@ -47,7 +47,7 @@ class DanmuWebsocket():
 		self._roomId = roomid
 		self._roomId = int(self._roomId)
 
-		self.cookies=cookies
+		self.cookies_list=cookies_list
 		self.fengbao=False
 		#风暴信息		
 		self.i=0
@@ -178,6 +178,8 @@ class DanmuWebsocket():
 						await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
 						return						
 				except Exception as e:
+					self.fengbao=False
+					self.i=0
 					print(314,e)
 				return
 		if cmd == 'SEND_GIFT' :
@@ -216,11 +218,13 @@ class DanmuWebsocket():
 			'rnd':'1493972251',
 			'roomid':self._roomId     
 		}
-		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
-			async with  s.post(send_url,headers=headers,data=data) as res:
-				await res.text()
-				# if res.status==200:
-				# 	print(108,msg,self._roomId)
+		for cookies in self.cookies_list:
+			async with  aiohttp.ClientSession(cookies=cookies) as s:
+				async with  s.post(send_url,headers=headers,data=data) as res:
+					await res.text()
+					print('yes')
+					# if res.status==200:
+					# 	print(108,msg,self._roomId)
 
 	async def addFengbaoProxy(self,realRoomid,send_uid,send_uname):
 		await asyncio.sleep(2)

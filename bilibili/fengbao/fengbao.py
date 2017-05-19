@@ -17,19 +17,25 @@ import json
 from sql import addUser
 
 #登录B站获取cookies
-username="13126772351"
-password="ye06021123"
+info = [
+	{'username':'13126772351','password':'13126772351','roomid':1273106},
+	# {'username':'979365217@qq.com','password':'ye06021123','roomid':2570641},
+	{'username':'13390776820','password':'wsglr3636...','roomid':2570641}
+]
+cookies_list = []
+for each in info:		
+	LoginClient=Client(each['username'],each['password'])
+	cookies=LoginClient.cookies_login() #<class dic>{}
+	while not LoginClient.isLogin:
+		LoginClient.login()
+		if LoginClient.isLogin:
+			cookies=LoginClient.cookies_login()
+			break
+	cookies_list.append(cookies)
 
-LoginClient=Client(username,password)
-cookies=LoginClient.cookies_login() #<class dic>{}
-while not LoginClient.isLogin:
-	LoginClient.login()
-	if LoginClient.isLogin:
-		cookies=LoginClient.cookies_login()
-		break
 
 room=[]
-for i in range(0,7):
+for i in range(0,10):
 	r=requests.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i))
 	if r.status_code==200:
 		data=json.loads(r.content.decode('utf8'))['data']
@@ -60,7 +66,7 @@ print(len(room))
 #建立直播弹幕websocket,返回发送弹幕姬
 danmuji=[]
 for each in room:
-	danmuji.append(DanmuWebsocket(cookies=cookies,roomid=each))
+	danmuji.append(DanmuWebsocket(cookies_list=cookies_list,roomid=each))
 
 
 #执行异步任务
