@@ -171,15 +171,11 @@ class DanmuWebsocket():
 				try:
 					print (311,commentUser + ' say: ' + commentText,self._roomId)
 					await self.sendDanmu(commentText)
-					self.i+=1
-					if self.i==2:
-						self.fengbao=False
-						self.i=0
-						await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
-						return						
+					self.fengbao=False
+					await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
+					return						
 				except Exception as e:
 					self.fengbao=False
-					self.i=0
 					print(314,e)
 				return
 		if cmd == 'SEND_GIFT' :
@@ -222,7 +218,7 @@ class DanmuWebsocket():
 			async with  aiohttp.ClientSession(cookies=cookies) as s:
 				async with  s.post(send_url,headers=headers,data=data) as res:
 					await res.text()
-					print('yes')
+					print("send danmu ok!")
 					# if res.status==200:
 					# 	print(108,msg,self._roomId)
 

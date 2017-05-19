@@ -14,7 +14,7 @@ import requests
 import json
 
 #数据库操作
-from sql import addUser
+# from sql import addUser
 
 #登录B站获取cookies
 info = [
@@ -35,7 +35,7 @@ for each in info:
 
 
 room=[]
-for i in range(0,10):
+for i in range(0,7):
 	r=requests.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i))
 	if r.status_code==200:
 		data=json.loads(r.content.decode('utf8'))['data']
