@@ -28,7 +28,7 @@ class User(Base):
 class SmallTv(Base):
 	__tablename__ = 'TvRecord'
 	id = Column(Integer,primary_key=True)
-	tv_id = Column(Integer, nullable=False,unique=True)
+	tv_id = Column(String(20), nullable=False,unique=True)
 	roomid = Column(Integer,nullable=False)
 	realRoomid = Column(Integer,nullable=True)
 	#date = Column(Date, default=datetime.today().strftime("%Y-%m-%d"), nullable=False)
