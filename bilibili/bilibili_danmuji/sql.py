@@ -13,17 +13,21 @@ class User(Base):
     __tablename__ = 'user'
 
     # 表的结构
-    uid = Column(Integer,  primary_key=True)
-    uname = Column(String(20),nullable=False)
-    roomid = Column(Integer,nullable=True)
-    realRoomid = Column(Integer,nullable=True)
+    id = Column(Integer,primary_key=True)
+    realRoomid = Column(Integer,nullable=False,unique=True)
+    uid = Column(Integer, nullable=True)
+    uname = Column(String(20),nullable=True)
+    roomid = Column(Integer,nullable=True)    
     fansnum = Column(Integer,nullable=True)
     areaName = Column(String(20),nullable=True)
+    fengbaoNum = Column(Integer,default=0,nullable=True)
+    TvNum = Column(Integer,default=0,nullable=True)
     date = Column(DateTime(timezone=True), default=func.now())
 
 class SmallTv(Base):
 	__tablename__ = 'TvRecord'
-	tv_id = Column(Integer, primary_key=True)
+	id = Column(Integer,primary_key=True)
+	tv_id = Column(Integer, nullable=False,unique=True)
 	roomid = Column(Integer,nullable=False)
 	real_roomid = Column(Integer,nullable=True)
 	#date = Column(Date, default=datetime.today().strftime("%Y-%m-%d"), nullable=False)
@@ -31,8 +35,8 @@ class SmallTv(Base):
 
 class Fengbao(Base):
 	__tablename__ = 'Fengbao'
-	id = Column(Integer,primary_key=True)
-	roomid = Column(Integer,nullable=False)
+	id = Column(Integer, primary_key=True)
+	realRoomid = Column(Integer,nullable=False)
 	send_uid = Column(Integer,nullable=True)
 	send_uname = Column(String(20),nullable=True)
 	date = Column(DateTime(timezone=True), default=func.now())
@@ -47,7 +51,9 @@ DBSession = sessionmaker(bind=engine)
 
 ###建立表
 Base.metadata.create_all(engine)#新建数据库表，必须使用此语句建立表结构，以后打开可以不加此语句。
-def addUser(start,end):
+
+
+def addUserList(start,end):
 	room=[]
 	session = DBSession()
 
@@ -71,7 +77,7 @@ def addUser(start,end):
 				data=json.loads(s.content.decode('utf8'))['data']#可能是字典，也可能是"粉丝列表中没有值"
 				fansnum=int(data['results']) if 'results' in data else 0
 				print(i,uname,online)					
-				queryUser=session.query(User).filter_by(uid=uid).first()
+				queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
 				if queryUser:
 					#print(queryUser)
 					queryUser.fansnum=fansnum
@@ -82,8 +88,20 @@ def addUser(start,end):
 	session.close()
 	return room
 
-# addUser(18,22)
+# addUserList(0,10)
 
+def addUser(uid,uname,roomid,realRoomid,fansnum,areaName):
+	session = DBSession()
+	queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
+	if queryUser:
+		#print(queryUser)
+		#queryUser.fansnum=fansnum
+		#session.commit()
+		print('exited!')
+	else:	
+		session.add(User(uid=uid,uname=uname,roomid=roomid,realRoomid=realRoomid,fansnum=fansnum,areaName=areaName))
+		session.commit()
+	session.close()	
 # session = DBSession()
 # for instance in session.query(User).order_by(User.fansnum):#filter_by(fansnum=0): 
 # 	print(instance.uname,instance.uid,instance.fansnum)
@@ -92,12 +110,31 @@ def addSmallTv(tv_id,roomid,real_roomid):
 	session = DBSession()
 	try:
 		session.add(SmallTv(tv_id=tv_id,roomid=roomid,real_roomid=real_roomid))
+		queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
+		if queryUser:
+			queryUser.TvNum+=1
+		else:
+			session.add(User(realRoomid=realRoomid,roomid=roomid,TvNum=1))
 		session.commit()
-		session.close()	
+		session.close()
+		print('小电视成功！')	
 	except Exception as e:
 		print(95,e)
 
 
+def addFengbao(realRoomid,send_uid,send_uname):
+	session = DBSession()
+	try:
+		session.add(Fengbao(realRoomid=realRoomid,send_uid=send_uid,send_uname=send_uname))
+		queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
+		if queryUser:
+			queryUser.fengbaoNum+=1
+		else:
+			session.add(User(realRoomid=realRoomid,fengbaoNum=1))
+		session.commit()
+		session.close()
+	except Exception as e:
+		print(e)
 
 
 # # 创建session对象:
