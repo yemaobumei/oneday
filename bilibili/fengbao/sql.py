@@ -3,7 +3,6 @@
 from sqlalchemy import Column, String,Integer, DateTime, create_engine,engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.sql import func
 
 import requests
 import json
@@ -30,7 +29,7 @@ class SmallTv(Base):
 	id = Column(Integer,primary_key=True)
 	tv_id = Column(Integer, nullable=False,unique=True)
 	roomid = Column(Integer,nullable=False)
-	real_roomid = Column(Integer,nullable=True)
+	realRoomid = Column(Integer,nullable=True)
 	#date = Column(Date, default=datetime.today().strftime("%Y-%m-%d"), nullable=False)
 	date = Column(DateTime(timezone=True), default=datetime.now())
 
@@ -107,10 +106,10 @@ def addUser(uid,uname,roomid,realRoomid,fansnum,areaName):
 # for instance in session.query(User).order_by(User.fansnum):#filter_by(fansnum=0): 
 # 	print(instance.uname,instance.uid,instance.fansnum)
 # session.close()
-def addSmallTv(tv_id,roomid,real_roomid):
+def addSmallTv(tv_id,roomid,realRoomid):
 	session = DBSession()
 	try:
-		session.add(SmallTv(tv_id=tv_id,roomid=roomid,real_roomid=real_roomid))
+		session.add(SmallTv(tv_id=tv_id,roomid=roomid,realRoomid=realRoomid))
 		queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
 		if queryUser:
 			queryUser.TvNum+=1

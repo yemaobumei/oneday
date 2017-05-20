@@ -35,7 +35,7 @@ for each in info:
 	danmuji = DanmuWebsocket(cookies=cookies,roomid=each['roomid'])
 	#添加异步任务
 	tasks+=[
-				danmuji.sendDanmu('小夜猫来看你了'),
+				#danmuji.sendDanmu('小夜猫来看你了'),
 				LoginClient.do_sign(),
 				danmuji.connectServer(),
 				danmuji.HeartbeatLoop()
