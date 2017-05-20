@@ -403,6 +403,6 @@ class DanmuWebsocket():
 		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
 			async with  s.get(url,headers=headers) as res:
 				text = await res.text()#{"code":0,"msg":"OK","data":{"id":20122,"dtime":179,"status":1}}
-				if res.status==200:
-					print('已参加小电视抽奖',tv_id)
+				# if res.status==200:
+					# print('已参加小电视抽奖',tv_id)
 

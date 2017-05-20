@@ -46,7 +46,7 @@ class Fengbao(Base):
 # 初始化数据库连接
 engine = create_engine('sqlite:///ye.db', echo=False)#true控制台就会输出sql操作信息,默认Fasle
 # 创建DBSession类型
-DBSession = sessionmaker(bind=engine)
+DBSession = sessionmaker(bind=engine,autoflush=False)
 # create_engine用来初始化数据库连接.
 # SQLAlchemy用一个字符串表示连接信息'数据库类型+数据库驱动名称://用户名:口令@机器地址:端口号/数据库名'
 
@@ -110,15 +110,18 @@ def addUser(uid,uname,roomid,realRoomid,fansnum,areaName):
 def addSmallTv(tv_id,roomid,realRoomid):
 	session = DBSession()
 	try:
+		queryTv=session.query(SmallTv).filter_by(tv_id=tv_id).first()
+		if queryTv:#如果小电视存在则退出,因为建立了三个websocket监视小电视
+			return
 		session.add(SmallTv(tv_id=tv_id,roomid=roomid,realRoomid=realRoomid))
 		queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
-		if queryUser:
-			queryUser.TvNum+=1
-		else:
-			session.add(User(realRoomid=realRoomid,roomid=roomid,TvNum=1))
+		# if queryUser:
+		# 	queryUser.TvNum+=1
+		# else:
+		# 	session.add(User(realRoomid=realRoomid,roomid=roomid,TvNum=1))
 		session.commit()
 		session.close()
-		print('小电视成功！')	
+		print('小电视成功！',tv_id)	
 	except Exception as e:
 		print(95,e)
 
@@ -126,6 +129,9 @@ def addSmallTv(tv_id,roomid,realRoomid):
 def addFengbao(realRoomid,send_uid,send_uname):
 	session = DBSession()
 	try:
+		queryFengbao=session.query(Fengbao).filter_by(realRoomid=realRoomid).first()
+		if queryFengbao:
+			return
 		session.add(Fengbao(realRoomid=realRoomid,send_uid=send_uid,send_uname=send_uname))
 		queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
 		if queryUser:
