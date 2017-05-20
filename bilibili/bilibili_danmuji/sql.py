@@ -7,6 +7,7 @@ from sqlalchemy.sql import func
 
 import requests
 import json
+from datetime import datetime
 Base = declarative_base()
 class User(Base):
     # 表的名字
@@ -22,7 +23,7 @@ class User(Base):
     areaName = Column(String(20),nullable=True)
     fengbaoNum = Column(Integer,default=0,nullable=True)
     TvNum = Column(Integer,default=0,nullable=True)
-    date = Column(DateTime(timezone=True), default=func.now())
+    date = Column(DateTime(timezone=True), default=datetime.now())
 
 class SmallTv(Base):
 	__tablename__ = 'TvRecord'
@@ -31,7 +32,7 @@ class SmallTv(Base):
 	roomid = Column(Integer,nullable=False)
 	real_roomid = Column(Integer,nullable=True)
 	#date = Column(Date, default=datetime.today().strftime("%Y-%m-%d"), nullable=False)
-	date = Column(DateTime(timezone=True), default=func.now())
+	date = Column(DateTime(timezone=True), default=datetime.now())
 
 class Fengbao(Base):
 	__tablename__ = 'Fengbao'
@@ -39,7 +40,7 @@ class Fengbao(Base):
 	realRoomid = Column(Integer,nullable=False)
 	send_uid = Column(Integer,nullable=True)
 	send_uname = Column(String(20),nullable=True)
-	date = Column(DateTime(timezone=True), default=func.now())
+	date = Column(DateTime(timezone=True), default=datetime.now())
 
 
 # 初始化数据库连接
