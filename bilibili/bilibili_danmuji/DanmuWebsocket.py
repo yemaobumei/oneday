@@ -151,7 +151,7 @@ class DanmuWebsocket():
 				for con in contains:
 					msg=msg.replace(con,' ')
 				data['info'] = msg
-				r=requests.post(url,data=data)
+				r=requests.post(url,data=data,timeout=2)
 				response=json.loads(r.content.decode('utf-8'))['text']
 				#print(152,response)
 				await self.sendDanmu(response+'@'+username)
