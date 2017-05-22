@@ -387,19 +387,21 @@ class DanmuWebsocket():
 				print(372,e)
 				pass
 		if cmd == 'SYS_MSG':
-
-			if 'tv_id' in dic:
-				tv_id = dic['tv_id']
-				real_roomid = dic['real_roomid']
-				roomid = dic['roomid']
-				URL='http://api.live.bilibili.com/SmallTV/join?roomid={0}&id={1}&_={2}'.format(real_roomid, tv_id, int(time.time()*1000))
-				await self.getAwardTv(tv_id,URL)
-				addSmallTv(tv_id,roomid,real_roomid)
-				return
-			if '领取应援棒' in dic['msg']:
-				roomid = re.findall('.+?(\d+)',dic['url'])
-				roomid = int(roomid[0])
-				await self.getAwardLighten(roomid)
+			try:
+				if 'tv_id' in dic:
+					tv_id = dic['tv_id']
+					real_roomid = dic['real_roomid']
+					roomid = dic['roomid']
+					URL='http://api.live.bilibili.com/SmallTV/join?roomid={0}&id={1}&_={2}'.format(real_roomid, tv_id, int(time.time()*1000))
+					await self.getAwardTv(tv_id,URL)
+					addSmallTv(tv_id,roomid,real_roomid)
+					return
+				if '领取应援棒' in dic['msg']:
+					roomid = re.findall('.+?(\d+)',dic['url'])
+					roomid = int(roomid[0])
+					await self.getAwardLighten(roomid)
+			except Exception as e:
+				print(404,e)
 
 		return
 
@@ -418,12 +420,14 @@ class DanmuWebsocket():
 		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
 			async with  s.post(url,headers=headers,data={'roomid':roomid}) as res:
 				result = await res.text()
+				result = json.loads(result)
 				if len(result['data'])>0:
 					result = result['data'][0]
 					if result['type'] == 'need_you':
 						lightenId = result['lightenId']
 						async with s.post(url2,data={'roomid':roomid,'lightenId':lightenId}) as r:
 							result = await r.text()
+							result = json.loads(result)
 							if result['code'] == 0 :
 								print('领取应援棒成功!')
 							else:
@@ -431,5 +435,3 @@ class DanmuWebsocket():
 
 					else:
 						print(result)
-
-	
