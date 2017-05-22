@@ -387,22 +387,20 @@ class DanmuWebsocket():
 				print(372,e)
 				pass
 		if cmd == 'SYS_MSG':
-			try:
-				if 'tv_id' in dic:
-					tv_id = dic['tv_id']
-					real_roomid = dic['real_roomid']
-					roomid = dic['roomid']
-					URL='http://api.live.bilibili.com/SmallTV/join?roomid={0}&id={1}&_={2}'.format(real_roomid, tv_id, int(time.time()*1000))
-					await self.getAwardTv(tv_id,URL)
-					addSmallTv(tv_id,roomid,real_roomid)
-					return
-				if '领取应援棒' in dic['msg']:
-					roomid = re.findall('.+?(\d+)',dic['url'])
-					roomid = int(roomid[0])
-					await self.getAwardLighten(roomid)
 
-			except Exception as e:
-				print(392,e)
+			if 'tv_id' in dic:
+				tv_id = dic['tv_id']
+				real_roomid = dic['real_roomid']
+				roomid = dic['roomid']
+				URL='http://api.live.bilibili.com/SmallTV/join?roomid={0}&id={1}&_={2}'.format(real_roomid, tv_id, int(time.time()*1000))
+				await self.getAwardTv(tv_id,URL)
+				addSmallTv(tv_id,roomid,real_roomid)
+				return
+			if '领取应援棒' in dic['msg']:
+				roomid = re.findall('.+?(\d+)',dic['url'])
+				roomid = int(roomid[0])
+				await self.getAwardLighten(roomid)
+
 		return
 
 
