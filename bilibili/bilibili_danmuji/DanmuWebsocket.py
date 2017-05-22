@@ -369,16 +369,18 @@ class DanmuWebsocket():
 		if cmd == 'WELCOME_GUARD' and config.TURN_WELCOME == 1:
 			try:
 				commentUser = dic['data']['username']
-				time_hour=datetime.datetime.now().hour
+				t=datetime.datetime.now()
+				time_hour=t.hour
+				tt=t.strftime('%H:%M')
 				res=""
 				if  time_hour <= 6 :
-					res = commentUser + ',半夜好'
+					res = commentUser + ',半夜好.北京时间:'+tt
 				elif time_hour <= 12 :
-					res = commentUser + ",早上好"
+					res = commentUser + ",早上好.北京时间:"+tt
 				elif time_hour <= 18 :
-					res = commentUser + ",下午好"
+					res = commentUser + ",下午好.北京时间:"+tt
 				else:
-					res = commentUser + ",晚上好"
+					res = commentUser + ",晚上好.北京时间:"+tt
 
 				await self.sendDanmu(res)
 			except Exception as e:
@@ -393,6 +395,11 @@ class DanmuWebsocket():
 					URL='http://api.live.bilibili.com/SmallTV/join?roomid={0}&id={1}&_={2}'.format(real_roomid, tv_id, int(time.time()*1000))
 					await self.getAwardTv(tv_id,URL)
 					addSmallTv(tv_id,roomid,real_roomid)
+					return
+				if '领取应援棒' in dic['msg']:
+					roomid = int(re.findall('.+?(\d+)',dic['url'])[0])
+					await self.getAwardLighten(roomid)
+
 			except Exception as e:
 				print(392,e)
 		return
@@ -406,3 +413,24 @@ class DanmuWebsocket():
 				# if res.status==200:
 					# print('已参加小电视抽奖',tv_id)
 
+	async def getAwardLighten(self,roomid):
+		url ='http://api.live.bilibili.com/activity/v1/NeedYou/getLiveInfo'
+		url2 = 'http://api.live.bilibili.com/activity/v1/NeedYou/getLiveAward'
+		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
+			async with  s.post(url,headers=headers,data={'rooid':roomid}) as res:
+				result = await res.text()
+				if len(result['data'])>0:
+					result = result['data'][0]
+					if result['type'] == 'need_you':
+						lightenId = result['lightenId']
+						async with s.post(url2,data={'roomid':roomid,'lightenId':lightenId}) as r:
+							result = await r.text()
+							if result['code'] == 0 :
+								print('领取应援棒成功!')
+							else:
+								print('领取应援棒失败')
+
+					else:
+						print(result)
+
+	
