@@ -397,7 +397,8 @@ class DanmuWebsocket():
 					addSmallTv(tv_id,roomid,real_roomid)
 					return
 				if '领取应援棒' in dic['msg']:
-					roomid = int(re.findall('.+?(\d+)',dic['url'])[0])
+					roomid = re.findall('.+?(\d+)',dic['url'])
+					roomid = int(roomid[0])
 					await self.getAwardLighten(roomid)
 
 			except Exception as e:
@@ -417,7 +418,7 @@ class DanmuWebsocket():
 		url ='http://api.live.bilibili.com/activity/v1/NeedYou/getLiveInfo'
 		url2 = 'http://api.live.bilibili.com/activity/v1/NeedYou/getLiveAward'
 		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
-			async with  s.post(url,headers=headers,data={'rooid':roomid}) as res:
+			async with  s.post(url,headers=headers,data={'roomid':roomid}) as res:
 				result = await res.text()
 				if len(result['data'])>0:
 					result = result['data'][0]
