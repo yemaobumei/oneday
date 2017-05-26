@@ -37,6 +37,12 @@ def loop(func):
 			await asyncio.sleep(24*60*60-endTime+startTime)
 	return wrap
 
+def loop2(func):
+	async def wrap(self,roomid,msg):
+		while True:
+			func(self,roomid,msg)
+			await asyncio.sleep(2)
+	return wrap
 class Client():
 	def __init__(self,username,password):
 		self.session = requests.Session()
@@ -164,7 +170,7 @@ class Client():
 		except Exception as e:
 			print(e)
 		return False
-
+	@loop2
 	def sendDanmu(self,roomid,msg):
 		send_url="http://live.bilibili.com/msg/send"
 		method="POST"
