@@ -80,8 +80,12 @@ def addUserList(start,end):
 				print(i,uname,online)					
 				queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
 				if queryUser:
-					#print(queryUser)
+					queryUser.uid=uid
+					queryUser.uname=uname
+					queryUser.roomid=roomid
+					queryUser.realRoomid=realRoomid
 					queryUser.fansnum=fansnum
+					queryUser.areaName=areaName
 					print('exited!')
 				else:	
 					session.add(User(uid=uid,uname=uname,roomid=roomid,realRoomid=realRoomid,fansnum=fansnum,areaName=areaName))
@@ -129,9 +133,9 @@ def addSmallTv(tv_id,roomid,realRoomid):
 def addFengbao(realRoomid,send_uid,send_uname):
 	session = DBSession()
 	try:
-		queryFengbao=session.query(Fengbao).filter_by(realRoomid=realRoomid).first()
-		if queryFengbao:
-			return
+		# queryFengbao=session.query(Fengbao).filter_by(realRoomid=realRoomid).first()
+		# if queryFengbao:
+		# 	return
 		session.add(Fengbao(realRoomid=realRoomid,send_uid=send_uid,send_uname=send_uname))
 		queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
 		if queryUser:
