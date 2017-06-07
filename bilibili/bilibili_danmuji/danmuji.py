@@ -18,7 +18,7 @@ from api import Client
 # roomid="1273106"
 # #roomid="2570641"
 info = [
-	{'username':'13126772351','password':'13126772351','roomid':1273106},
+	{'username':'13126772351','password':'ye06021123','roomid':1273106},
 	{'username':'979365217@qq.com','password':'ye06021123','roomid':2570641},
 	{'username':'13390776820','password':'wsglr3636...','roomid':2570641}
 ]

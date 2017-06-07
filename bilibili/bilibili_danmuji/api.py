@@ -73,7 +73,7 @@ class Client():
 		root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 		#存储cookies文件
 		cookies_file = os.path.join(root_path, self.username + ".cookies")
-		with open(path, 'wb') as f:
+		with open(cookies_file, 'wb') as f:
 			cookies_dic = requests.utils.dict_from_cookiejar(self.session.cookies)
 			pickle.dump(cookies_dic, f)
 
