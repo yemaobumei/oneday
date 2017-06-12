@@ -1,0 +1,3 @@
+获取直播流地址:cid=roomid
+http://live.bilibili.com/api/playurl?player=1&cid=1273106&quality=0 
+
