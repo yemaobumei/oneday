@@ -29,6 +29,10 @@ import random
 
 #添加数据库操作
 from sql import addSmallTv
+
+#mp3信息获取
+import eyed3
+
 headers={
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -72,6 +76,9 @@ class DanmuWebsocket():
 							'喜欢主播的大佬可以上波船,船上风景别有一番滋味呢',
 							'点关注不迷路，主播带你上高速',
 						]
+
+#------------点歌计数--------------------------------------------
+		self.songNum=0
 
 	async def sendDanmu(self,msg):
 		send_url="http://live.bilibili.com/msg/send"
@@ -296,8 +303,8 @@ class DanmuWebsocket():
 			commentUser = dic['info'][2][1]
 			isAdmin = dic['info'][2][2] == '1'
 			isVIP = dic['info'][2][3] == '1'
-			if "喵咭大佬弹幕姬专用の夜猫" in commentUser:
-				return 
+			# if "喵咭大佬弹幕姬专用の夜猫" in commentUser:
+			# 	return 
 			if isAdmin:
 				commentUser = '管理员 ' + commentUser
 			if isVIP:
@@ -307,8 +314,45 @@ class DanmuWebsocket():
 				await self.robot(commentUser,commentText)
 			except Exception as e:
 				print(314,e)
-				pass
+			if "点歌" in commentText:
+				try:
+					song=commentText.replace('点歌','')
+
+					if  song:
+						os.chdir('../music')
+						os.system("netease-dl --quiet song --name '%s'"%(song))
+						# files=os.listdir('../music/')
+						# for file in files:
+						# 	if file.split('.')[-1]=='mp3' :
+						# 		font_path="/usr/share/fonts/winFonts/msyh.ttf"
+						# 		flv_name=file.split('.')[0]+'.flv'
+						# 		mp3=eyed3.load(file)
+						# 		seconds=mp3.info.time_secs
+						# 		print(flv_name,seconds)
+						# 		cmd1="ffmpeg  -loop 1 -i '0%s.jpg'   -pix_fmt yuv420p -vcodec libx264 -b:v 600k -r:v 25 -preset medium -crf 30  -vframes 250 -r 25 -t %s -s 720x576 -y SinglePictureVide.mp4"%(str(random.randint(0,6)),str(seconds))
+						# 		cmd2="ffmpeg -i %s -i %s -vf drawtext=text='正在播放%s':fontfile=%s:fontsize=18:fontcolor=blue@0.8:x=w-tw-10:y=th  -b:a 256k -b:v 600k -f flv -y '%s'"%('SinglePictureVide.mp4',file,file,font_path,flv_name)
+						# 		os.system(cmd1)
+						# 		os.system(cmd2)
+						# 		os.remove(file)
+						# 		os.remove("SinglePictureVide.mp4")
+						# 		f=open('./mylist.txt','w')
+						# 		f.write("file '%s'\n"%(flv_name))
+						# 		f.close()
+						# f=open("list%s.txt"%(self.songNum),'w')
+						# f.write(song)
+						# f.close()
+						# print(song)
+						# self.songNum+=1
+				except Exception as e:
+					print(e)
+			if "切歌" in commentText:
+				try:
+					print(commentText)
+					os.system('killall ffmpeg')
+				except Exception as e:
+					print(e)
 			return
+
 		if cmd == 'SEND_GIFT' and config.TURN_GIFT == 1:
 			#累计多次礼物后，情况礼物清单栏,{'a':3,'b':5}
 			self.gift_num+=1
@@ -372,52 +416,7 @@ class DanmuWebsocket():
 				await self.sendDanmu(res)
 			except Exception as e:
 				print(372,e)
-		# if cmd == 'SYS_MSG':
-		# 	try:
-		# 		if 'tv_id' in dic:
-		# 			tv_id = dic['tv_id']
-		# 			real_roomid = dic['real_roomid']
-		# 			roomid = dic['roomid']
-		# 			URL='http://api.live.bilibili.com/SmallTV/join?roomid={0}&id={1}&_={2}'.format(real_roomid, tv_id, int(time.time()*1000))
-		# 			await self.getAwardTv(tv_id,URL)
-		# 			addSmallTv(tv_id,roomid,real_roomid)
-		# 			return
-		# 		if '领取应援棒' in dic['msg']:
-		# 			roomid = re.findall('.+?(\d+)',dic['url'])
-		# 			roomid = int(roomid[0])
-		# 			await self.getAwardLighten(roomid)
-		# 	except Exception as e:
-		# 		print(404,e)
-
-		return
 
 
-	async def getAwardTv(self,tv_id,url):
-		
-		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
-			async with  s.get(url,headers=headers) as res:
-				text = await res.text()#{"code":0,"msg":"OK","data":{"id":20122,"dtime":179,"status":1}}
-				# if res.status==200:
-					# print('已参加小电视抽奖',tv_id)
 
-	async def getAwardLighten(self,roomid):
-		url ='http://api.live.bilibili.com/activity/v1/NeedYou/getLiveInfo'
-		url2 = 'http://api.live.bilibili.com/activity/v1/NeedYou/getLiveAward'
-		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
-			async with  s.post(url,headers=headers,data={'roomid':roomid}) as res:
-				result = await res.text()
-				result = json.loads(result)
-				if len(result['data'])>0:
-					result = result['data'][0]
-					if result['type'] == 'need_you':
-						lightenId = result['lightenId']
-						async with s.post(url2,data={'roomid':roomid,'lightenId':lightenId}) as r:
-							result = await r.text()
-							result = json.loads(result)
-							if result['code'] == 0 :
-								print('领取应援棒成功!')
-							else:
-								print('领取应援棒失败')
 
-					else:
-						print(result)
