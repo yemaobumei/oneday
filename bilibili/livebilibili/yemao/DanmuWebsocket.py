@@ -108,6 +108,7 @@ class DanmuWebsocket():
 		length=len(msg)
 		c=math.ceil(length/30.0)
 		for i in range(c):
+			await asyncio.sleep(1)
 			await self.sendDanmu(msg[i*30:(i+1)*30])
 					
 	async def robot(self,username,msg):
@@ -310,8 +311,11 @@ class DanmuWebsocket():
 
 					if  song:
 						os.chdir('../music')
-						os.system("netease-dl --quiet song --name '%s'"%(song))
-						os.system("ps -ef|grep ffmpeg|grep bgm|awk '{print$2}'|xargs kill -9")
+						# os.system("netease-dl --quiet song --name '%s'"%(song))
+						status=os.popen("netease-dl --quiet song --name '%s'"%(song)).read()
+						await self.sendDanmu(status)
+						if "Downlaoding" in status:
+							os.system("ps -ef|grep ffmpeg|grep bgm|awk '{print$2}'|xargs kill -9")
 						# files=os.listdir('../music/')
 						# for file in files:
 						# 	if file.split('.')[-1]=='mp3' :

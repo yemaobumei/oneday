@@ -110,6 +110,7 @@ class DanmuWebsocket():
 		length=len(msg)
 		c=math.ceil(length/30.0)
 		for i in range(c):
+			await asyncio.sleep(1)
 			await self.sendDanmu(msg[i*30:(i+1)*30])
 					
 	async def robot(self,username,msg):
