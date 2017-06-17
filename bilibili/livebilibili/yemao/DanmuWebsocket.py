@@ -303,24 +303,15 @@ class DanmuWebsocket():
 			commentUser = dic['info'][2][1]
 			isAdmin = dic['info'][2][2] == '1'
 			isVIP = dic['info'][2][3] == '1'
-			# if "喵咭大佬弹幕姬专用の夜猫" in commentUser:
-			# 	return 
-			if isAdmin:
-				commentUser = '管理员 ' + commentUser
-			if isVIP:
-				commentUser = 'VIP ' + commentUser
-			try:
-				#print (311,commentUser + ' say: ' + commentText)
-				await self.robot(commentUser,commentText)
-			except Exception as e:
-				print(314,e)
-			if "点歌" in commentText:
+
+			if "点歌" == commentText[0:2]:
 				try:
 					song=commentText.replace('点歌','')
 
 					if  song:
 						os.chdir('../music')
 						os.system("netease-dl --quiet song --name '%s'"%(song))
+						os.system("ps -ef|grep ffmpeg|grep bgm|awk '{print$2}'|xargs kill -9")
 						# files=os.listdir('../music/')
 						# for file in files:
 						# 	if file.split('.')[-1]=='mp3' :
@@ -345,12 +336,18 @@ class DanmuWebsocket():
 						# self.songNum+=1
 				except Exception as e:
 					print(e)
-			if "切歌" in commentText:
+			if "切歌" == commentText:
 				try:
-					print(commentText)
 					os.system('killall ffmpeg')
 				except Exception as e:
 					print(e)
+			if "喵咭大佬弹幕姬专用の夜猫" in commentUser:
+				return 
+			try:
+				#print (311,commentUser + ' say: ' + commentText)
+				await self.robot(commentUser,commentText)
+			except Exception as e:
+				print(314,e)					
 			return
 
 		if cmd == 'SEND_GIFT' and config.TURN_GIFT == 1:
