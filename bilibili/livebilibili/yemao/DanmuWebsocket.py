@@ -312,7 +312,7 @@ class DanmuWebsocket():
 					if  song:
 						os.chdir('../music')
 						# os.system("netease-dl --quiet song --name '%s'"%(song))
-						status=os.popen("netease-dl --quiet song --name '%s'"%(song)).read()
+						status=os.popen("netease-dl --quiet --lyric song --name '%s'"%(song)).read()
 						await self.sendDanmu(status)
 						if "Downlaoding" in status:
 							os.system("ps -ef|grep ffmpeg|grep bgm|awk '{print$2}'|xargs kill -9")
