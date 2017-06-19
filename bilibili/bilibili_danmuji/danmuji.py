@@ -20,7 +20,8 @@ from api import Client
 info = [
 	{'username':'13126772351','password':'ye06021123','roomid':1273106},
 	{'username':'979365217@qq.com','password':'ye06021123','roomid':4416185},
-	{'username':'13390776820','password':'wsglr3636...','roomid':4416185}
+	{'username':'13390776820','password':'wsglr3636...','roomid':4416185},
+	{'username':'13375190907','password':'icca0907','roomid':4416185}
 ]
 tasks = []
 for each in info:		
