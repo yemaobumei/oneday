@@ -46,6 +46,7 @@ class Client():
 		self.cookies={}
 		self.username=username
 		self.password=password
+		self.nickname=""
 
 	#密码执行加密
 	def _encrypt(self):
@@ -138,9 +139,7 @@ class Client():
 			return False
 		print('欢迎您:', self.username)
 		self.isLogin=True
-
-
-		return self.cookies #dict{}
+		return self.cookies,self.nickname #dict{}
 	@loop
 	def do_sign(self):
 		self.load_cookies()
@@ -159,6 +158,7 @@ class Client():
 		try:
 			if data['status'] == True:
 				self.userdata = data['data']
+				self.nickname=data['data']['uname']
 				self.isLogin=True
 				return True
 		except Exception as e:

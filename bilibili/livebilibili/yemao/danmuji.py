@@ -23,14 +23,14 @@ info = [
 tasks = []
 for each in info:		
 	LoginClient=Client(each['username'],each['password'])
-	cookies=LoginClient.cookies_login() #<class dic>{}
+	cookies,nickname=LoginClient.cookies_login() #<class dic>{}
 	while not LoginClient.isLogin:
 		LoginClient.login()
 		if LoginClient.isLogin:
-			cookies=LoginClient.cookies_login()
+			cookies,nickname=LoginClient.cookies_login()
 			break
 	#建立直播弹幕websocket,返回发送弹幕姬
-	danmuji = DanmuWebsocket(cookies=cookies,roomid=each['roomid'])
+	danmuji = DanmuWebsocket(cookies=cookies,roomid=each['roomid'],nickname=nickname)
 	#添加异步任务
 	tasks+=[
 				#danmuji.sendDanmu('小夜猫来看你了'),

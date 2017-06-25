@@ -36,7 +36,7 @@ headers={
 
 
 class DanmuWebsocket():
-	def __init__(self,cookies,roomid):
+	def __init__(self,cookies,roomid,nickname):
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
 		self._roomId = 0
 		self._ChatPort = 788
@@ -51,6 +51,7 @@ class DanmuWebsocket():
 		self._roomId = int(self._roomId)
 
 		self.cookies=cookies
+		self.nickname=nickname
 
 #---辅助弹幕部分--------------------------------------------------------------------------
 		self.send_danmu_num=0
@@ -306,7 +307,7 @@ class DanmuWebsocket():
 			commentUser = dic['info'][2][1]
 			isAdmin = dic['info'][2][2] == '1'
 			isVIP = dic['info'][2][3] == '1'
-			if "喵咭大佬弹幕姬专用の夜猫" in commentUser:
+			if self.nickname in commentUser:
 				return 
 			if isAdmin:
 				commentUser = '管理员 ' + commentUser

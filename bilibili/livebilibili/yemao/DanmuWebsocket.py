@@ -40,7 +40,7 @@ headers={
 
 
 class DanmuWebsocket():
-	def __init__(self,cookies,roomid):
+	def __init__(self,cookies,roomid,nickname):
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
 		self._roomId = 0
 		self._ChatPort = 788
@@ -55,6 +55,7 @@ class DanmuWebsocket():
 		self._roomId = int(self._roomId)
 
 		self.cookies=cookies
+		self.nickname=nickname
 
 #---辅助弹幕部分--------------------------------------------------------------------------
 		self.send_danmu_num=0
@@ -345,7 +346,7 @@ class DanmuWebsocket():
 					os.system('killall ffmpeg')
 				except Exception as e:
 					print(e)
-			if "喵咭大佬弹幕姬专用の夜猫" in commentUser:
+			if self.nickname in commentUser:
 				return 
 			try:
 				#print (311,commentUser + ' say: ' + commentText)
