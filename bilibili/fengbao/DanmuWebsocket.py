@@ -193,7 +193,7 @@ class DanmuWebsocket():
 			try:
 				if GiftName == "节奏风暴":				
 					self.fengbao = True
-				#print(GiftName,self._roomId)
+					print(GiftName,self._roomId)
 			except Exception as e:
 				print(355,e,GiftUser)
 			return
@@ -219,10 +219,12 @@ class DanmuWebsocket():
 			# 	async with  s.post(send_url,headers=headers,data=data) as res:
 			# 		await res.text()
 			# 		print("send danmu ok!")
+
 					# if res.status==200:
 					# 	print(108,msg,self._roomId)
 			os.system("nohup python3 -c \"import requests;requests.post(\'%s\',cookies=%s,headers=%s,data=%s)\" >danmu.out 2>&1 &"%(send_url,cookies,headers,data))
 		await asyncio.sleep(0.1)
+
 	async def addFengbaoProxy(self,realRoomid,send_uid,send_uname):
 		await asyncio.sleep(2)
 		addFengbao(realRoomid,send_uid,send_uname)
