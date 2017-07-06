@@ -19,7 +19,8 @@ import config
 #登录B站获取cookies
 info = [
 	{'username':'13126772351','password':'ye06021123','roomid':1273106},
-	# {'username':'979365217@qq.com','password':'ye06021123','roomid':2570641},
+	{'username':'979365217@qq.com','password':'ye06021123','roomid':2570641},
+	{'username':'13375190907','password':'licca0907','roomid':2570641},
 	{'username':'13390776820','password':'wsglr3636...','roomid':2570641}
 ]
 cookies_list = []
@@ -70,7 +71,7 @@ print(len(room))
 
 
 
-
+room=['2570641']
 #建立直播弹幕websocket,返回发送弹幕姬
 danmuji=[]
 for each in room:
