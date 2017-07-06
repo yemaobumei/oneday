@@ -12,9 +12,9 @@ from api import Client
 
 import requests
 import json
+import time
+import config
 
-#数据库操作
-# from sql import addUser
 
 #登录B站获取cookies
 info = [
@@ -38,33 +38,34 @@ room=[]
 s = requests.Session()
 s.keep_alive = False
 headers={'Connection':'close'}
-proxies={"http":"60.169.19.66:9000"}
+proxies=config.proxies
 
 for i in range(0,7):
-	try:		
-		r=s.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i),timeout=5,proxies=proxies)
-		if r.status_code==200:
-			data=json.loads(r.content.decode('utf8'))['data']
-			for each_room in data:
-				room.append(each_room['roomid'])
-				#获取主播信息
-				# uid=int(each_room['uid'])
-				# uname=each_room['uname']
-				# roomid=int(each_room['link'].replace('/',''))
-				# realRoomid=int(each_room['roomid'])
-				# areaName=each_room['areaName']
-				# online=each_room['online']
-				#获取主播粉丝数
-				# s=requests.get('http://space.bilibili.com/ajax/friend/GetFansList?mid=%s&page=1&_=1494764064486'%(uid))#mid输入uid.
-				# data=json.loads(s.content.decode('utf8'))['data']#可能是字典，也可能是"粉丝列表中没有值"
-				# fansnum=int(data['results']) if 'results' in data else 0
-				#print(i,uname,online)
-				#数据库添加用户信息
-				# addUser(uid,uname,roomid,realRoomid,fansnum,areaName)
-	except Exception as e:
-		print(e)			
+	while True:
+		try:	
+			r=s.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i),timeout=5,proxies=proxies)
+			if r.status_code==200:
+				data=r.json()['data']
+				for each_room in data:
+					room.append(each_room['roomid'])
+				break
+			else:
+				print(r.status_code)
+		except Exception as e:
+			print(e)
 
-# room = list(set(room))
+		time.sleep(5)
+		#查询代理ip地址
+		#http://www.daxiangdaili.com/api?tid=559329887212274
+		response=requests.get("http://vtp.daxiangdaili.com/ip/?tid=559329887212274&num=1&protocol=http&operator=1&delay=1&filter=on")
+		ip=response.text
+		proxies['http']=ip
+		print(ip)
+		f=open('./config.py','w')
+		f.write('proxies=%s'%(proxies))
+		f.close()
+
+
 print(len(room))
 
 
