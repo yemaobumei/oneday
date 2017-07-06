@@ -20,7 +20,9 @@ import config
 info = [
 	{'username':'13126772351','password':'ye06021123','roomid':1273106},
 	# {'username':'979365217@qq.com','password':'ye06021123','roomid':2570641},
-	{'username':'13390776820','password':'wsglr3636...','roomid':2570641}
+	{'username':'13390776820','password':'wsglr3636...','roomid':2570641},#feihua
+	{'username':'13375190907','password':'licca0907','roomid':2570641}#ningmeng
+
 ]
 cookies_list = []
 for each in info:		
