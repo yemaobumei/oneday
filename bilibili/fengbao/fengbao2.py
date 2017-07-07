@@ -42,7 +42,7 @@ s.keep_alive = False
 headers={'Connection':'close'}
 proxies=config.proxies
 
-for i in range(0,2):
+for i in range(4,6):
 	while True:
 		try:	
 			r=s.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i),timeout=5,proxies=proxies)
@@ -62,7 +62,6 @@ for i in range(0,2):
 		response=requests.get("http://vtp.daxiangdaili.com/ip/?tid=559329887212274&num=1&protocol=http&operator=1&delay=1&filter=on")
 		ip=response.text
 		proxies['http']=ip
-		proxies['https']=ip
 		print(ip)
 		f=open('./config.py','w')
 		f.write('proxies=%s'%(proxies))
