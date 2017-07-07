@@ -42,7 +42,7 @@ s.keep_alive = False
 headers={'Connection':'close'}
 proxies=config.proxies
 
-for i in range(0,2):
+for i in range(7,8):
 	while True:
 		try:	
 			r=s.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i),timeout=5,proxies=proxies)
