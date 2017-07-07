@@ -27,11 +27,11 @@ info = [
 cookies_list = []
 for each in info:		
 	LoginClient=Client(each['username'],each['password'])
-	cookies=LoginClient.cookies_login() #<class dic>{}
+	cookies,nickname=LoginClient.cookies_login() #<class dic>{}
 	while not LoginClient.isLogin:
 		LoginClient.login()
 		if LoginClient.isLogin:
-			cookies=LoginClient.cookies_login()
+			cookies,nickname=LoginClient.cookies_login()
 			break
 	cookies_list.append(cookies)
 
@@ -72,7 +72,6 @@ for i in range(0,2):
 
 
 print(len(room))
-
 
 #建立直播弹幕websocket,返回发送弹幕姬
 danmuji=[]
