@@ -62,6 +62,7 @@ for i in range(0,7):
 		response=requests.get("http://vtp.daxiangdaili.com/ip/?tid=559329887212274&num=1&protocol=http&operator=1&delay=1&filter=on")
 		ip=response.text
 		proxies['http']=ip
+		proxies['https']=ip
 		print(ip)
 		f=open('./config.py','w')
 		f.write('proxies=%s'%(proxies))

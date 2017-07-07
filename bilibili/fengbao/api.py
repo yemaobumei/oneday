@@ -15,7 +15,7 @@ import binascii
 from bs4 import BeautifulSoup
 import urllib
 import time
-
+import config
 headers = {
 	'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 	'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -66,9 +66,9 @@ class Client():
 		print('进入登录程序.')
 		root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 		#访问登陆页面
-		response = self.session.get('https://passport.bilibili.com/login')
+		response = self.session.get('https://passport.bilibili.com/login',proxies=config.proxies)
 		#请求验证码图片
-		response = self.session.get('https://passport.bilibili.com/captcha')
+		response = self.session.get('https://passport.bilibili.com/captcha',proxies=config.proxies)
 		#保存验证码
 		captcha_file = os.path.join(root_path, "captcha.png")
 		f = open(captcha_file,'wb')
@@ -86,7 +86,7 @@ class Client():
 			'pwd': password,
 			'vdcode':captcha_code
 		}
-		response = self.session.post('https://passport.bilibili.com/login/dologin', data=preload)
+		response = self.session.post('https://passport.bilibili.com/login/dologin', data=preload,proxies=config.proxies)
 		try:
 			#解析返回的html，判断登陆成功与否
 			soup = BeautifulSoup(response.text, "html.parser")
@@ -137,15 +137,16 @@ class Client():
 
 	#获取个人信息
 	def get_account_info(self):
-		response = self.session.get('https://account.bilibili.com/home/userInfo')
+		response = self.session.get('https://account.bilibili.com/home/userInfo',proxies=config.proxies)
 		data = json.loads(response.content.decode('utf-8'))
+		print(data)
 		try:
 			if data['status'] == True:
 				self.userdata = data['data']
 				self.isLogin=True
 				return True
 		except Exception as e:
-			print(e)
+			print(149,e)
 		return False
 
 
