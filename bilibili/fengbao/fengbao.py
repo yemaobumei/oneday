@@ -71,8 +71,6 @@ for i in range(0,7):
 print(len(room))
 
 
-
-room=['2570641']
 #建立直播弹幕websocket,返回发送弹幕姬
 danmuji=[]
 for each in room:

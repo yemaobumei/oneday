@@ -222,8 +222,9 @@ class DanmuWebsocket():
 
 					# if res.status==200:
 					# 	print(108,msg,self._roomId)
-			os.system("nohup python3 -c \"import requests;requests.post(\'%s\',cookies=%s,headers=%s,data=%s)\" >danmu.out 2>&1 &"%(send_url,cookies,headers,data))
-		await asyncio.sleep(0.1)
+			#os.system("nohup python3 -c \"import requests;requests.post(\'%s\',cookies=%s,headers=%s,data=%s)\" >danmu.out 2>&1 &"%(send_url,cookies,headers,data))
+			requests.post(send_url,cookies=cookies,headers=headers,data=data)
+		await asyncio.sleep(0.01)
 
 	async def addFengbaoProxy(self,realRoomid,send_uid,send_uname):
 		await asyncio.sleep(2)
