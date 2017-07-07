@@ -27,11 +27,11 @@ info = [
 cookies_list = []
 for each in info:		
 	LoginClient=Client(each['username'],each['password'])
-	cookies=LoginClient.cookies_login() #<class dic>{}
+	cookies,nickname=LoginClient.cookies_login() #<class dic>{}
 	while not LoginClient.isLogin:
 		LoginClient.login()
 		if LoginClient.isLogin:
-			cookies=LoginClient.cookies_login()
+			cookies,nickname=LoginClient.cookies_login()
 			break
 	cookies_list.append(cookies)
 
