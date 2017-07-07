@@ -320,7 +320,7 @@ class DanmuWebsocket():
 				print(314,e)
 				pass
 			return
-		if cmd == 'SEND_GIFT' and config.TURN_GIFT == 1:
+		if cmd == 'SEND_GIFT':
 			#累计多次礼物后，情况礼物清单栏,{'a':3,'b':5}
 			self.gift_num+=1
 			if self.gift_num % 50 == 0:
@@ -359,16 +359,8 @@ class DanmuWebsocket():
 				print(355,e,GiftUser)
 				pass
 			return
-		# if cmd == 'WELCOME' and config.TURN_WELCOME == 1:
-		# 	commentUser = dic['data']['uname']
-		# 	try:
-		# 		print (357,'欢迎 ' + commentUser + ' 进入房间。。。。')
-		# 		await self.sendDanmu('欢迎 ' + commentUser + ' 进入房间。。。。')
-		# 	except Exception as e:
-		# 		print(360,e)
-		# 		pass
-		# 	return
-		if cmd == 'WELCOME_GUARD' and config.TURN_WELCOME == 1:
+
+		if cmd == 'WELCOME_GUARD' :
 			try:
 				commentUser = dic['data']['username']
 				t=datetime.datetime.now()

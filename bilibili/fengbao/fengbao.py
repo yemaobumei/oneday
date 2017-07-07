@@ -38,6 +38,7 @@ for each in info:
 
 room=[]
 s = requests.Session()
+s.proxies=config.proxies
 s.keep_alive = False
 headers={'Connection':'close'}
 proxies=config.proxies
@@ -45,7 +46,7 @@ proxies=config.proxies
 for i in range(0,2):
 	while True:
 		try:	
-			r=s.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i),timeout=5,proxies=proxies)
+			r=s.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i),timeout=5)
 			if r.status_code==200:
 				data=r.json()['data']
 				for each_room in data:
@@ -61,12 +62,13 @@ for i in range(0,2):
 		#http://www.daxiangdaili.com/api?tid=559329887212274
 		response=requests.get("http://vtp.daxiangdaili.com/ip/?tid=559329887212274&num=1&protocol=http&operator=1&delay=1&filter=on")
 		ip=response.text
-		proxies['http']=ip
-		proxies['https']=ip
-		print(ip)
-		f=open('./config.py','w')
-		f.write('proxies=%s'%(proxies))
-		f.close()
+		if response.status_code == 200:
+			proxies['http']=ip
+			proxies['https']=ip
+			print(ip)
+			f=open('./config.py','w')
+			f.write('proxies=%s'%(proxies))
+			f.close()
 
 
 print(len(room))

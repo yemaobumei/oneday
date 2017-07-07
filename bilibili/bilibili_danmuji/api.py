@@ -16,7 +16,7 @@ from bs4 import BeautifulSoup
 import urllib
 import time
 import asyncio
-
+import config
 headers = {
 	'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 	'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -41,6 +41,7 @@ class Client():
 	def __init__(self,username,password):
 		self.session = requests.Session()
 		self.session.headers = headers
+		self.session.proxies = config.proxies
 		self.userdata={}
 		self.isLogin=False
 		self.cookies={}
@@ -136,7 +137,7 @@ class Client():
 		self.load_cookies()
 		if not self.get_account_info():
 			print(self.username + '.cookies失效，请登录')
-			return False
+			return None,None
 		print('欢迎您:', self.username)
 		self.isLogin=True
 		return self.cookies,self.nickname #dict{}

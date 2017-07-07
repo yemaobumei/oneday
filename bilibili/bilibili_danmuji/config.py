@@ -1,2 +1,1 @@
-TURN_WELCOME = 1
-TURN_GIFT = 1
+proxies={'http': '61.160.233.8:80','https':'61.160.233.8:80'}
