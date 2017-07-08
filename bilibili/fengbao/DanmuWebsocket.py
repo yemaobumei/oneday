@@ -140,7 +140,7 @@ class DanmuWebsocket():
 					try: # 为什么还会出现 utf-8 decode error??????
 						messages = tmp.decode('utf-8')
 					except Exception as e:
-						#print(258,e)
+						print(258,e)
 						continue
 					await self.parseDanMu(messages)
 					continue
@@ -160,8 +160,7 @@ class DanmuWebsocket():
 			cmd = dic['cmd']
 
 		except Exception as e: # 有些情况会 jsondecode 失败，未细究，可能平台导致
-			# print(276,e)
-			# print(type(messages),messages)
+			print(276,e)
 			return
 		
 		if cmd == 'DANMU_MSG':
@@ -169,34 +168,24 @@ class DanmuWebsocket():
 			if self.fengbao:					
 				commentText = dic['info'][1]
 				commentUser = dic['info'][2][1]
-				try:
-					print (311,commentUser + ' say: ' + commentText,self._roomId)
-					await self.sendDanmu(commentText)
-					self.fengbao=False
-					await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
-					return						
-				except Exception as e:
-					self.fengbao=False
-					print(314,e)
-				return
-		if cmd == 'SEND_GIFT' :
 
+				print (311,commentUser + ' say: ' + commentText,self._roomId)
+				await self.sendDanmu(commentText)
+				self.fengbao=False
+				await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
+			return
+
+		if cmd == 'SEND_GIFT' :
 
 			#获取送礼信息		
 			GiftName = dic['data']['giftName']
-			# uid=dic['data']['uid']
-			# gifts=['B坷垃','喵娘','节奏风暴','普通拳']
-			# gifts_low=['233','666','小拳拳','亿圆']
-			#print (332,GiftName,GiftNum)
 			self.send_uid=dic['data']['uid']
 			self.send_uname=dic['data']['uname']
 
-			try:
-				if GiftName == "节奏风暴":				
-					self.fengbao = True
-					print(GiftName,self._roomId)
-			except Exception as e:
-				print(355,e,GiftUser)
+			if GiftName == "节奏风暴":				
+				self.fengbao = True
+				print(GiftName,self._roomId)
+
 			return
 
 #---辅助弹幕部分--------------------------------------------------------------------------
@@ -220,9 +209,9 @@ class DanmuWebsocket():
 			# 	async with  s.post(send_url,headers=headers,data=data) as res:
 			# 		await res.text()
 			# 		print("send danmu ok!")
-
 					# if res.status==200:
 					# 	print(108,msg,self._roomId)
+					
 			#os.system("nohup python3 -c \"import requests;requests.post(\'%s\',cookies=%s,headers=%s,data=%s)\" >danmu.out 2>&1 &"%(send_url,cookies,headers,data))
 			requests.post(send_url,cookies=cookies,headers=headers,data=data)
 		await asyncio.sleep(0.01)

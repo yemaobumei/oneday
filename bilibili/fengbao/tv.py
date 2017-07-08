@@ -1,4 +1,7 @@
-from sql import *
+import sys
+sys.path.append("../")
+
+from helper.sql import *
 # from datetime import datetime,timedelta
 # addSmallTv(1222,1,1)
 #addFengbao(123,111,'yefan')
