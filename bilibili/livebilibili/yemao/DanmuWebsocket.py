@@ -27,8 +27,7 @@ import math
 import datetime,time
 import random
 
-#添加数据库操作
-from sql import addSmallTv
+
 
 #mp3信息获取
 import eyed3
@@ -317,28 +316,6 @@ class DanmuWebsocket():
 						await self.sendDanmu(status)
 						if "下载" in status:
 							os.system("ps -ef|grep ffmpeg|grep bgm|awk '{print$2}'|xargs kill -9")
-						# files=os.listdir('../music/')
-						# for file in files:
-						# 	if file.split('.')[-1]=='mp3' :
-						# 		font_path="/usr/share/fonts/winFonts/msyh.ttf"
-						# 		flv_name=file.split('.')[0]+'.flv'
-						# 		mp3=eyed3.load(file)
-						# 		seconds=mp3.info.time_secs
-						# 		print(flv_name,seconds)
-						# 		cmd1="ffmpeg  -loop 1 -i '0%s.jpg'   -pix_fmt yuv420p -vcodec libx264 -b:v 600k -r:v 25 -preset medium -crf 30  -vframes 250 -r 25 -t %s -s 720x576 -y SinglePictureVide.mp4"%(str(random.randint(0,6)),str(seconds))
-						# 		cmd2="ffmpeg -i %s -i %s -vf drawtext=text='正在播放%s':fontfile=%s:fontsize=18:fontcolor=blue@0.8:x=w-tw-10:y=th  -b:a 256k -b:v 600k -f flv -y '%s'"%('SinglePictureVide.mp4',file,file,font_path,flv_name)
-						# 		os.system(cmd1)
-						# 		os.system(cmd2)
-						# 		os.remove(file)
-						# 		os.remove("SinglePictureVide.mp4")
-						# 		f=open('./mylist.txt','w')
-						# 		f.write("file '%s'\n"%(flv_name))
-						# 		f.close()
-						# f=open("list%s.txt"%(self.songNum),'w')
-						# f.write(song)
-						# f.close()
-						# print(song)
-						# self.songNum+=1
 				except Exception as e:
 					print(e)
 			if "切歌" == commentText:
