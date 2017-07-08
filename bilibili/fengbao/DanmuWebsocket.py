@@ -169,9 +169,9 @@ class DanmuWebsocket():
 				commentText = dic['info'][1]
 				commentUser = dic['info'][2][1]
 
-				print (311,commentUser + ' say: ' + commentText,self._roomId)
 				await self.sendDanmu(commentText)
 				self.fengbao=False
+				print (311,commentUser + ' say: ' + commentText,self._roomId)
 				await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
 			return
 
@@ -184,8 +184,6 @@ class DanmuWebsocket():
 
 			if GiftName == "节奏风暴":				
 				self.fengbao = True
-				print(GiftName,self._roomId)
-
 			return
 
 #---辅助弹幕部分--------------------------------------------------------------------------
@@ -205,18 +203,18 @@ class DanmuWebsocket():
 			'roomid':self._roomId     
 		}
 		for cookies in self.cookies_list:
-			# async with  aiohttp.ClientSession(cookies=cookies) as s:
-			# 	async with  s.post(send_url,headers=headers,data=data) as res:
-			# 		await res.text()
+			async with  aiohttp.ClientSession(cookies=cookies) as s:
+				async with  s.post(send_url,headers=headers,data=data) as res:
+					await res.text()
 			# 		print("send danmu ok!")
 					# if res.status==200:
 					# 	print(108,msg,self._roomId)
 					
 			#os.system("nohup python3 -c \"import requests;requests.post(\'%s\',cookies=%s,headers=%s,data=%s)\" >danmu.out 2>&1 &"%(send_url,cookies,headers,data))
-			requests.post(send_url,cookies=cookies,headers=headers,data=data)
-		await asyncio.sleep(0.01)
+			#requests.post(send_url,cookies=cookies,headers=headers,data=data)
+		#await asyncio.sleep(0.01)
 
 	async def addFengbaoProxy(self,realRoomid,send_uid,send_uname):
 		await asyncio.sleep(2)
 		addFengbao(realRoomid,send_uid,send_uname)
-		print("fengbao success!")
+		print("fengbao success!",self._roomId)
