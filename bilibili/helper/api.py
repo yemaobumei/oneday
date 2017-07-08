@@ -6,6 +6,7 @@
 #
 ############################################################
 import os,sys
+sys.path.append("../")
 import requests
 import requests.utils
 import pickle
@@ -16,7 +17,7 @@ from bs4 import BeautifulSoup
 import urllib
 import time
 import asyncio
-import config
+from helper import config
 headers = {
 	'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 	'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -62,9 +63,8 @@ class Client():
 		return message
 
 	def load_cookies(self):
-		root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 		#读取cookies文件
-		cookies_file = os.path.join(root_path, self.username + ".cookies")		
+		cookies_file = os.path.join(os.path.dirname(__file__), self.username + ".cookies")		
 		with open(cookies_file, 'rb') as f:
 			self.cookies=pickle.load(f)
 			self.session.cookies = requests.utils.cookiejar_from_dict(self.cookies)
@@ -72,9 +72,8 @@ class Client():
 
 
 	def save_cookies(self):
-		root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 		#存储cookies文件
-		cookies_file = os.path.join(root_path, self.username + ".cookies")
+		cookies_file = os.path.join(os.path.dirname(__file__), self.username + ".cookies")
 		with open(cookies_file, 'wb') as f:
 			cookies_dic = requests.utils.dict_from_cookiejar(self.session.cookies)
 			pickle.dump(cookies_dic, f)
@@ -127,10 +126,8 @@ class Client():
 			
 	#使用cookies登陆
 	def cookies_login(self):
-		root_path = os.path.dirname(os.path.realpath(sys.argv[0]))
-
 		#读取cookies文件
-		cookies_file = os.path.join(root_path, self.username + ".cookies")
+		cookies_file = os.path.join(os.path.dirname(__file__), self.username + ".cookies")
 		if not os.path.exists(cookies_file):
 			print(self.username + '.cookies不存在，请登录')
 			return False

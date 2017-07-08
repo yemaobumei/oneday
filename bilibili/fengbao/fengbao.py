@@ -1,19 +1,19 @@
 #!/usr/bin/python3
 #coding=utf-8
 
-import sys
-import os
+import os,sys
+sys.path.append("../")
 #异步操作
 import asyncio
 import aiohttp
 
 from DanmuWebsocket import DanmuWebsocket
-from api import Client
+from helper.api import Client
 
 import requests
 import json
 import time
-import config
+from helper import config
 
 
 #登录B站获取cookies

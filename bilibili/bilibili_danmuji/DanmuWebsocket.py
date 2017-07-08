@@ -7,11 +7,11 @@ import xml.dom.minidom
 import random
 import json
 from struct import *
-import config
 import re
 
-#api.py
+#lib.py
 import os,sys
+sys.path.append("../")
 import requests
 import requests.utils
 import pickle
@@ -28,7 +28,7 @@ import datetime,time
 import random
 
 #添加数据库操作
-from sql import addSmallTv
+from helper.sql import addSmallTv
 headers={
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',

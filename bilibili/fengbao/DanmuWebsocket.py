@@ -11,6 +11,7 @@ import re
 
 #api.py
 import os,sys
+sys.path.append("../")
 import requests
 import requests.utils
 import pickle
@@ -25,7 +26,7 @@ import math
 import datetime,time
 import random
 
-from sql import  addFengbao
+from helper.sql import  addFengbao
 
 headers={
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',

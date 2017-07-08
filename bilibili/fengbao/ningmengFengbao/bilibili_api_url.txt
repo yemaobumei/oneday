@@ -1,5 +1,0 @@
-验证码地址："https://passport.bilibili.com/captcha"
-快速登录地址  "https://account.bilibili.com/ajax/miniLogin/minilogin"
-
-'开播提醒'
- http://live.bilibili.com/feed/heartBeat/heartBeat 

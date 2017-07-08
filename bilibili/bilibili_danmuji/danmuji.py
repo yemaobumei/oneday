@@ -1,22 +1,19 @@
 #!/usr/bin/python3
 #coding=utf-8
 
-import sys
 import os
 import asyncio
 import aiohttp
 
 from DanmuWebsocket import DanmuWebsocket
-from api import Client
+
+import sys
+sys.path.append("../")
+from helper.api import Client
 
 
 #登录B站获取cookies
-# username=["13126772351","979365217@qq.com"]
-# password=["ye06021123","ye06021123"]
-# username=
-# password="ye06021123"
-# roomid="1273106"
-# #roomid="2570641"
+
 info = [
 	{'username':'13126772351','password':'ye06021123','roomid':4416185},
 	{'username':'979365217@qq.com','password':'ye06021123','roomid':4416185},
