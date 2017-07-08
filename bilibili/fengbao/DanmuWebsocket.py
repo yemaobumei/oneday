@@ -140,7 +140,7 @@ class DanmuWebsocket():
 					try: # 为什么还会出现 utf-8 decode error??????
 						messages = tmp.decode('utf-8')
 					except Exception as e:
-						print(258,e)
+						#print(258,e)
 						continue
 					await self.parseDanMu(messages)
 					continue
@@ -160,7 +160,7 @@ class DanmuWebsocket():
 			cmd = dic['cmd']
 
 		except Exception as e: # 有些情况会 jsondecode 失败，未细究，可能平台导致
-			print(276,e)
+			#print(276,e)
 			return
 		
 		if cmd == 'DANMU_MSG':

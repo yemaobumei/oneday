@@ -54,21 +54,22 @@ for i in range(0,7):
 				break
 			else:
 				print(r.status_code)
+
+
+			time.sleep(5)
+			#查询代理ip地址
+			#http://www.daxiangdaili.com/api?tid=559329887212274
+			response=requests.get("http://vtp.daxiangdaili.com/ip/?tid=559329887212274&num=1&protocol=http&operator=1&delay=1&filter=on")
+			ip=response.text
+			if response.status_code == 200:
+				proxies['http']=ip
+				proxies['https']=ip
+				print(ip)
+				f=open('../helper/config.py','w')
+				f.write('proxies=%s'%(proxies))
+				f.close()
 		except Exception as e:
 			print(e)
-
-		time.sleep(5)
-		#查询代理ip地址
-		#http://www.daxiangdaili.com/api?tid=559329887212274
-		response=requests.get("http://vtp.daxiangdaili.com/ip/?tid=559329887212274&num=1&protocol=http&operator=1&delay=1&filter=on")
-		ip=response.text
-		if response.status_code == 200:
-			proxies['http']=ip
-			proxies['https']=ip
-			print(ip)
-			f=open('../helper/config.py','w')
-			f.write('proxies=%s'%(proxies))
-			f.close()
 
 
 print(len(room))
