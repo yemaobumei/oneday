@@ -151,11 +151,14 @@ class Client():
 		self.load_cookies()
 		log=open('./sign.log','a')
 		url = "http://live.bilibili.com/sign/doSign"
-		r = self.session.get(url)
-		data = json.loads(r.text)
-		print(data['msg'])
-		log.write(time.strftime("%Y-%m-%d ", time.localtime())+data['msg']+'\n')
-		log.close()
+		try:
+			r = self.session.get(url)
+			data = json.loads(r.text)
+			print(data['msg'])
+			log.write(time.strftime("%Y-%m-%d ", time.localtime())+data['msg']+'\n')
+			log.close()
+		except Exception as e:
+			raise MyError('api.py:签到失败!')
 
 	#获取个人信息
 	def get_account_info(self):
