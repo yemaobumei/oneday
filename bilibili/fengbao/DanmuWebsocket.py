@@ -6,25 +6,18 @@ import aiohttp
 import xml.dom.minidom
 import random
 import json
-from struct import *
 import re
 
 #api.py
 import os,sys
 sys.path.append("../")
 import requests
-import requests.utils
-import pickle
-import rsa
-import binascii
-from bs4 import BeautifulSoup
+from struct import *
 
 
 #helper
-import difflib
-import math
-import datetime,time
-import random
+
+import time
 
 from helper.sql import  addFengbao
 
@@ -143,7 +136,6 @@ class DanmuWebsocket():
 						#print(258,e)
 						continue
 					await self.parseDanMu(messages)
-					continue
 				elif num==5 or num==6 or num==7:
 					tmp = await self._reader.read(num2)
 					continue
@@ -164,15 +156,14 @@ class DanmuWebsocket():
 			return
 		
 		if cmd == 'DANMU_MSG':
-
 			if self.fengbao:
-				self.fengbao=False					
+				self.fengbao = False					
 				commentText = dic['info'][1]
 				commentUser = dic['info'][2][1]
 				try:
 					await self.sendDanmu(commentText)
 					print (172,commentUser + ' say: ' + commentText,self._roomId)				
-					await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
+					#await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
 				except Exception as e:
 					print(177,e)
 			return
@@ -181,11 +172,13 @@ class DanmuWebsocket():
 
 			#获取送礼信息		
 			GiftName = dic['data']['giftName']
-			self.send_uid=dic['data']['uid']
-			self.send_uname=dic['data']['uname']
+
 			# if self._roomId == 2570641:
 			#print(GiftName,self._roomId)
-			if GiftName == "节奏风暴":				
+			#self.fengbao=True
+			if GiftName == "节奏风暴":
+				self.send_uid=dic['data']['uid']
+				self.send_uname=dic['data']['uname']				
 				self.fengbao = True
 			return
 
@@ -202,7 +195,7 @@ class DanmuWebsocket():
 			'fontsize':25,
 			'mode':1,
 			'msg':msg,
-			'rnd':'1493972251',
+			'rnd':int(time.time()),#'1493972251',
 			'roomid':self._roomId     
 		}
 		for cookies in self.cookies_list:

@@ -33,13 +33,13 @@ for each in info:
 	cookies_list.append(cookies)
 
 
+#获取最新热门直播房间号
 room=[]
 s = requests.Session()
 proxies=config.proxies
 s.proxies=proxies
 s.keep_alive = False
 headers={'Connection':'close'}
-
 
 for i in range(0,7):
 	j=0
@@ -67,7 +67,7 @@ for i in range(0,7):
 				if response.status_code == 200:
 					proxies['http']=ip
 					proxies['https']=ip
-					print(ip)
+					#print(ip)
 					f=open('../helper/config.py','w')
 					f.write('proxies=%s'%(proxies))
 					f.close()
@@ -80,6 +80,7 @@ for i in range(0,7):
 
 room=list(set(room))
 print(len(room))
+#room=['2570641']
 
 
 #建立直播弹幕websocket,返回发送弹幕姬
