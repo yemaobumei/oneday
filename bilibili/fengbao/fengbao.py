@@ -41,7 +41,7 @@ s.keep_alive = False
 headers={'Connection':'close'}
 
 
-for i in range(0,1):
+for i in range(0,7):
 	j=0
 	while True:
 		j += 1
