@@ -83,8 +83,8 @@ class DanmuWebsocket():
 		# print ('链接弹幕中。。。。。')
 		if (await self.SendJoinChannel(self._roomId) == True):
 			self.connected = True
-			# print ('进入房间成功。。。。。',self._roomId)
-			print ('链接弹幕成功。。。。。',self._roomId)
+			#print ('进入房间成功。。。。。',self._roomId)
+			#print ('链接弹幕成功。。。。。',self._roomId)
 			await self.ReceiveMessageLoop()
 			
 	async def HeartbeatLoop(self):
@@ -169,9 +169,12 @@ class DanmuWebsocket():
 				self.fengbao=False					
 				commentText = dic['info'][1]
 				commentUser = dic['info'][2][1]
-				await self.sendDanmu(commentText)
-				print (172,commentUser + ' say: ' + commentText,self._roomId)				
-				await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
+				try:
+					await self.sendDanmu(commentText)
+					print (172,commentUser + ' say: ' + commentText,self._roomId)				
+					await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
+				except Exception as e:
+					print(177,e)
 			return
 
 		if cmd == 'SEND_GIFT' :
@@ -206,7 +209,8 @@ class DanmuWebsocket():
 			async with  aiohttp.ClientSession(cookies=cookies) as s:
 				async with  s.post(send_url,headers=headers,data=data) as res:
 					await res.text()
-			# 		print("send danmu ok!")
+					#r=json.loads(res.text())
+					#print('send danmu ok!',r['msg'])
 					# if res.status==200:
 					# 	print(108,msg,self._roomId)
 					
@@ -215,6 +219,6 @@ class DanmuWebsocket():
 		#await asyncio.sleep(0.01)
 
 	async def addFengbaoProxy(self,realRoomid,send_uid,send_uname):
-		await asyncio.sleep(2)
 		addFengbao(realRoomid,send_uid,send_uname)
-		print("fengbao success!",self._roomId)
+		await asyncio.sleep(0.5)
+		#print("fengbao success!",self._roomId)

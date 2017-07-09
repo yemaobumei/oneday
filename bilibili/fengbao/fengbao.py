@@ -79,7 +79,6 @@ for i in range(0,7):
 			time.sleep(2)#休息一下，防止访问频率太高
 
 room=list(set(room))
-room+=['2570641']
 print(len(room))
 
 
