@@ -28,6 +28,14 @@ headers = {
 # 	'Referer': 'http://www.bilibili.com/',
 # 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:45.0) Gecko/20100101 Firefox/45.0'
 # }
+class MyError(Exception):
+	"""docstring for ClassName"""
+	def __init__(self, value):
+		super(Exception, self).__init__()
+		self.value = value
+	def __str__(self):
+		return repr(self.value)
+		
 def loop(func):
 	
 	async def wrap(self):
@@ -151,16 +159,13 @@ class Client():
 
 	#获取个人信息
 	def get_account_info(self):
-		response = self.session.get('https://account.bilibili.com/home/userInfo')
+		response = self.session.get('https://account.bilibili.com/home/userInfo',timeout=5)
 		data = json.loads(response.content.decode('utf-8'))
-		try:
-			if data['status'] == True:
-				self.userdata = data['data']
-				self.nickname=data['data']['uname']
-				self.isLogin=True
-				return True
-		except Exception as e:
-			print(e)
+		if data['status'] == True:
+			self.userdata = data['data']
+			self.nickname=data['data']['uname']
+			self.isLogin=True
+			return True
 		return False
 
 	def sendDanmu(self,roomid,msg):
@@ -210,3 +215,5 @@ class Client():
 		except Exception as e:
 			print('error', e)
 
+
+		

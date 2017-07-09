@@ -66,7 +66,7 @@ class DanmuWebsocket():
 			async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
 				html = await r.text()
 				m = re.findall(r'ROOMID\s=\s(\d+)', html)
-				ROOMID = m[0]
+				ROOMID = m[0]#str
 			self._roomId = int(ROOMID)
 			async with s.get(self._CIDInfoUrl + ROOMID) as r:
 				xml_string = '<root>' + await r.text() + '</root>'
@@ -84,7 +84,7 @@ class DanmuWebsocket():
 		if (await self.SendJoinChannel(self._roomId) == True):
 			self.connected = True
 			# print ('进入房间成功。。。。。',self._roomId)
-			# print ('链接弹幕成功。。。。。')
+			print ('链接弹幕成功。。。。。',self._roomId)
 			await self.ReceiveMessageLoop()
 			
 	async def HeartbeatLoop(self):
@@ -165,13 +165,12 @@ class DanmuWebsocket():
 		
 		if cmd == 'DANMU_MSG':
 
-			if self.fengbao:					
+			if self.fengbao:
+				self.fengbao=False					
 				commentText = dic['info'][1]
 				commentUser = dic['info'][2][1]
-
 				await self.sendDanmu(commentText)
-				self.fengbao=False
-				print (311,commentUser + ' say: ' + commentText,self._roomId)
+				print (172,commentUser + ' say: ' + commentText,self._roomId)				
 				await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
 			return
 
@@ -181,7 +180,8 @@ class DanmuWebsocket():
 			GiftName = dic['data']['giftName']
 			self.send_uid=dic['data']['uid']
 			self.send_uname=dic['data']['uname']
-
+			# if self._roomId == 2570641:
+			#print(GiftName,self._roomId)
 			if GiftName == "节奏风暴":				
 				self.fengbao = True
 			return
