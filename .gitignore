@@ -1,6 +1,6 @@
-
+*.out
 .DS_Store
-.log
+*.log
 *.dump
 __pycache__
 
