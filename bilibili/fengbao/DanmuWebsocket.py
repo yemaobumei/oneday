@@ -145,13 +145,9 @@ class DanmuWebsocket():
 						messages = tmp.decode('utf-8')
 					except Exception as e:
 						#print(147,e)
-						raise MyError("解码失败!")
+						#raise MyError("解码失败!")
 						continue
-					try:
-						await self.parseDanMu(messages)
-					except Exception as e:
-						print(141,e)
-						raise NameError
+					await self.parseDanMu(messages)
 				elif num==5 or num==6 or num==7:
 					tmp = await self._reader.read(num2)
 					continue
