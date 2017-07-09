@@ -35,7 +35,7 @@ class MyError(Exception):
 		self.value = value
 	def __str__(self):
 		return repr(self.value)
-		
+
 def loop(func):
 	
 	async def wrap(self):
@@ -50,7 +50,7 @@ class Client():
 	def __init__(self,username,password):
 		self.session = requests.Session()
 		self.session.headers = headers
-		self.session.proxies = config.proxies
+		#self.session.proxies = config.proxies
 		self.userdata={}
 		self.isLogin=False
 		self.cookies={}
@@ -159,14 +159,18 @@ class Client():
 
 	#获取个人信息
 	def get_account_info(self):
-		response = self.session.get('https://account.bilibili.com/home/userInfo',timeout=5)
-		data = json.loads(response.content.decode('utf-8'))
-		if data['status'] == True:
-			self.userdata = data['data']
-			self.nickname=data['data']['uname']
-			self.isLogin=True
-			return True
-		return False
+		try:
+			response = self.session.get('https://account.bilibili.com/home/userInfo',timeout=5)
+			data = json.loads(response.content.decode('utf-8'))
+			if data['status'] == True:
+				self.userdata = data['data']
+				self.nickname=data['data']['uname']
+				self.isLogin=True
+				return True
+			return False
+		except Exception as e :
+			print(e)
+			return False
 
 	def sendDanmu(self,roomid,msg):
 		send_url="http://live.bilibili.com/msg/send"
