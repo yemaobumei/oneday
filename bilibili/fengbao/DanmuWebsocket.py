@@ -20,6 +20,7 @@ from struct import *
 import time
 
 from helper.sql import  addFengbao
+from helper.api import MyError
 
 headers={
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
@@ -30,13 +31,13 @@ headers={
 class DanmuWebsocket():
 	def __init__(self,cookies_list,roomid):
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
-		self._ChatPort = 788
+		self._ChatPort = 2243#788
 		self._protocolversion = 1
 		self._reader = 0
 		self._writer = 0
 		self.connected = False
 		self._UserCount = 0
-		self._ChatHost = 'livecmt-1.bilibili.com'
+		self._ChatHost = 'livecmt-2.bilibili.com'
 
 		self._roomId = roomid
 		self._roomId = int(self._roomId)
@@ -54,41 +55,51 @@ class DanmuWebsocket():
 			
 
 	async def connectServer(self):
-		#print ('正在进入房间。。。。。')
-		with aiohttp.ClientSession() as s:
-			async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
-				html = await r.text()
-				m = re.findall(r'ROOMID\s=\s(\d+)', html)
-				ROOMID = m[0]#str
-			self._roomId = int(ROOMID)
-			async with s.get(self._CIDInfoUrl + ROOMID) as r:
-				xml_string = '<root>' + await r.text() + '</root>'
-				dom = xml.dom.minidom.parseString(xml_string)
-				root = dom.documentElement
-				server = root.getElementsByTagName('server')
-				self._ChatHost = server[0].firstChild.data
+		try:
+			#print ('正在进入房间。。。。。')
+			with aiohttp.ClientSession() as s:
+				async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
+					html = await r.text()
+					m = re.findall(r'ROOMID\s=\s(\d+)', html)
+					ROOMID = m[0]#str
+				self._roomId = int(ROOMID)
+				async with s.get(self._CIDInfoUrl + ROOMID) as r:
+					xml_string = '<root>' + await r.text() + '</root>'
+					dom = xml.dom.minidom.parseString(xml_string)
+					root = dom.documentElement
+					server = root.getElementsByTagName('server')
+					self._ChatHost = server[0].firstChild.data
 
 
 
-		reader, writer = await asyncio.open_connection(self._ChatHost, self._ChatPort)
-		self._reader = reader
-		self._writer = writer
-		# print ('链接弹幕中。。。。。')
-		if (await self.SendJoinChannel(self._roomId) == True):
-			self.connected = True
-			#print ('进入房间成功。。。。。',self._roomId)
-			#print ('链接弹幕成功。。。。。',self._roomId)
-			await self.ReceiveMessageLoop()
-			
+			reader, writer = await asyncio.open_connection(self._ChatHost, self._ChatPort)
+			self._reader = reader
+			self._writer = writer
+			# print ('链接弹幕中。。。。。')
+			if (await self.SendJoinChannel(self._roomId) == True):
+				self.connected = True
+				#print ('进入房间成功。。。。。',self._roomId)
+				#print ('链接弹幕成功。。。。。',self._roomId)
+				await self.ReceiveMessageLoop()
+			else:
+				raise MyError("连接弹幕失败!roomid:%s"%(self._roomId))
+		except Exception as e:
+			self.connected	=	False
+			print(84,e,self._roomId)
+			print('reconnect for roomid:%s'%(self._roomId))
+			await asyncio.sleep(1)				
+			await self.connectServer()
+
 	async def HeartbeatLoop(self):
-		while self.connected == False:
-			await asyncio.sleep(0.5)
+		try:
+			while self.connected == False:
+				await asyncio.sleep(10)
 
-
-		while self.connected == True:
-			await self.SendSocketData(0, 16, self._protocolversion, 2, 1, "")
-			await asyncio.sleep(30)
-
+			while self.connected == True:
+				await self.SendSocketData(0, 16, self._protocolversion, 2, 1, "")
+				await asyncio.sleep(30)
+		except Exception as e:
+			print("heartbeat error!")
 
 	async def SendJoinChannel(self, channelId):
 		self._uid = (int)(100000000000000.0 + 200000000000000.0*random.random())
@@ -133,9 +144,14 @@ class DanmuWebsocket():
 					try: # 为什么还会出现 utf-8 decode error??????
 						messages = tmp.decode('utf-8')
 					except Exception as e:
-						#print(258,e)
+						#print(147,e)
+						raise MyError("解码失败!")
 						continue
-					await self.parseDanMu(messages)
+					try:
+						await self.parseDanMu(messages)
+					except Exception as e:
+						print(141,e)
+						raise NameError
 				elif num==5 or num==6 or num==7:
 					tmp = await self._reader.read(num2)
 					continue
