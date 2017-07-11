@@ -47,16 +47,16 @@ class GetTopUpRoomId():
 						response=requests.get("http://vtp.daxiangdaili.com/ip/?tid=559329887212274&num=1&protocol=http&operator=1&delay=1&filter=on",timeout=5)
 						ip=response.text
 						if response.status_code == 200:
-							proxies['http']=ip
-							proxies['https']=ip
+							self.s.proxies['http']=ip
+							self.s.proxies['https']=ip
 							#print(ip)
 							f=open('../helper/config.py','w')
-							f.write('proxies=%s'%(proxies))
+							f.write('proxies=%s'%(self.s.proxies))
 							f.close()
 						else:
 							raise MyError("代理ip失败,http_code:%s"%(response.status_code))
 					except Exception as e:
-						print("fengbao.py:78",e)
+						print("getUpTop.py:59",e)
 				finally:
 					time.sleep(1)#休息一下，防止访问频率太高
 		room=list(set(room))
