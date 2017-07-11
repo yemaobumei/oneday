@@ -179,11 +179,11 @@ class Client():
 		send_url="http://live.bilibili.com/msg/send"
 		method="POST"
 		data={
-			'color':'16772431',
-			'fontsize':25,
-			'mode':1,
+			# 'color':'16772431',
+			# 'fontsize':25,
+			'mode':2,
 			'msg':msg,
-			'rnd':'1493972251',
+			# 'rnd':'1493972251',
 			'roomid':roomid		
 		}
 		res = self.session.post(send_url,data=data)

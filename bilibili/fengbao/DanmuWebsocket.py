@@ -85,6 +85,7 @@ class DanmuWebsocket():
 				raise MyError("连接弹幕失败!roomid:%s"%(self._roomId))
 		except Exception as e:
 			self.connected	=	False
+			self._writer.close()
 			print(84,e,self._roomId)
 			print('reconnect for roomid:%s'%(self._roomId))
 			await asyncio.sleep(1)				
@@ -203,11 +204,11 @@ class DanmuWebsocket():
 		if len(msg) == 0:
 			return
 		data={
-			'color':'16772431',
-			'fontsize':25,
-			'mode':1,
+			# 'color':'16772431',
+			# 'fontsize':25,
+			# 'mode':1,
 			'msg':msg,
-			'rnd':int(time.time()),#'1493972251',
+			# 'rnd':int(time.time()),#'1493972251',
 			'roomid':self._roomId     
 		}
 		for cookies in self.cookies_list:
