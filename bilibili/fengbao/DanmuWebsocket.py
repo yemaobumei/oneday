@@ -162,6 +162,7 @@ class DanmuWebsocket():
 		try:
 
 			dic = json.loads(messages)
+			#print(dic)
 			cmd = dic['cmd']
 
 		except Exception as e: # 有些情况会 jsondecode 失败，未细究，可能平台导致
@@ -176,7 +177,7 @@ class DanmuWebsocket():
 				try:
 					await self.sendDanmu(commentText)
 					print (172,commentUser + ' say: ' + commentText,self._roomId)				
-					#await self.addFengbaoProxy(self._roomId,self.send_uid,self.send_uname)
+					addFengbao(self._roomId,self.send_uid,self.send_uname)
 				except Exception as e:
 					print(177,e)
 			return

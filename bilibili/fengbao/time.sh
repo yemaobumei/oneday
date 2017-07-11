@@ -7,6 +7,7 @@ while true
 do
 
 	ps -ef|grep 'python3'|grep 'fengbao'|awk '{print$2}'|xargs kill -9 && echo  `date`
+	python3 getTopUp.py
 	for py in fengbao*.py
 	do
 		nohup python3 $py > "${py}.out" 2>&1 &

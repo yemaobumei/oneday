@@ -1,4 +1,5 @@
 
+
 一般弹幕
 {'cmd': 'DANMU_MSG', 'info': [[0, 1, 25, 16772431, 1494510655, '1494509681', 0, '7add70e6', 0], '测试', [25303175, '喵咭大佬弹幕姬专用の夜猫', 0, 1, 0, 10000, 1], [14, '喵咭', '喵咭喵呜', 1273106, 16746162], [23, 0, 5805790, '>50000'], [], 0, 3]}
 
@@ -14,3 +15,9 @@
 
 礼物
 {'cmd': 'SEND_GIFT', 'data': {'giftName': '233', 'num': 1, 'notice_msg': [], 'silver': '2679', 'price': 233, 'uid': 3027215, 'super': 0, 'uname': 'c跳', 'newTitle': 0, 'capsule': {'normal': {'coin': 8, 'change': 0, 'progress': {'now': 2680, 'max': 10000}}, 'colorful': {'coin': 0, 'change': 0, 'progress': {'now': 1612, 'max': 5000}}}, 'giftId': 8, 'eventScore': 0, 'timestamp': 1494510925, 'beatId': '', 'title': '', 'rnd': '1494510832', 'medal': 1, 'newMedal': 0, 'giftType': 1, 'gold': 5307, 'rcost': 2963054, 'action': '赠送', 'top_list': [], 'eventNum': 0}}
+
+老爷进入房间
+{'cmd': 'WELCOME', 'data': {'uid': 25092751, 'uname': '剑人的同桌', 'isadmin': 0, 'vip': 1}, 'roomid': 1273106}
+
+船员进入房间
+{'cmd': 'WELCOME_GUARD', 'data': {'uid': 25303175, 'username': '最短的夜猫', 'guard_level': 3}, 'roomid': 1273106}

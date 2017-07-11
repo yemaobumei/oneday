@@ -137,11 +137,11 @@ def addFengbao(realRoomid,send_uid,send_uname):
 		# if queryFengbao:
 		# 	return
 		session.add(Fengbao(realRoomid=realRoomid,send_uid=send_uid,send_uname=send_uname))
-		queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
-		if queryUser:
-			queryUser.fengbaoNum+=1
-		else:
-			session.add(User(realRoomid=realRoomid,fengbaoNum=1))
+		# queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
+		# if queryUser:
+		# 	queryUser.fengbaoNum+=1
+		# else:
+		# 	session.add(User(realRoomid=realRoomid,fengbaoNum=1))
 		session.commit()
 		session.close()
 	except Exception as e:
