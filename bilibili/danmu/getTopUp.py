@@ -7,7 +7,7 @@ import time
 sys.path.append("../")
 from helper import config
 
-#获取最新热门直播房间号
+#获取最新热门直播房间号,得到的是b站主播的真实房间号,而不是浏览器打开直播间的房间
 
 class GetTopUpRoomId():
 	def __init__(self, startPage,endPage):
