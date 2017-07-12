@@ -7,6 +7,12 @@ import socket
 import asyncio, aiohttp
 from struct import pack
 from Abstract import AbstractDanMuClient
+import sys
+sys.path.append("../")
+from helper.api import Client
+LoginClient=Client('979365217@qq.com','ye06021123')
+cookies,nickname=LoginClient.cookies_login()
+#LoginClient.sendDanmu(roomid,msg)
 
 # import socket
 # class _socket(socket.socket):
@@ -24,7 +30,9 @@ class BilibiliDanmuClient(AbstractDanMuClient):
 		super(BilibiliDanmuClient, self).__init__(roomId,loop,executor)
 		self.serverUrl = "livecmt-2.bilibili.com"
 		self.dmPort = 2243
-
+		self.fengbao = False
+		self.send_uid = ""
+		self.send_uname= ""
 	async def _get_live_status(self):
 		try:
 			liveUrl = 'http://live.bilibili.com/%s'%(self.roomId)
@@ -98,13 +106,36 @@ class BilibiliDanmuClient(AbstractDanMuClient):
 	def msgHandleBlock(self, content):
 		for msg in re.findall(b'\x00({[^\x00]*})', content):
 			try:
-				msg = json.loads(msg.decode('utf8', 'ignore'))
-				cmd = msg['cmd']
-				msg['NickName'] = (msg.get('info', ['','',['', '']])[2][1]
-					or msg.get('data', {}).get('uname', ''))
-				msg['Content']  = msg.get('info', ['', ''])[1]
-				msg['MsgType']  = {'SEND_GIFT': 'gift', 'DANMU_MSG': 'danmu',
-					'WELCOME': 'enter'}.get(msg.get('cmd'), 'other')
+				dic = json.loads(msg.decode('utf8', 'ignore'))
+				cmd = dic['cmd']
+
+				if cmd == 'DANMU_MSG':
+					if self.fengbao:
+						self.fengbao = False					
+						commentText = dic['info'][1]
+						commentUser = dic['info'][2][1]
+						try:
+							LoginClient.sendDanmu(self.roomId,commentText)
+							print (172,commentUser + ' say: ' + commentText,self.roomId)				
+							#addFengbao(self._roomId,self.send_uid,self.send_uname)
+						except Exception as e:
+							print(177,e)
+					return
+
+				if cmd == 'SEND_GIFT' :
+
+					#获取送礼信息		
+					GiftName = dic['data']['giftName']
+
+					# if self.roomId == 2570641:
+					# #print(GiftName,self.roomId)
+					# 	self.fengbao=True
+					if GiftName == "节奏风暴":
+						self.send_uid=dic['data']['uid']
+						self.send_uname=dic['data']['uname']				
+						self.fengbao = True
+					return
+
 			except Exception as e:
 				pass
 			else:
