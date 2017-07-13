@@ -4,7 +4,7 @@
 import asyncio
 import concurrent.futures
 from getTopUp import GetTopUpRoomId
-from Bilibili import BilibiliDanmuClient
+from Bilibili import BilibiliDanmuClient, BilibiliFengbaoClient
 import room
 
 async def testMemory():
@@ -17,21 +17,23 @@ async def testMemory():
 			str(process.memory_info().rss / 1024 / 1024))
 		await asyncio.sleep(10)
 
-class DanmuClientManger():
-	def __init__(self, loop = None, executor = None, page = [0,7]):
+class DanmuClientManager():
+	def __init__(self, loop = None, executor = None, roomInfo = []):
 		#私有一个事件循环控制器
 		self.loop = loop or asyncio.get_event_loop()
 		#私有一个cpu占用型任务的线程池
 		self.executor = executor or concurrent.futures.ThreadPoolExecutor(max_workers=100,) 
 		
 		# 得到需要连接的直播房间列表
-		self.roomList = self._getRoomList(page)
+		self.roomInfo = roomInfo
 
-	def _getRoomList(self,page):
-		pass
+
+	def _prepare(self):
+		return [BilibiliDanmuClient(roomId, self.loop, self.executor) for roomId in self.roomInfo]	
+
 	def start(self):
 		#实例化生弹幕成客户端
-		liveClients = [BilibiliDanmuClient(roomId, self.loop, self.executor) for roomId in self.roomList]	
+		liveClients = self._prepare()
 		initTasks = []
 
 		for client in liveClients:
@@ -56,20 +58,21 @@ class DanmuClientManger():
 			print('关闭')
 		finally:
 			# print(">> Cancelling tasks now")
-			# for task in asyncio.Task.all_tasks():
-			#     task.cancel()
-			# self.loop.run_until_complete(asyncio.sleep(1))
-			# print(">> Done cancelling tasks")
+			for task in asyncio.Task.all_tasks():
+			    task.cancel()
+			self.loop.run_until_complete(asyncio.sleep(1))
+			print(">> Done cancelling tasks")
 			self.loop.close()
 
-class BDCManager(DanmuClientManger):
-	def _getRoomList(self,page):
-		try:
-			roomList = room.room
-		except Exception as e:
-			roomList = GetTopUpRoomId(page[0],page[1]).start()
-		return roomList
+class FengbaoClientManager(DanmuClientManager):
+	def _prepare(self):
+		return [BilibiliFengbaoClient(roomId, self.loop, self.executor, cookieslist=self.roomInfo['cookieslist']) for roomId in self.roomInfo['roomList']]		
+
+def getRoomList(a=0, b=1):
+	try:
+		roomList = room.room
+		print(roomList)
+	except Exception as e:
+		roomList = GetTopUpRoomId(a,b).start()
+	return roomList
 		
-if __name__ == '__main__':
-	cm = BDCManager(page=[0,7])
-	cm.start()
