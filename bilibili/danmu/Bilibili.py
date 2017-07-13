@@ -8,6 +8,8 @@ import asyncio, aiohttp
 from struct import pack
 from Abstract import AbstractDanMuClient
 import sys
+sys.path.append('../')
+from helper.sql import addFengbao
 
 # import socket
 # class _socket(socket.socket):
@@ -97,11 +99,38 @@ class BilibiliDanmuClient(AbstractDanMuClient):
 			await self.loop.sock_sendall(self.sock,data)
 			await asyncio.sleep(30)
 
+	def getJson(self,msg):
+		try:
+			cmd = re.findall('\"cmd\":(.+?)\,',msg)[0]
+			data=re.findall('\"data\":(.+\})\,',msg)[0]
+			giftName=re.findall('\"giftName\":(.+?)\,',data)[0]
+			uname=re.findall('\"uname\":(.+?)\,',data)[0]
+			uid=re.findall('\"uid\":(.+?)\,',data)[0]
+			dic={
+				"cmd" : cmd,
+				"data":{
+					"giftName" : giftName,
+					"uname" : uname,
+					"uid" : uid
+				}
+			}
+		except Exception as e:
+			print(113,e)
+			dic = {}
+		return dic	
+
 	def msgHandleBlock(self, content):
 		for msg in re.findall(b'\x00({[^\x00]*})', content):
 			try:
-				dic = json.loads(msg.decode('utf8', 'ignore'))
+				msg = msg.decode('utf8','ignore')
+				dic = json.loads(msg)
+			except Exception as e:
+				print(122,e)
+				dic = self.getJson(msg)
 				cmd = dic['cmd']
+			else:
+				cmd = dic['cmd']
+			finally:
 
 				if cmd == 'DANMU_MSG':					
 					commentText = dic['info'][1]
@@ -118,10 +147,7 @@ class BilibiliDanmuClient(AbstractDanMuClient):
 					# if self.roomId == 2570641:
 					print(GiftName,self.roomId)
 					return
-			except Exception as e:
-				print(140,e)
-			else:
-				return  
+
 	def sendDanmu(self,roomid,msg,cookies):
 		send_url="http://live.bilibili.com/msg/send"
 		method="POST"
@@ -133,6 +159,7 @@ class BilibiliDanmuClient(AbstractDanMuClient):
 		res = requests.post(send_url,cookies=cookies,data=data)
 		if res.status_code==200:
 			print('弹幕发送成功')
+
 class BilibiliFengbaoClient(BilibiliDanmuClient):
 
 	def __init__(self, roomId, loop, executor, cookieslist = []):
@@ -146,9 +173,15 @@ class BilibiliFengbaoClient(BilibiliDanmuClient):
 	def msgHandleBlock(self, content):
 		for msg in re.findall(b'\x00({[^\x00]*})', content):
 			try:
-				dic = json.loads(msg.decode('utf8', 'ignore'))
+				msg = msg.decode('utf8','ignore')
+				dic = json.loads(msg)
+			except Exception as e:
+				dic = self.getJson(msg)
+				cmd = dic.get('cmd','')
+			else:
 				cmd = dic['cmd']
-
+			finally:
+				
 				if cmd == 'DANMU_MSG':
 					if self.fengbao:
 						self.fengbao = False					
@@ -158,7 +191,7 @@ class BilibiliFengbaoClient(BilibiliDanmuClient):
 							for cookies in self.cookieslist:
 								self.sendDanmu(self.roomId,commentText,cookies)
 							print (172,commentUser + ' say: ' + commentText,self.roomId)				
-							#addFengbao(self._roomId,self.send_uid,self.send_uname)
+							addFengbao(self.roomId,self.send_uid,self.send_uname)
 						except Exception as e:
 							print(177,e)
 					return
@@ -177,8 +210,4 @@ class BilibiliFengbaoClient(BilibiliDanmuClient):
 						self.fengbao = True
 					return
 
-			except Exception as e:
-				print(140,e)
-			else:
-				return  
 				

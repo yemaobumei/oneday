@@ -1,7 +1,7 @@
 #!/usr/bin/python3  
 # -*- coding: utf-8 -*- 
 import abc
-import socket
+import socket,select
 
 class AbstractDanMuClient(metaclass=abc.ABCMeta):
 	'''主要流程：
@@ -43,15 +43,19 @@ class AbstractDanMuClient(metaclass=abc.ABCMeta):
 		'''每隔x秒发送心跳包维持websocket连接'''
 		pass
 
+	
+	def recv_size(the_socket):
+		pass
 	async def danmuCoro(self):
 		'''弹幕处理协程，异步接收弹幕数据
 		   并使用self.msgHandleBlock在另一线程/进程处理数据
 		   因为数据流是单向的所以即使是进程也不麻烦'''
 		try:  
 			while self.connected:
-				content = await self.loop.sock_recv(self.sock, 10240) #1024后面解析会部分出错????
-				# sock_recv(sock[, 1024]) 接收字节不可以省略
-				self.loop.run_in_executor(None, self.msgHandleBlock, content)
+				#if not select.select([self.sock], [], [], 1)[0]: return
+				content = await self.loop.sock_recv(self.sock, 8192) #1024后面解析会部分出错????
+				#content = await self.recv()
+				self.loop.run_in_executor(self.executor, self.msgHandleBlock, content)
 		except:
 			self.connected = False
 
