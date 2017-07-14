@@ -6,8 +6,8 @@ import os,sys
 import time
 sys.path.append("../")
 from helper import config
-
-#获取最新热门直播房间号,得到的是b站主播的真实房间号,而不是浏览器打开直播间的房间
+from helper.api import MyError
+#获取最新热门直播房间号
 
 class GetTopUpRoomId():
 	def __init__(self, startPage,endPage):
@@ -29,7 +29,7 @@ class GetTopUpRoomId():
 			while True:
 				j += 1
 				if j > 40:
-					raise Exception('获取最新直播房间号失败')	
+					raise MyError('获取最新直播房间号失败')	
 				try:
 					r=self.s.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i),timeout=5)
 					if r.status_code==200:
@@ -38,7 +38,7 @@ class GetTopUpRoomId():
 							room.append(each_room['roomid'])
 						break
 					else:
-						raise Exception("获取直播信息失败第%s次,http错误号:%s"%(j,r.status_code))
+						raise MyError("获取直播信息失败第%s次,http错误号:%s"%(j,r.status_code))
 				except Exception as e:
 					print("getUpTop.py:37",e)
 					#查询代理ip地址
@@ -55,7 +55,7 @@ class GetTopUpRoomId():
 							f.write('proxies=%s'%(self.s.proxies))
 							f.close()
 						else:
-							raise Exception("代理ip失败,http_code:%s"%(response.status_code))
+							raise MyError("代理ip失败,http_code:%s"%(response.status_code))
 					except Exception as e:
 						print("getUpTop.py:59",e)
 				finally:

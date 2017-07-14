@@ -117,7 +117,7 @@ class DanmuWebsocket():
 				num, = unpack('!I', tmp)
 				tmp = await self._reader.read(4)
 				num2 = expr - 16
-
+	 
 				if num2 != 0:
 					num -= 1
 					if num==0 or num==1 or num==2:
@@ -144,8 +144,13 @@ class DanmuWebsocket():
 						else:
 							continue
 			except Exception as e:
-				pass
-				#print(161,"DanmuWebsocket.py:161",e)			
+				# self._writer.close()
+				print(161,"DanmuWebsocket.py:161",self._roomId)				
+				break
+				#发生错误跳出循环进行重连弹幕服务器
+		await asyncio.sleep(1)
+		await self.connectServer()
+
 
 	def getJson(self,msg):
 		def find(result):
@@ -209,6 +214,7 @@ class DanmuWebsocket():
 			# if self._roomId == 2570641:
 			# 	print(GiftName,self._roomId)
 			# 	self.fengbao=True
+			# print(GiftName,self._roomId)
 			if GiftName == "节奏风暴":
 				self.send_uid = data.get('uid',0)
 				self.send_uname = data.get('uname','noSendname')			
