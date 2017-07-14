@@ -5,19 +5,14 @@ import os,sys
 sys.path.append("../")
 #异步操作
 import asyncio
-import aiohttp
 
 from DanmuWebsocket import DanmuWebsocket
-from helper.api import Client,MyError
+from helper.api import Client
 
-import requests
-import json
-import time
-
-from helper import config
 import room
 from getTopUp import GetTopUpRoomId
 
+loop = asyncio.get_event_loop()
 #登录B站获取cookies
 info = [
 	{'username':'13126772351','password':'ye06021123','roomid':4416185},
@@ -45,13 +40,13 @@ except Exception as e:
 	room=GetTopUpRoomId(0,7).start()
 print(len(room))
 
-#room=['1273106']
+# room +=['2570641']
 
 
 #建立直播弹幕websocket,返回发送弹幕姬
 danmuji=[]
 for each in room:
-	danmuji.append(DanmuWebsocket(cookies_list=cookies_list,roomid=each))
+	danmuji.append(DanmuWebsocket(loop=loop,cookies_list=cookies_list,roomid=each))
 
 
 #执行异步任务
@@ -61,12 +56,18 @@ for each in danmuji:
 	tasks.append(each.HeartbeatLoop())
 
 
-loop = asyncio.get_event_loop()
+
 try:
 	loop.run_until_complete(asyncio.wait(tasks))
 except KeyboardInterrupt:
-	pass
+	print("手动关闭")
+finally:
+	# print(">> Cancelling tasks now")
+	for task in asyncio.Task.all_tasks():
+	    task.cancel()
+	loop.run_until_complete(asyncio.sleep(1))
+	print(">> Done cancelling tasks")
+	loop.close()
 
-loop.close()
 
 
