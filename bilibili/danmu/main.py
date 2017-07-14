@@ -26,7 +26,7 @@ if __name__ == '__main__':
 		cookieslist.append(cookies)
 	#获取直播房间号		
 	roomList = getRoomList(0,7)
-	roomList += [2570641]
+	# roomList += [2570641]
 
 	#启动任务管理器
 	#cm = DanmuClientManager(roomInfo = roomList)

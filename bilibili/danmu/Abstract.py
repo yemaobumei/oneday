@@ -58,7 +58,8 @@ class AbstractDanMuClient(metaclass=abc.ABCMeta):
 				# print(num)
 				content = await self.loop.sock_recv(self.sock, num) #1024后面解析会部分出错????
 				#content = await self.recv()
-				self.loop.run_in_executor(self.executor, self.msgHandleBlock, content)
+				# self.loop.run_in_executor(self.executor, self.msgHandleBlock, content)
+				self.msgHandleBlock(content)
 		except:
 			self.connected = False
 

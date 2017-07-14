@@ -28,6 +28,8 @@ class BilibiliDanmuClient(AbstractDanMuClient):
 		self.serverUrl = "livecmt-2.bilibili.com"
 		self.dmPort = 2243
 
+		self.send_uid = ""
+		self.send_uname= ""
 
 	async def _get_live_status(self):
 		try:
@@ -100,13 +102,19 @@ class BilibiliDanmuClient(AbstractDanMuClient):
 			await asyncio.sleep(30)
 
 	def getJson(self,msg):
+		def find(result):
+			if len(result)!=0:
+				return result[0]
+			else:
+				return "0000"
 		try:
-			cmd = re.findall('\"cmd\":(.+?)\,',msg)[0]
-			data=re.findall('\"data\":(.+\})\,',msg)[0]
-			giftName=re.findall('\"giftName\":(.+?)\,',data)[0]
-			uname=re.findall('\"uname\":(.+?)\,',data)[0]
-			uid=re.findall('\"uid\":(.+?)\,',data)[0]
-			dic={
+			cmd = find(re.findall('"cmd":["]?(.+?)["]?\,',msg))
+			#print(cmd=='SEND_GIFT')
+			if cmd != 'SEND_GIFT': return {}
+			giftName = find(re.findall('"giftName":["]?(.+?)["]?\,',msg))
+			uname = find(re.findall('"uname":["]?(.+?)["]?\,',msg))
+			uid = int(find(re.findall('"uid":["]?(.+?)["]?\,',msg)))
+			dic = {
 				"cmd" : cmd,
 				"data":{
 					"giftName" : giftName,
@@ -115,9 +123,9 @@ class BilibiliDanmuClient(AbstractDanMuClient):
 				}
 			}
 		except Exception as e:
-			print(113,e)
+			print(113,msg)
 			dic = {}
-		return dic	
+		return dic
 
 	def msgHandleBlock(self, content):
 		for msg in re.findall(b'\x00({[^\x00]*})', content):
@@ -125,28 +133,26 @@ class BilibiliDanmuClient(AbstractDanMuClient):
 				msg = msg.decode('utf8','ignore')
 				dic = json.loads(msg)
 			except Exception as e:
-				print(122,e)
-				dic = self.getJson(msg)
-				cmd = dic.get('cmd','')
-			else:
-				cmd = dic['cmd']
-			finally:
+				# print(122,e)
+				dic = self.getJson(msg)				
+				
+			cmd = dic.get('cmd','')
+			if cmd == 'DANMU_MSG':					
+				commentText = dic['info'][1]
+				commentUser = dic['info'][2][1]
+				print (172,commentUser + ' say: ' + commentText,self.roomId)				
+				return
 
-				if cmd == 'DANMU_MSG':					
-					commentText = dic['info'][1]
-					commentUser = dic['info'][2][1]
-					print (172,commentUser + ' say: ' + commentText,self.roomId)				
-					return
+			if cmd == 'SEND_GIFT' :
 
-				if cmd == 'SEND_GIFT' :
-
-					#获取送礼信息		
-					GiftName = dic['data']['giftName']
-					send_uid=dic['data']['uid']
-					send_uname=dic['data']['uname']
-					# if self.roomId == 2570641:
-					print(GiftName,self.roomId)
-					return
+				data = dic.get('data','')
+				#获取送礼信息		
+				GiftName = dic['data'].get('giftName',"noGiftName")
+				self.send_uid = data.get('uid',0)
+				self.send_uname = data.get('uname','noSendname')
+				# if self.roomId == 2570641:
+				print(GiftName,self.roomId)
+				return
 
 	def sendDanmu(self,roomid,msg,cookies):
 		send_url="http://live.bilibili.com/msg/send"
@@ -156,8 +162,11 @@ class BilibiliDanmuClient(AbstractDanMuClient):
 			'msg':msg,
 			'roomid':roomid		
 		}
-		res = requests.post(send_url,cookies=cookies,data=data)
+		s = requests.session()
+		s.trust_env = False
+		res = s.post(send_url,cookies=cookies,data=data)
 		if res.status_code==200:
+			# s.close()
 			print('弹幕发送成功')
 
 class BilibiliFengbaoClient(BilibiliDanmuClient):
@@ -165,8 +174,6 @@ class BilibiliFengbaoClient(BilibiliDanmuClient):
 	def __init__(self, roomId, loop, executor, cookieslist = []):
 		super(BilibiliFengbaoClient, self).__init__(roomId, loop, executor)
 		self.fengbao = False
-		self.send_uid = ""
-		self.send_uname= ""
 		self.cookieslist = cookieslist
 
 
@@ -176,39 +183,36 @@ class BilibiliFengbaoClient(BilibiliDanmuClient):
 				msg = msg.decode('utf8','ignore')
 				dic = json.loads(msg)
 			except Exception as e:
-				print(179,e)
+				# print(179,e)
 				dic = self.getJson(msg)
-				cmd = dic.get('cmd','')
-			else:
-				cmd = dic['cmd']
-			finally:
-				
-				if cmd == 'DANMU_MSG':
-					if self.fengbao:
-						self.fengbao = False					
-						commentText = dic['info'][1]
-						commentUser = dic['info'][2][1]
-						try:
-							for cookies in self.cookieslist:
-								self.sendDanmu(self.roomId,commentText,cookies)
-							print (172,commentUser + ' say: ' + commentText,self.roomId)				
-							addFengbao(self.roomId,self.send_uid,self.send_uname)
-						except Exception as e:
-							print(177,e)
-					return
+								
+			cmd = cmd = dic.get('cmd','')
+			if cmd == 'DANMU_MSG':
+				if self.fengbao:
+					self.fengbao = False					
+					commentText = dic['info'][1]
+					commentUser = dic['info'][2][1]
+					try:
+						for cookies in self.cookieslist:
+							self.sendDanmu(self.roomId,commentText,cookies)
+						print (172,commentUser + ' say: ' + commentText,self.roomId)				
+						addFengbao(self.roomId,self.send_uid,self.send_uname)
+					except Exception as e:
+						print(177,e)
+				return
 
-				if cmd == 'SEND_GIFT' :
+			if cmd == 'SEND_GIFT' :
+				data = dic.get('data','')
+				#获取送礼信息		
+				GiftName = dic['data'].get('giftName',"noGiftName")
 
-					#获取送礼信息		
-					GiftName = dic['data']['giftName']
+				# if self.roomId == 2570641:
+				# 	self.fengbao=True
+				# 	print(GiftName,self.roomId)
+				if GiftName == "节奏风暴":
+					self.send_uid = data.get('uid',0)
+					self.send_uname = data.get('uname','noSendname')			
+					self.fengbao = True
+				return
 
-					# if self.roomId == 2570641:
-					# 	self.fengbao=True
-					#print(GiftName,self.roomId)
-					if GiftName == "节奏风暴":
-						self.send_uid=dic['data']['uid']
-						self.send_uname=dic['data']['uname']				
-						self.fengbao = True
-					return
-
-				
+			
