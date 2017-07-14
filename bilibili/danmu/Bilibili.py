@@ -127,7 +127,7 @@ class BilibiliDanmuClient(AbstractDanMuClient):
 			except Exception as e:
 				print(122,e)
 				dic = self.getJson(msg)
-				cmd = dic['cmd']
+				cmd = dic.get('cmd','')
 			else:
 				cmd = dic['cmd']
 			finally:
@@ -176,6 +176,7 @@ class BilibiliFengbaoClient(BilibiliDanmuClient):
 				msg = msg.decode('utf8','ignore')
 				dic = json.loads(msg)
 			except Exception as e:
+				print(179,e)
 				dic = self.getJson(msg)
 				cmd = dic.get('cmd','')
 			else:
@@ -202,8 +203,8 @@ class BilibiliFengbaoClient(BilibiliDanmuClient):
 					GiftName = dic['data']['giftName']
 
 					# if self.roomId == 2570641:
-					# 	print(GiftName,self.roomId)
 					# 	self.fengbao=True
+					#print(GiftName,self.roomId)
 					if GiftName == "节奏风暴":
 						self.send_uid=dic['data']['uid']
 						self.send_uname=dic['data']['uname']				

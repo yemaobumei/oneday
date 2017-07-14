@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*- 
 import abc
 import socket,select
-
+from struct import *
 class AbstractDanMuClient(metaclass=abc.ABCMeta):
 	'''主要流程：
 	   先获取直播状态，
@@ -53,7 +53,10 @@ class AbstractDanMuClient(metaclass=abc.ABCMeta):
 		try:  
 			while self.connected:
 				#if not select.select([self.sock], [], [], 1)[0]: return
-				content = await self.loop.sock_recv(self.sock, 8192) #1024后面解析会部分出错????
+				tmp = await self.loop.sock_recv(self.sock,4)
+				num, = unpack('!I', tmp)
+				# print(num)
+				content = await self.loop.sock_recv(self.sock, num) #1024后面解析会部分出错????
 				#content = await self.recv()
 				self.loop.run_in_executor(self.executor, self.msgHandleBlock, content)
 		except:

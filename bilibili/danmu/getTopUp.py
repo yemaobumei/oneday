@@ -16,6 +16,7 @@ class GetTopUpRoomId():
 		self.s = requests.Session()
 		self.s.proxies = config.proxies
 		self.s.keep_alive = False
+		# self.s.trust_env = False
 		self.room = []
 	def saveRoom(self):
 		f=open('room.py','w')
@@ -28,7 +29,7 @@ class GetTopUpRoomId():
 			while True:
 				j += 1
 				if j > 40:
-					raise MyError('获取最新直播房间号失败')	
+					raise Exception('获取最新直播房间号失败')	
 				try:
 					r=self.s.get('http://api.live.bilibili.com/area/liveList?area=all&order=online&page=%s'%(i),timeout=5)
 					if r.status_code==200:
@@ -37,7 +38,7 @@ class GetTopUpRoomId():
 							room.append(each_room['roomid'])
 						break
 					else:
-						raise MyError("获取直播信息失败第%s次,http错误号:%s"%(j,r.status_code))
+						raise Exception("获取直播信息失败第%s次,http错误号:%s"%(j,r.status_code))
 				except Exception as e:
 					print("getUpTop.py:37",e)
 					#查询代理ip地址
@@ -54,7 +55,7 @@ class GetTopUpRoomId():
 							f.write('proxies=%s'%(self.s.proxies))
 							f.close()
 						else:
-							raise MyError("代理ip失败,http_code:%s"%(response.status_code))
+							raise Exception("代理ip失败,http_code:%s"%(response.status_code))
 					except Exception as e:
 						print("getUpTop.py:59",e)
 				finally:
