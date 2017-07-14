@@ -14,9 +14,9 @@ class GetTopUpRoomId():
 		self.startPage = startPage
 		self.endPage = endPage
 		self.s = requests.Session()
-		self.s.proxies = config.proxies
+		# self.s.proxies = config.proxies
 		self.s.keep_alive = False
-		# self.s.trust_env = False
+		self.s.trust_env = False
 		self.room = []
 	def saveRoom(self):
 		f=open('room.py','w')

@@ -46,20 +46,20 @@ class DanmuWebsocket():
 
 	async def connectServer(self):
 		try:
-			#print ('正在进入房间。。。。。')
-			with aiohttp.ClientSession() as s:
-				async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
-					html = await r.text()
-					m = re.findall(r'ROOMID\s=\s(\d+)', html)
-					ROOMID = m[0]#str
-				self._roomId = int(ROOMID)
-				async with s.get(self._CIDInfoUrl + ROOMID) as r:
-					xml_string = '<root>' + await r.text() + '</root>'
-					dom = xml.dom.minidom.parseString(xml_string)
-					root = dom.documentElement
-					server = root.getElementsByTagName('server')
-					self._ChatHost = server[0].firstChild.data
-
+			# #print ('正在进入房间。。。。。')
+			# with aiohttp.ClientSession() as s:
+			# 	async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
+			# 		html = await r.text()
+			# 		m = re.findall(r'ROOMID\s=\s(\d+)', html)
+			# 		ROOMID = m[0]#str
+			# 	self._roomId = int(ROOMID)
+			# 	async with s.get(self._CIDInfoUrl + ROOMID) as r:
+			# 		xml_string = '<root>' + await r.text() + '</root>'
+			# 		dom = xml.dom.minidom.parseString(xml_string)
+			# 		root = dom.documentElement
+			# 		server = root.getElementsByTagName('server')
+			# 		self._ChatHost = server[0].firstChild.data
+			pass
 		except Exception as e:
 			self.connected	=	False
 			print(84,e,self._roomId)
@@ -75,12 +75,13 @@ class DanmuWebsocket():
 				await self.ReceiveMessageLoop()			
 			else:
 				print("链接房间:%s失败"%(self._roomId))
+				
 
 
 
 	async def HeartbeatLoop(self):
-		while self.connected == False:
-			await asyncio.sleep(10)
+		# while self.connected == False:
+		# 	await asyncio.sleep(0.5)
 
 		while self.connected == True:
 			await self.SendSocketData(0, 16, self._protocolversion, 2, 1, "")
@@ -131,7 +132,7 @@ class DanmuWebsocket():
 						try: # 为什么还会出现 utf-8 decode error??????
 							messages = tmp.decode('utf-8')
 						except Exception as e:
-							print(147,e)
+							#print(147,e)
 							continue
 						await self.parseDanMu(messages)
 					elif num==5 or num==6 or num==7:
@@ -180,7 +181,7 @@ class DanmuWebsocket():
 			#cmd = dic['cmd']
 
 		except Exception as e: # 有些情况会 jsondecode 失败，未细究，可能平台导致
-			print(276,e)
+			#print(276,e)
 			dic = self.getJson(messages)
 			#print(dic)
  
@@ -193,9 +194,10 @@ class DanmuWebsocket():
 				try:
 					await self.sendDanmu(commentText)
 					self.fengbao = False
-					#print (172,commentUser + ' say: ' + commentText,self._roomId)				
-					self.loop.run_in_executor(None,addFengbao,*[self._roomId,self.send_uid,self.send_uname])
-					#addFengbao(self._roomId,self.send_uid,self.send_uname)
+					print (172,commentUser + ' say: ' + commentText,self._roomId)				
+					#self.loop.run_in_executor(None,addFengbao,*[self._roomId,self.send_uid,self.send_uname])
+					#数据库操作不能同时放入多个线程。
+					addFengbao(self._roomId,self.send_uid,self.send_uname)
 				except Exception as e:
 					print(177,e)
 			return
@@ -232,7 +234,8 @@ class DanmuWebsocket():
 		for cookies in self.cookies_list:
 			async with  aiohttp.ClientSession(cookies=cookies) as s:
 				async with  s.post(send_url,headers=headers,data=data) as res:
-					await res.text()
+					return
+					#await res.text()
 					#r=json.loads(res.text())
 					#print('send danmu ok!',r['msg'])
 					# if res.status==200:
