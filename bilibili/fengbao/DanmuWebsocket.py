@@ -208,8 +208,8 @@ class DanmuWebsocket():
 			# 	print(GiftName,self._roomId)
 			# 	self.fengbao=True
 			if GiftName == "节奏风暴":
-				self.send_uid=(data.get('uid',0))
-				self.send_uname=dic.get('uname','noSendname')			
+				self.send_uid = data.get('uid',0)
+				self.send_uname = data.get('uname','noSendname')			
 				self.fengbao = True
 			return
 
