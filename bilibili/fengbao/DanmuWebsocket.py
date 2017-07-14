@@ -234,8 +234,7 @@ class DanmuWebsocket():
 		for cookies in self.cookies_list:
 			async with  aiohttp.ClientSession(cookies=cookies) as s:
 				async with  s.post(send_url,headers=headers,data=data) as res:
-					return
-					#await res.text()
+					await res.text()
 					#r=json.loads(res.text())
 					#print('send danmu ok!',r['msg'])
 					# if res.status==200:
