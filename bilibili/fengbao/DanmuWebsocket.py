@@ -71,7 +71,7 @@ class DanmuWebsocket():
 			# print ('链接弹幕中。。。。。')
 			if (await self.SendJoinChannel(self._roomId) == True):
 				self.connected = True
-				print ("链接房间:%s成功"%(self._roomId))
+				# print ("链接房间:%s成功"%(self._roomId))
 				await self.ReceiveMessageLoop()			
 			else:
 				print("链接房间:%s失败"%(self._roomId))
@@ -144,8 +144,8 @@ class DanmuWebsocket():
 						else:
 							continue
 			except Exception as e:
-				# self._writer.close()
-				print(161,"DanmuWebsocket.py:161",self._roomId)				
+				self._writer.close()##必须加否则tcp链接过多
+				# print(161,"DanmuWebsocket.py:161",self._roomId)				
 				break
 				#发生错误跳出循环进行重连弹幕服务器
 		await asyncio.sleep(1)
@@ -196,8 +196,21 @@ class DanmuWebsocket():
 			if self.fengbao:					
 				commentText = dic['info'][1]
 				commentUser = dic['info'][2][1]
-				try:
+				try:					
+					## 多线程发送弹幕0.0001881122589111328
+					# s = time.time() 
+					# for cookies in self.cookies_list:
+					# 	self.loop.run_in_executor(None,self.senddanmu,*[commentText,cookies])
+					# end = time.time()
+					# print(end-s)
+					
+
+					#异步发送弹幕4.767163991928101
+					# s = time.time()
 					await self.sendDanmu(commentText)
+					# end = time.time()
+					# print(end-s)
+
 					self.fengbao = False
 					print (172,commentUser + ' say: ' + commentText,self._roomId)				
 					#self.loop.run_in_executor(None,addFengbao,*[self._roomId,self.send_uid,self.send_uname])
@@ -212,7 +225,7 @@ class DanmuWebsocket():
 			#获取送礼信息		
 			GiftName = data.get('giftName',"noGiftName")
 			# if self._roomId == 2570641:
-			# 	print(GiftName,self._roomId)
+			# 	#print(GiftName,self._roomId)
 			# 	self.fengbao=True
 			# print(GiftName,self._roomId)
 			if GiftName == "节奏风暴":
@@ -246,6 +259,20 @@ class DanmuWebsocket():
 					# if res.status==200:
 					# 	print(108,msg,self._roomId)
 					
-			#os.system("nohup python3 -c \"import requests;requests.post(\'%s\',cookies=%s,headers=%s,data=%s)\" >danmu.out 2>&1 &"%(send_url,cookies,headers,data))
-			#requests.post(send_url,cookies=cookies,headers=headers,data=data)
-		#await asyncio.sleep(0.01)
+	#非异步形式	
+	def senddanmu(self,msg,cookies):
+		try:
+			send_url="http://live.bilibili.com/msg/send"
+			method="POST"
+			msg=msg.strip()
+			if len(msg) == 0:
+				return
+			data={
+				'msg':msg,
+				'roomid':self._roomId     
+			}
+			s=requests.session()
+			s.trust_env=False
+			s.post(send_url,cookies=cookies,headers=headers,data=data)	
+		except Exception as e:
+			print(267,e)	

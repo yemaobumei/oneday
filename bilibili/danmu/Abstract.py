@@ -53,9 +53,9 @@ class AbstractDanMuClient(metaclass=abc.ABCMeta):
 		try:  
 			while self.connected:
 				#if not select.select([self.sock], [], [], 1)[0]: return
-				tmp = await self.loop.sock_recv(self.sock,4)
-				num, = unpack('!I', tmp)
-				# print(num)
+				# tmp = await self.loop.sock_recv(self.sock,4)
+				# num, = unpack('!I', tmp)
+				num = 8192
 				content = await self.loop.sock_recv(self.sock, num) #1024后面解析会部分出错????
 				#content = await self.recv()
 				# self.loop.run_in_executor(self.executor, self.msgHandleBlock, content)
