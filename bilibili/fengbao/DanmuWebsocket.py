@@ -132,9 +132,10 @@ class DanmuWebsocket():
 						try: # 为什么还会出现 utf-8 decode error??????
 							messages = tmp.decode('utf-8')
 						except Exception as e:
-							#print(147,e)
-							continue
-						await self.parseDanMu(messages)
+							# print(147,e)
+							pass
+						else:
+							await self.parseDanMu(messages)
 					elif num==5 or num==6 or num==7:
 						tmp = await self._reader.read(num2)
 						continue
@@ -254,7 +255,8 @@ class DanmuWebsocket():
 			async with  aiohttp.ClientSession(cookies=cookies) as s:
 				async with  s.post(send_url,headers=headers,data=data) as res:
 					await res.text()
-					#r=json.loads(res.text())
+					# r = await res.text()
+					#r=json.loads(r)
 					#print('send danmu ok!',r['msg'])
 					# if res.status==200:
 					# 	print(108,msg,self._roomId)

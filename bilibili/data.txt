@@ -1,4 +1,4 @@
-
+弹幕消息分类
 
 一般弹幕
 {'cmd': 'DANMU_MSG', 'info': [[0, 1, 25, 16772431, 1494510655, '1494509681', 0, '7add70e6', 0], '测试', [25303175, '喵咭大佬弹幕姬专用の夜猫', 0, 1, 0, 10000, 1], [14, '喵咭', '喵咭喵呜', 1273106, 16746162], [23, 0, 5805790, '>50000'], [], 0, 3]}
@@ -21,3 +21,65 @@
 
 船员进入房间
 {'cmd': 'WELCOME_GUARD', 'data': {'uid': 25303175, 'username': '最短的夜猫', 'guard_level': 3}, 'roomid': 1273106}
+
+
+ 
+礼物数据包
+{
+  'code': 0,
+  'msg': 'ok',
+  'data': [
+    {
+      'id': 32922170,
+      'uid': 25303175,
+      'gift_id': 73,
+      'gift_num': 5,
+      'expireat': '4天',
+      'gift_type': 3,
+      'gift_name': '壁咚',
+      'gift_price': '2000金瓜子'
+    },
+    {
+      'id': 35305352,
+      'uid': 25303175,
+      'gift_id': 6,
+      'gift_num': 21,
+      'expireat': '6天',
+      'gift_type': '',
+      'gift_name': '亿圆',
+      'gift_price': '1000金瓜子/1000银瓜子'
+    },
+    {
+      'id': 35307803,
+      'uid': 25303175,
+      'gift_id': 1,
+      'gift_num': 49,
+      'expireat': '29天',
+      'gift_type': '',
+      'gift_name': '辣条',
+      'gift_price': '100金瓜子/100银瓜子'
+    },
+    {
+      'id': 35403264,
+      'uid': 25303175,
+      'gift_id': 6,
+      'gift_num': 43,
+      'expireat': '7天',
+      'gift_type': '',
+      'gift_name': '亿圆',
+      'gift_price': '1000金瓜子/1000银瓜子'
+    },
+    {
+      'id': 35403322,
+      'uid': 25303175,
+      'gift_id': 1,
+      'gift_num': 38,
+      'expireat': '30天',
+      'gift_type': '',
+      'gift_name': '辣条',
+      'gift_price': '100金瓜子/100银瓜子'
+    }
+  ]
+}
+
+giftId=1&roomid=2570641&ruid=25303175&num=1&coinType=silver&Bag_id=35617088&timestamp=1500202460&rnd=1500202400&token=19363fb5fe2f83fecaa03b0d7c35a202a68f9469
