@@ -133,7 +133,7 @@ class DanmuWebsocket():
 							messages = tmp.decode('utf-8')
 						except Exception as e:
 							# print(147,e)
-							pass
+							continue
 						else:
 							await self.parseDanMu(messages)
 					elif num==5 or num==6 or num==7:
