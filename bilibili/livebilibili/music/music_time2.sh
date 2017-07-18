@@ -15,7 +15,7 @@ fontsize="24"
 LIVEURL="rtmp://xl.live-send.acg.tv/live-xl/?streamname=live_25303175_5745325&key=71771fb7bb37ccbdc17888f178f56075"
 
 declare -i rest
-	#ffmpeg  -loop 1 -i "0${rnd}.jpg"   -pix_fmt yuv420p -vcodec libx264 -b:v 100k -r:v 25 -preset medium -crf 18  -vframes 250  -t 10 -s 960x540 -y SinglePictureVide.mp4
+#ffmpeg  -loop 1 -i "0${rnd}.jpg"   -pix_fmt yuv420p -vcodec libx264 -b:v 100k -r:v 25 -preset medium -crf 18  -vframes 250  -t 10 -s 960x540 -y SinglePictureVide.mp4
 while true
 do
 
@@ -27,7 +27,7 @@ then
 	for file in $(ls -rt *.mp3| tr " " "\?") #按时间逆序遍历
 	do
 		rest=$(ls |grep '.mp3'|wc -l)-1
-		drawtext1="drawtext=text='点歌：点歌+歌名歌手 切歌：切歌  点歌机在网易云搜索并下载 ':fontfile=${font_path}:fontsize=0.03*main_h:fontcolor=${fontcolor}@0.8:x=w-tw-30:y=10,drawtext=text='Linux系统下FFMPEG推流加py弹幕姬实现弹幕点歌':fontfile=${font_path}:fontsize=0.03*main_h:fontcolor=${fontcolor}@0.8:x=w-tw-30:y=th+20,drawtext=text='正在播放：${file}   点播列表还有${rest}首':fontfile=${font_path}:fontsize=0.03*main_h:fontcolor=red@0.8:x=w-tw-30:y=2*(th+10)+10,drawtext=text='爱特夜猫，调戏弹幕姬~不点个关注吗':fontfile=${font_path}:fontsize=0.03*main_h:fontcolor=white@0.8:x=w-tw-30:y=3*(th+10)+10"
+		drawtext1="drawtext=text='点歌：点歌+歌名歌手 切歌：切歌  点歌机在网易云搜索并下载 ':fontfile=${font_path}:fontsize=18:fontcolor=${fontcolor}@0.8:x=w-tw-30:y=10,drawtext=text='Linux系统下FFMPEG推流加py弹幕姬实现弹幕点歌':fontfile=${font_path}:fontsize=18:fontcolor=${fontcolor}@0.8:x=w-tw-30:y=th+20,drawtext=text='正在播放：${file}   点播列表还有${rest}首':fontfile=${font_path}:fontsize=18:fontcolor=red@0.8:x=w-tw-30:y=2*(th+10)+10,drawtext=text='爱特夜猫，调戏弹幕姬~不点个关注吗':fontfile=${font_path}:fontsize=18:fontcolor=white@0.8:x=w-tw-30:y=3*(th+10)+10"
 		# ffmpeg -loop 1 -re -i "${pic}"  -i "${file}" -vf  "${drawtext1}" -c:v libx264 -c:a aac  -strict experimental -b:a 192k -shortest  -f flv "${LIVEURL}"
 		lrc="$(echo $file|cut -d "." -f 1).lrc" #获取歌词文件名
 		if test -f "lyric/$lrc" && cat "lyric/$lrc" | grep -v "not found" #如果有歌词文件且有歌词则播放
@@ -45,7 +45,7 @@ else
 	#随机选取一个MP3
 	file=$(ls bgm/ | sort -R | head -n1) ##file=$(ls bgm/* | sort -R | head -n1)输出包含bgm/,ls bmg/ 不包含
 	#ffmpeg -re   -i	"${f}" -c copy -b:v 200k -b:a 192k  -f flv "rtmp://xl.live-send.acg.tv/live-xl/?streamname=live_25303175_5745325&key=71771fb7bb37ccbdc17888f178f56075"
-	drawtext2="drawtext=text='点歌：点歌+歌名歌手 切歌：切歌  点歌机在网易云搜索并下载 ':fontfile=${font_path}:fontsize=0.03*main_h:fontcolor=${fontcolor}@0.8:x=w-tw-30:y=10,drawtext=text='Linux系统下FFMPEG推流加py弹幕姬实现弹幕点歌':fontfile=${font_path}:fontsize=0.03*main_h:fontcolor=${fontcolor}@0.8:x=w-tw-30:y=th+20,drawtext=text='正在播放：${file}   当前无人点歌':fontfile=${font_path}:fontsize=0.03*main_h:fontcolor=red@0.8:x=w-tw-30:y=2*(th+10)+10,drawtext=text='爱特夜猫，调戏弹幕姬~不点个关注吗':fontfile=${font_path}:fontsize=0.03*main_h:fontcolor=white@0.8:x=w-tw-30:y=3*(th+10)+10"
+	drawtext2="drawtext=text='点歌：点歌+歌名歌手 切歌：切歌  点歌机在网易云搜索并下载 ':fontfile=${font_path}:fontsize=18:fontcolor=${fontcolor}@0.8:x=w-tw-30:y=10,drawtext=text='Linux系统下FFMPEG推流加py弹幕姬实现弹幕点歌':fontfile=${font_path}:fontsize=18:fontcolor=${fontcolor}@0.8:x=w-tw-30:y=th+20,drawtext=text='正在播放：${file}   当前无人点歌':fontfile=${font_path}:fontsize=18:fontcolor=red@0.8:x=w-tw-30:y=2*(th+10)+10,drawtext=text='爱特夜猫，调戏弹幕姬~不点个关注吗':fontfile=${font_path}:fontsize=18:fontcolor=white@0.8:x=w-tw-30:y=3*(th+10)+10"
 	
 	if [ "$(echo ${file}|grep .mp3)" != "" ]
 	then
