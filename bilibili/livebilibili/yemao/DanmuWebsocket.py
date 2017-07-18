@@ -15,7 +15,6 @@ import os,sys
 import requests
 import requests.utils
 import pickle
-import json
 import rsa
 import binascii
 from bs4 import BeautifulSoup
@@ -25,12 +24,12 @@ from bs4 import BeautifulSoup
 import difflib
 import math
 import datetime,time
-import random
 
 
 
-#mp3信息获取
-import eyed3
+
+# #mp3信息获取
+# import eyed3
 
 headers={
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
@@ -159,50 +158,41 @@ class DanmuWebsocket():
 
 
 
-
-
-
-
-	# def connection_info(self):
-	# 	r=self.session.get('http://live.bilibili.com/' + str(self._roomId))
-	# 	html=r.content.decode('utf8')
-	# 	m = re.findall(r'ROOMID\s=\s(\d+)', html)
-	# 	ROOMID = m[0]
-	# 	self._roomId = int(ROOMID)
-	# 	r2=self.session.get(self._CIDInfoUrl + ROOMID)
-	# 	xml_string = '<root>' + r2.content.decode('utf8') + '</root>'
-	# 	dom = xml.dom.minidom.parseString(xml_string)
-	# 	root = dom.documentElement
-	# 	server = root.getElementsByTagName('server')
-	# 	self._ChatHost = server[0].firstChild.data
-
 	async def connectServer(self):
-		print ('正在进入房间。。。。。')
-		with aiohttp.ClientSession() as s:
-			async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
-				html = await r.text()
-				m = re.findall(r'ROOMID\s=\s(\d+)', html)
-				ROOMID = m[0]
-			self._roomId = int(ROOMID)
-			async with s.get(self._CIDInfoUrl + ROOMID) as r:
-				xml_string = '<root>' + await r.text() + '</root>'
-				dom = xml.dom.minidom.parseString(xml_string)
-				root = dom.documentElement
-				server = root.getElementsByTagName('server')
-				self._ChatHost = server[0].firstChild.data
+		try:
+			# #print ('正在进入房间。。。。。')
+			# with aiohttp.ClientSession() as s:
+			# 	async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
+			# 		html = await r.text()
+			# 		m = re.findall(r'ROOMID\s=\s(\d+)', html)
+			# 		ROOMID = m[0]#str
+			# 	self._roomId = int(ROOMID)
+			# 	async with s.get(self._CIDInfoUrl + ROOMID) as r:
+			# 		xml_string = '<root>' + await r.text() + '</root>'
+			# 		dom = xml.dom.minidom.parseString(xml_string)
+			# 		root = dom.documentElement
+			# 		server = root.getElementsByTagName('server')
+			# 		self._ChatHost = server[0].firstChild.data
+			pass
+		except Exception as e:
+			self.connected	=	False
+			print(84,e,self._roomId)
+
+		else:
+			reader, writer = await asyncio.open_connection(self._ChatHost, self._ChatPort)
+			self._reader = reader
+			self._writer = writer
+			# print ('链接弹幕中。。。。。')
+			if (await self.SendJoinChannel(self._roomId) == True):
+				self.connected = True
+				# print ("链接房间:%s成功"%(self._roomId))
+				await self.ReceiveMessageLoop()			
+			else:
+				print("链接房间:%s失败"%(self._roomId))
+				
 
 
 
-		reader, writer = await asyncio.open_connection(self._ChatHost, self._ChatPort)
-		self._reader = reader
-		self._writer = writer
-		print ('链接弹幕中。。。。。')
-		if (await self.SendJoinChannel(self._roomId) == True):
-			self.connected = True
-			print ('进入房间成功。。。。。')
-			print ('链接弹幕成功。。。。。')
-			await self.ReceiveMessageLoop()
-			
 	async def HeartbeatLoop(self):
 		while self.connected == False:
 			await asyncio.sleep(0.5)
@@ -232,65 +222,93 @@ class DanmuWebsocket():
 
 	async def ReceiveMessageLoop(self):
 		while self.connected == True:
-			tmp = await self._reader.read(4)
-			expr, = unpack('!I', tmp)
-			tmp = await self._reader.read(2)
-			tmp = await self._reader.read(2)
-			tmp = await self._reader.read(4)
-			num, = unpack('!I', tmp)
-			tmp = await self._reader.read(4)
-			num2 = expr - 16
-
-			if num2 != 0:
-				num -= 1
-				if num==0 or num==1 or num==2:
-					tmp = await self._reader.read(4)
-					num3, = unpack('!I', tmp)
-					#print ('房间人数为 %s' % num3)
-					self._UserCount = num3
-					continue
-				elif num==3 or num==4:
-					tmp = await self._reader.read(num2)
-					# strbytes, = unpack('!s', tmp)
-					try: # 为什么还会出现 utf-8 decode error??????
-						messages = tmp.decode('utf-8')
-					except:
+			try:
+				tmp = await self._reader.read(4)
+				expr, = unpack('!I', tmp)
+				tmp = await self._reader.read(2)
+				tmp = await self._reader.read(2)
+				tmp = await self._reader.read(4)
+				num, = unpack('!I', tmp)
+				tmp = await self._reader.read(4)
+				num2 = expr - 16
+	 
+				if num2 != 0:
+					num -= 1
+					if num==0 or num==1 or num==2:
+						tmp = await self._reader.read(4)
+						num3, = unpack('!I', tmp)
+						#print ('房间人数为 %s' % num3)
+						self._UserCount = num3
 						continue
-					await self.parseDanMu(messages)
-					continue
-				elif num==5 or num==6 or num==7:
-					tmp = await self._reader.read(num2)
-					continue
-				else:
-					if num != 16:
+					elif num==3 or num==4:
 						tmp = await self._reader.read(num2)
-					else:
+						# strbytes, = unpack('!s', tmp)
+						try: # 为什么还会出现 utf-8 decode error??????
+							messages = tmp.decode('utf-8')
+						except Exception as e:
+							# print(147,e)
+							continue
+						else:
+							await self.parseDanMu(messages)
+					elif num==5 or num==6 or num==7:
+						tmp = await self._reader.read(num2)
 						continue
+					else:
+						if num != 16:
+							tmp = await self._reader.read(num2)
+						else:
+							continue
+			except Exception as e:
+				self._writer.close()##必须加否则tcp链接过多
+				self.connected = False
+				# print(161,"DanmuWebsocket.py:161",self._roomId)				
+				break
+				#发生错误跳出循环进行重连弹幕服务器
+		# await asyncio.sleep(1)
+		await self.connectServer()
+
+
+	def getJson(self,msg):
+		def find(result):
+			if len(result)!=0:
+				return result[0]
+			else:
+				return "0000"
+		try:
+			cmd = find(re.findall('"cmd":["]?(.+?)["]?\,',msg))
+			#print(cmd=='SEND_GIFT')
+			if cmd != 'SEND_GIFT': return {}
+			giftName = find(re.findall('"giftName":["]?(.+?)["]?\,',msg))
+			uname = find(re.findall('"uname":["]?(.+?)["]?\,',msg))
+			uid = int(find(re.findall('"uid":["]?(.+?)["]?\,',msg)))
+			dic = {
+				"cmd" : cmd,
+				"data":{
+					"giftName" : giftName,
+					"uname" : uname,
+					"uid" : uid
+				}
+			}
+		except Exception as e:
+			print(113,msg)
+			dic = {}
+		return dic
+
 
 	async def parseDanMu(self, messages):
 		try:
+
 			dic = json.loads(messages)
-			cmd = dic['cmd']
 			#print(dic)
+			#cmd = dic['cmd']
+
 		except Exception as e: # 有些情况会 jsondecode 失败，未细究，可能平台导致
-			print(276,e)
-			return
-		
-		# if cmd == 'LIVE':
-		# 	try:
-		# 		#print ('直播开始。。。') #{'cmd': 'LIVE', 'roomid': 2570641}
-		# 		await self.sendDanmu('喵咭晚上好,小夜猫终于等到你开播了') 
-		# 		await self.sendDanmu('欢迎来到直播间'+str(dic['roomid'])+',弹幕姬小夜猫陪伴你们左右')
-		# 	except Exception as e:
-		# 		print(286,e)
-		# 	return
-		# if cmd == 'PREPARING':
-		# 	try:
-		# 		#print ('房主准备中。。。') #{'cmd': 'PREPARING', 'roomid': 2570641}
-		# 		await self.sendDanmu('各位晚安,让我们明天继续相约直播间'+str(dic['roomid'])+',明天见')
-		# 	except Exception as e:
-		# 		print(292,e) 
-		# 	return
+			#print(276,e)
+			dic = self.getJson(messages)
+			#print(dic)
+ 
+		cmd = dic.get('cmd','')
+
 		if cmd == 'DANMU_MSG':
 			self.recevie_danmu_num+=1
 			if self.recevie_danmu_num % 40 == 0:
