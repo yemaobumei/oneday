@@ -80,8 +80,8 @@ class DanmuWebsocket():
 
 
 	async def HeartbeatLoop(self):
-		# while self.connected == False:
-		# 	await asyncio.sleep(0.5)
+		while self.connected == False:
+			await asyncio.sleep(0.5)
 
 		while self.connected == True:
 			await self.SendSocketData(0, 16, self._protocolversion, 2, 1, "")
@@ -146,10 +146,11 @@ class DanmuWebsocket():
 							continue
 			except Exception as e:
 				self._writer.close()##必须加否则tcp链接过多
+				self.connected = False
 				# print(161,"DanmuWebsocket.py:161",self._roomId)				
 				break
 				#发生错误跳出循环进行重连弹幕服务器
-		await asyncio.sleep(1)
+		# await asyncio.sleep(1)
 		await self.connectServer()
 
 

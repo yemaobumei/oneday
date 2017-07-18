@@ -284,10 +284,11 @@ class DanmuWebsocket():
 							continue
 			except Exception as e:
 				self._writer.close()##必须加否则tcp链接过多
+				self.connected = False
 				# print(161,"DanmuWebsocket.py:161",self._roomId)				
 				break
 				#发生错误跳出循环进行重连弹幕服务器
-		await asyncio.sleep(1)
+		# await asyncio.sleep(1)
 		await self.connectServer()				
 
 	async def parseDanMu(self, messages):
