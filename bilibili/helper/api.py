@@ -50,6 +50,7 @@ class Client():
 	def __init__(self,username,password):
 		self.session = requests.Session()
 		self.session.headers = headers
+		self.session.trust_env = False
 		#self.session.proxies = config.proxies
 		self.userdata={}
 		self.isLogin=False
