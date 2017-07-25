@@ -22,7 +22,8 @@
 船员进入房间
 {'cmd': 'WELCOME_GUARD', 'data': {'uid': 25303175, 'username': '最短的夜猫', 'guard_level': 3}, 'roomid': 1273106}
 
-
+夏日大作战
+{'cmd': 'SYS_GIFT', 'msg': '【猴叔家养蠢云开w】在直播间【272849】赠送了 水箭炮【225】个，水枪大战开始啦！一起来打水仗吧！', 'tips': '【猴叔家养蠢云开w】在直播间【272849】赠送了 水箭炮【225】个，水枪大战开始啦！一起来打水仗吧！', 'url': 'http://live.bilibili.com/272849', 'roomid': 272849, 'giftId': 77, 'msgTips': 0}
  
 礼物数据包
 {

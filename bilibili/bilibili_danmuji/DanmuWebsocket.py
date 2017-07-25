@@ -295,7 +295,6 @@ class DanmuWebsocket():
 		try:
 			dic = json.loads(messages)
 			cmd = dic['cmd']
-			#print(dic)
 		except Exception as e: # 有些情况会 jsondecode 失败，未细究，可能平台导致
 			#print(276,e)
 			return
@@ -418,16 +417,40 @@ class DanmuWebsocket():
 			except Exception as e:
 				print(404,e)
 
-		return
-
-
-	async def getAwardTv(self,tv_id,url):
-		
+		if cmd == 'SYS_GIFT':
+			try:
+				roomid = dic.get('roomid','')
+				if roomid:
+					await self.getAwardRaffle(roomid)
+			except Exception as e:
+				print(429,e)
+				
+	async def getAwardTv(self,tv_id,url):		
 		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
 			async with  s.get(url,headers=headers) as res:
 				text = await res.text()#{"code":0,"msg":"OK","data":{"id":20122,"dtime":179,"status":1}}
 				# if res.status==200:
 					# print('已参加小电视抽奖',tv_id)
+
+	async def getAwardRaffle(self,roomid):
+		url = "http://api.live.bilibili.com/activity/v1/SummerBattle/check?roomid=%s"%(roomid)
+		async with aiohttp.ClientSession(cookies=self.cookies) as s:
+			async with s.get(url,headers=headers) as res:
+				result = await res.text()
+				result = json.loads(result)
+				if len(result['data'])>0:
+					data = result['data'][0]
+					raffleId = data.get('raffleId','')
+					if raffleId:
+						url2 = "http://api.live.bilibili.com/activity/v1/SummerBattle/join?roomid=%s&&raffleId=%s"%(roomid,raffleId)
+						url3 = "http://api.live.bilibili.com/activity/v1/SummerBattle/notice?roomid=%s&&raffleId=%s"%(roomid,raffleId)
+					else:
+						return
+					async with s.get(url2,headers=headers) as r:
+						result = await r.text()
+						result = json.loads(result)
+						if result.get('code','1') == 0:
+							print('加入夏日大作战成功!')
 
 	async def getAwardLighten(self,roomid):
 		url ='http://api.live.bilibili.com/activity/v1/NeedYou/getLiveInfo'
@@ -450,3 +473,4 @@ class DanmuWebsocket():
 
 					else:
 						print(result)
+
