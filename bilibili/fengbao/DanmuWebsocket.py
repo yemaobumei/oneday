@@ -25,7 +25,7 @@ headers={
 
 
 class DanmuWebsocket():
-	def __init__(self,loop,cookies_list,roomid):
+	def __init__(self,loop,cookies_list,roomid,record=False):
 		self._CIDInfoUrl = 'http://live.bilibili.com/api/player?id=cid:'
 		self._ChatPort = 2243#788
 		self._protocolversion = 1
@@ -42,7 +42,8 @@ class DanmuWebsocket():
 		#风暴信息	
 		self.fengbao=False			
 		self.send_uid=0
-		self.send_uname=""			
+		self.send_uname=""
+		self.record=record			
 
 	async def connectServer(self):
 		try:
@@ -217,7 +218,8 @@ class DanmuWebsocket():
 					print (172,commentUser + ' say: ' + commentText,self._roomId)				
 					#self.loop.run_in_executor(None,addFengbao,*[self._roomId,self.send_uid,self.send_uname])
 					#数据库操作不能同时放入多个线程。
-					addFengbao(self._roomId,self.send_uid,self.send_uname)
+					if self.record:
+						addFengbao(self._roomId,self.send_uid,self.send_uname)
 				except Exception as e:
 					print(177,e)
 			return
