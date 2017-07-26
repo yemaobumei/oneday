@@ -32,8 +32,10 @@ from helper.sql import addSmallTv
 headers={
 			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36',
 			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+			'Referer': 'https://live.bilibili.com/'
 		}
-
+# referer_header = 'http://live.bilibili.com/'
+# headers = {'Referer': referer_header}
 
 class DanmuWebsocket():
 	def __init__(self,cookies,roomid,nickname):
@@ -226,7 +228,14 @@ class DanmuWebsocket():
 			await self.SendSocketData(0, 16, self._protocolversion, 2, 1, "")
 			await asyncio.sleep(30)
 
-
+	async def OnlineHeartbeat(self):
+		heart_url = 'http://live.bilibili.com/User/userOnlineHeart'
+		while True:
+			async with  aiohttp.ClientSession(cookies=self.cookies) as s:
+				async with  s.post(heart_url,headers=headers) as res:
+					result = await res.text()
+					print(result)
+					await asyncio.sleep(300)
 	async def SendJoinChannel(self, channelId):
 		self._uid = (int)(100000000000000.0 + 200000000000000.0*random.random())
 		body = '{"roomid":%s,"uid":%s}' % (channelId, self._uid)

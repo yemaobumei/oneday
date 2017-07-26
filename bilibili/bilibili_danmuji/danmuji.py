@@ -38,7 +38,8 @@ for each in info:
 				#danmuji.sendDanmu('小夜猫来看你了'),
 				LoginClient.do_sign(),
 				danmuji.connectServer(),
-				danmuji.HeartbeatLoop()
+				danmuji.HeartbeatLoop(),
+				danmuji.OnlineHeartbeat(),
 			]		
 
 
