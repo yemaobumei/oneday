@@ -208,17 +208,6 @@ class DanmuWebsocket():
 			else:
 				print("链接房间:%s失败"%(self._roomId))
 
-
-
-		reader, writer = await asyncio.open_connection(self._ChatHost, self._ChatPort)
-		self._reader = reader
-		self._writer = writer
-		#print ('链接弹幕中。。。。。')
-		if (await self.SendJoinChannel(self._roomId) == True):
-			self.connected = True
-			#print ('进入房间成功。。。。。')
-			print ('链接弹幕成功。。。。。',self._roomId)
-			await self.ReceiveMessageLoop()
 			
 	async def HeartbeatLoop(self):
 		while self.connected == False:

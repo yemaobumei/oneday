@@ -22,9 +22,5 @@ b'{"cmd":"SEND_GIFT","data":{"giftName":"\xe8\xbe\xa3\xe6\x9d\xa1","num":1,"unam
 
 
 
-uname,giftName,
-cmd=
-data=re.findall('\"data\":(.+\})\,',s)[0]
-giftName=re.findall('\"giftName\":(.+?)\,',data)[0]
-uname=re.findall('\"uname\":(.+?)\,',data)[0]
-uid=re.findall('\"uid\":(.+?)\,',data)[0]
+#websocket连接获取数据包里可能会有多条弹幕
+b'\x00\x00\x01\x0e\x00\x10\x00\x00\x00\x00\x00\x05\x00\x00\x00\x00{"info":[[0,1,25,16777215,1501151390,1006652787,0,"a068f1e9",0],"\xe5\x8d\xa1\xe5\x93\x87\xe4\xbc\x8a",[57599384,"\xe4\xbb\xa3\xe5\x8f\xb7V\xe7\x81\xb0\xe9\xb8\xbd",0,0,0,10000,1],[2,"\xe5\xb8\x85\xe5\x85\xbd","\xe8\x99\x8e\xe7\x89\x99\xe5\xa3\xb9\xe6\x9d\x86\xe7\xa6\xbd\xe5\x85\xbd\xe7\x8b\x99","3027357",6406234,""],[16,0,6406234,">50000"],["sign-one-month","title-17-1"],0,0],"cmd":"DANMU_MSG"}\x00\x00\x00\xc3\x00\x10\x00\x00\x00\x00\x00\x05\x00\x00\x00\x00{"info":[[0,1,25,16777215,1501151390,1360088408,0,"e39abf12",0],"\xe5\x8f\xaf\xe7\x88\xb1\xe1\xbb\x9b \xe2\x82\x83\xe1\xbb\x9d",[30057743,"\xe6\xb4\x97\xe8\xa1\xa3\xe6\x9c\xba\xe7\x9a\x84bili",0,0,0,10000,1],[],[8,0,9868950,">50000"],[],0,0],"cmd":"DANMU_MSG"}'
