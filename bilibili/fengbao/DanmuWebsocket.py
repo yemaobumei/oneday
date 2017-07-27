@@ -48,7 +48,7 @@ class DanmuWebsocket():
 	async def connectServer(self):
 		try:
 			# #print ('正在进入房间。。。。。')
-			# with aiohttp.ClientSession() as s:
+			# async with aiohttp.ClientSession() as s:
 			# 	async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
 			# 		html = await r.text()
 			# 		m = re.findall(r'ROOMID\s=\s(\d+)', html)
