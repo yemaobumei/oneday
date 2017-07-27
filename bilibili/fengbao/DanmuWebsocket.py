@@ -40,9 +40,6 @@ class DanmuWebsocket():
 		self.cookies_list=cookies_list
 
 		#风暴信息	
-		self.fengbao=False			
-		self.send_uid=0
-		self.send_uname=""
 		self.record=record			
 
 	async def connectServer(self):
@@ -195,47 +192,25 @@ class DanmuWebsocket():
  
 		cmd = dic.get('cmd','')
 		
-		if cmd == 'DANMU_MSG':
-			if self.fengbao:					
-				commentText = dic['info'][1]
-				commentUser = dic['info'][2][1]
-				try:					
-					## 多线程发送弹幕0.0001881122589111328
-					# s = time.time() 
-					# for cookies in self.cookies_list:
-					# 	self.loop.run_in_executor(None,self.senddanmu,*[commentText,cookies])
-					# end = time.time()
-					# print(end-s)
-					
-
-					#异步发送弹幕4.767163991928101
-					# s = time.time()
-					await self.sendDanmu(commentText)
-					# end = time.time()
-					# print(end-s)
-
-					self.fengbao = False
-					print (172,commentUser + ' say: ' + commentText,self._roomId)				
-					#self.loop.run_in_executor(None,addFengbao,*[self._roomId,self.send_uid,self.send_uname])
-					#数据库操作不能同时放入多个线程。
-					if self.record:
-						addFengbao(self._roomId,self.send_uid,self.send_uname)
-				except Exception as e:
-					print(177,e)
-			return
-
 		if cmd == 'SEND_GIFT' :
 			data = dic.get('data','')
 			#获取送礼信息		
-			GiftName = data.get('giftName',"noGiftName")
+			giftName = data.get('giftName',"noGiftName")
 			# if self._roomId == 2570641:
 			# 	#print(GiftName,self._roomId)
 			# 	self.fengbao=True
 			# print(GiftName,self._roomId)
-			if GiftName == "节奏风暴":
-				self.send_uid = data.get('uid',0)
-				self.send_uname = data.get('uname','noSendname')			
-				self.fengbao = True
+			if giftName == "节奏风暴":
+				try:
+					send_uid = data.get('uid',0)
+					send_uname = data.get('uname','noSendname')			
+					fengbaoId = data['specialGift']['39']['id']
+					content = data['specialGift']['39']['content']
+					await self.sendDanmu(content)
+					if self.record:
+						addFengbao(fengbaoId,self._roomId,send_uid,send_uname,content)
+				except Exception as e:
+					print(213,e)
 			return
 
 #---辅助弹幕部分--------------------------------------------------------------------------

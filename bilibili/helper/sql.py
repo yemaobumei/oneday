@@ -36,11 +36,13 @@ class SmallTv(Base):
 
 class Fengbao(Base):
 	__tablename__ = 'Fengbao'
-	id = Column(Integer, primary_key=True)
-	realRoomid = Column(Integer,nullable=False)
-	send_uid = Column(Integer,nullable=True)
-	send_uname = Column(String(20),nullable=True)
-	date = Column(DateTime(timezone=True), default=datetime.now())
+	id = Column(Integer, primary_key = True)
+	fengbao_id = Column(String(20), nullable = False,unique = True)
+	realRoomid = Column(Integer,nullable = False)
+	send_uid = Column(Integer,nullable = True)
+	send_uname = Column(String(20),nullable = True)
+	content = Column(String(40), nullable = True)
+	date = Column(DateTime(timezone = True), default = datetime.now())
 
 
 # 初始化数据库连接
@@ -130,13 +132,13 @@ def addSmallTv(tv_id,roomid,realRoomid):
 		print(95,e)
 
 
-def addFengbao(realRoomid,send_uid,send_uname):
+def addFengbao(fengbao_id,realRoomid,send_uid,send_uname,content):
 	session = DBSession()
 	try:
-		# queryFengbao=session.query(Fengbao).filter_by(realRoomid=realRoomid).first()
-		# if queryFengbao:
-		# 	return
-		session.add(Fengbao(realRoomid=realRoomid,send_uid=send_uid,send_uname=send_uname))
+		queryFengbao=session.query(Fengbao).filter_by(fengbao_id=fengbao_id).first()
+		if queryFengbao:
+			return
+		session.add(Fengbao(fengbao_id=fengbao_id,realRoomid=realRoomid,send_uid=send_uid,send_uname=send_uname,content=content))
 		# queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
 		# if queryUser:
 		# 	queryUser.fengbaoNum+=1
