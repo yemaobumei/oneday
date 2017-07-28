@@ -15,16 +15,16 @@ from helper.api import Client
 #登录B站获取cookies
 
 info = [
-	{'username':'13126772351','password':'ye06021123','roomid':4416185},
-	{'username':'979365217@qq.com','password':'ye06021123','roomid':4416185},
-	{'username':'13390776820','password':'wsglr3636...','roomid':4416185},
-	{'username':'13375190907','password':'licca0907','roomid':4416185},
-	{'username':'15675178724','password':'zero082570X','roomid':4416185},
-	{'username':'15130169870','password':'30169870.','roomid':4416185}
+	{'username':'13126772351','roomid':4416185},
+	{'username':'979365217@qq.com','roomid':4416185},
+	{'username':'13390776820','roomid':4416185},
+	{'username':'13375190907','roomid':4416185},
+	{'username':'15675178724','roomid':4416185},
+	{'username':'15130169870','roomid':4416185},
 ]
 tasks = []
 for each in info:		
-	LoginClient=Client(each['username'],each['password'])
+	LoginClient=Client(each['username'])
 	cookies,nickname=LoginClient.cookies_login() #<class dic>{}
 	while not LoginClient.isLogin:
 		LoginClient.login()

@@ -47,7 +47,7 @@ def loop(func):
 	return wrap
 
 class Client():
-	def __init__(self,username,password):
+	def __init__(self,username,password = ""):
 		self.session = requests.Session()
 		self.session.headers = headers
 		self.session.trust_env = False
@@ -139,7 +139,7 @@ class Client():
 		cookies_file = os.path.join(os.path.dirname(__file__), self.username + ".cookies")
 		if not os.path.exists(cookies_file):
 			print(self.username + '.cookies不存在，请登录')
-			return False
+			return None,None
 		self.load_cookies()
 		if not self.get_account_info():
 			print(self.username + '.cookies失效，请登录')

@@ -223,7 +223,6 @@ class DanmuWebsocket():
 			async with  aiohttp.ClientSession(cookies=self.cookies) as s:
 				async with  s.post(heart_url,headers=headers) as res:
 					result = await res.text()
-					print(result)
 					await asyncio.sleep(300)
 	async def SendJoinChannel(self, channelId):
 		self._uid = (int)(100000000000000.0 + 200000000000000.0*random.random())
