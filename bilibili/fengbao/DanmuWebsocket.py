@@ -36,7 +36,7 @@ class DanmuWebsocket():
 		self._ChatHost = 'livecmt-2.bilibili.com'
 
 		self.loop = loop
-		self._roomId = int(roomid)
+		self.roomid = int(roomid)
 		self.cookies_list=cookies_list
 
 		#风暴信息	
@@ -46,11 +46,11 @@ class DanmuWebsocket():
 		try:
 			# #print ('正在进入房间。。。。。')
 			# async with aiohttp.ClientSession() as s:
-			# 	async with s.get('http://live.bilibili.com/' + str(self._roomId)) as r:
+			# 	async with s.get('http://live.bilibili.com/' + str(self.roomid)) as r:
 			# 		html = await r.text()
 			# 		m = re.findall(r'ROOMID\s=\s(\d+)', html)
 			# 		ROOMID = m[0]#str
-			# 	self._roomId = int(ROOMID)
+			# 	self.roomid = int(ROOMID)
 			# 	async with s.get(self._CIDInfoUrl + ROOMID) as r:
 			# 		xml_string = '<root>' + await r.text() + '</root>'
 			# 		dom = xml.dom.minidom.parseString(xml_string)
@@ -60,19 +60,19 @@ class DanmuWebsocket():
 			pass
 		except Exception as e:
 			self.connected	=	False
-			print(84,e,self._roomId)
+			print(84,e,self.roomid)
 
 		else:
 			reader, writer = await asyncio.open_connection(self._ChatHost, self._ChatPort)
 			self._reader = reader
 			self._writer = writer
 			# print ('链接弹幕中。。。。。')
-			if (await self.SendJoinChannel(self._roomId) == True):
+			if (await self.SendJoinChannel(self.roomid) == True):
 				self.connected = True
-				# print ("链接房间:%s成功"%(self._roomId))
+				# print ("链接房间:%s成功"%(self.roomid))
 				await self.ReceiveMessageLoop()			
 			else:
-				print("链接房间:%s失败"%(self._roomId))
+				print("链接房间:%s失败"%(self.roomid))
 				
 
 
@@ -145,7 +145,7 @@ class DanmuWebsocket():
 			except Exception as e:
 				self._writer.close()##必须加否则tcp链接过多
 				self.connected = False
-				# print(161,"DanmuWebsocket.py:161",self._roomId)				
+				# print(161,"DanmuWebsocket.py:161",self.roomid)				
 				break
 				#发生错误跳出循环进行重连弹幕服务器
 		# await asyncio.sleep(1)
@@ -194,26 +194,25 @@ class DanmuWebsocket():
 		
 		if cmd == 'SEND_GIFT' :
 			data = dic.get('data','')
-			#获取送礼信息		
-			giftName = data.get('giftName',"noGiftName")
-			# if self._roomId == 2570641:
-			# 	#print(GiftName,self._roomId)
-			# 	self.fengbao=True
-			# print(GiftName,self._roomId)
+			##获取送礼信息		
+			giftName = data.get('giftName',"nogiftName")
+			# if self.roomid == 2570641:
+			# print(giftName,self.roomid)
+			# await self.sendDanmu(giftName)
 			if giftName == "节奏风暴":
 				try:
 					send_uid = data.get('uid',0)
 					send_uname = data.get('uname','noSendname')			
 					fengbaoId = data['specialGift']['39']['id']
 					content = data['specialGift']['39']['content']
-					await self.sendDanmu(content)
+					status = await self.sendDanmu(content)
 					if self.record:
-						addFengbao(fengbaoId,self._roomId,send_uid,send_uname,content)
+						addFengbao(fengbaoId,self.roomid,send_uid,send_uname,content,status)
 				except Exception as e:
 					print(213,e)
 			return
 
-#---辅助弹幕部分--------------------------------------------------------------------------
+##---辅助弹幕部分--------------------------------------------------------------------------
 
 	async def sendDanmu(self,msg):
 		send_url="http://live.bilibili.com/msg/send"
@@ -227,7 +226,7 @@ class DanmuWebsocket():
 			# 'mode':1,
 			'msg':msg,
 			# 'rnd':int(time.time()),#'1493972251',
-			'roomid':self._roomId     
+			'roomid':self.roomid     
 		}
 		try:
 			status = False
@@ -237,6 +236,7 @@ class DanmuWebsocket():
 						await res.text()
 						r = await res.text()
 						r=json.loads(r)
+						print(r)
 						##判断是否抢风暴成功
 						if r.get('msg','')=="OK" and r.get('message','')=="OK":
 							status = True						
@@ -256,7 +256,7 @@ class DanmuWebsocket():
 				return
 			data={
 				'msg':msg,
-				'roomid':self._roomId     
+				'roomid':self.roomid     
 			}
 			s=requests.session()
 			s.trust_env=False

@@ -7,7 +7,7 @@ sys.path.append("../")
 import asyncio
 
 from DanmuWebsocket import DanmuWebsocket
-from helper.api import Client
+from helper.api import Client,MyError
 
 import room
 from getTopUp import GetTopUpRoomId
@@ -47,7 +47,7 @@ print(len(room))
 #建立直播弹幕websocket,返回发送弹幕姬
 danmuji=[]
 for each in room:
-	danmuji.append(DanmuWebsocket(loop=loop,cookies_list=cookies_list,roomid=each))
+	danmuji.append(DanmuWebsocket(loop=loop,cookies_list=cookies_list,roomid=each,record=False))
 
 
 #执行异步任务
