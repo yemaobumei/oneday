@@ -333,20 +333,20 @@ class DanmuJi(BaseWebSocketDanmuClient):
 
 	async def handlerMessage(self,dic):
 		cmd = dic.get('cmd','')
-		if cmd == 'LIVE':
-			try:
-				await self.sendDanmu('小可爱晚上好,小夜猫终于等到你开播了') 
-				await self.sendDanmu('欢迎来到直播间'+str(dic['roomid'])+',弹幕姬小夜猫陪伴你们左右')
-			except Exception as e:
-				print(286,e)
-			return
-		if cmd == 'PREPARING':
-			try:
-				#print ('房主准备中。。。') #{'cmd': 'PREPARING', 'roomid': 2570641}
-				await self.sendDanmu('各位晚安,让我们明天继续相约直播间'+str(dic['roomid'])+',明天见')
-			except Exception as e:
-				print(292,e) 
-			return
+		# if cmd == 'LIVE':
+		# 	try:
+		# 		await self.sendDanmu('小可爱晚上好,小夜猫终于等到你开播了') 
+		# 		await self.sendDanmu('欢迎来到直播间'+str(dic['roomid'])+',弹幕姬小夜猫陪伴你们左右')
+		# 	except Exception as e:
+		# 		print(286,e)
+		# 	return
+		# if cmd == 'PREPARING':
+		# 	try:
+		# 		#print ('房主准备中。。。') #{'cmd': 'PREPARING', 'roomid': 2570641}
+		# 		await self.sendDanmu('各位晚安,让我们明天继续相约直播间'+str(dic['roomid'])+',明天见')
+		# 	except Exception as e:
+		# 		print(292,e) 
+		# 	return
 		if cmd == 'DANMU_MSG':
 			self.recevie_danmu_num+=1
 			if self.recevie_danmu_num % 40 == 0:
@@ -455,7 +455,6 @@ class MusicClient(DanmuJi):
 		if "点歌" == commentText[0:2]:
 			try:
 				song=commentText.replace('点歌','')
-				print(song)
 				if  song:
 					os.chdir('../music')
 					status=os.popen("netease-dl --quiet --lyric song --name '%s'"%(song)).read()
