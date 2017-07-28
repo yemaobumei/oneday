@@ -88,7 +88,6 @@ class DanmuWebsocket():
 	async def sendDanmu(self,msg):
 		send_url="http://live.bilibili.com/msg/send"
 		method="POST"
-		msg=msg.strip()
 		if len(msg) == 0:
 			return
 		if len(msg) > 30:
