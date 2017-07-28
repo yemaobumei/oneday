@@ -32,8 +32,14 @@
 
 {'cmd': 'SEND_GIFT', 'data': {'giftName': '节奏风暴', 'num': 1, 'uname': '佐佐木诗织', 'rcost': 8084292, 'uid': 1791266, 'top_list': [{'uid': 4051068, 'uname': '奶茶味胖次', 'coin': 3056163, 'face': 'http://i1.hdslb.com/bfs/face/f37ebf49f0ba8e37bcd5c1c42ce60caf6010f0c8.jpg', 'guard_level': '3'}, {'uid': 12475243, 'uname': '小若沐', 'coin': 2360600, 'face': 'http://i0.hdslb.com/bfs/face/1c8fb26a9c63876de22d65a04cba81be9e9ed5b6.jpg', 'guard_level': '2'}, {'uid': 7963368, 'uname': '阿凉の御姐控', 'coin': 1852362, 'face': 'http://i1.hdslb.com/bfs/face/eac44e74cbf733e8727d1d20474f75f7c9f8f8d6.jpg', 'guard_level': '3'}], 'timestamp': 0, 'giftId': 39, 'giftType': 0, 'action': '赠送', 'super': 1, 'price': 100000, 'rnd': '535556140', 'newMedal': 0, 'newTitle': 0, 'medal': [], 'title': '', 'beatId': 'u16099', 'biz_source': 'live', 'metadata': '', 'gold': 200088, 'silver': '26538', 'eventScore': 0, 'eventNum': 0, 'specialGift': {'39': {'id': '103143', 'num': 100, 'time': 90, 'content': '我凉大可爱！！！', 'hadJoin': 0, 'action': 'start'}}, 'notice_msg': [], 'capsule': {'normal': {'coin': 14, 'change': 10, 'progress': {'now': 4012, 'max': 10000}}, 'colorful': {'coin': 0, 'change': 0, 'progress': {'now': 1000, 'max': 5000}}}}}
 
+# 发送抢风暴弹幕返回数据
+#风暴成功获得亿元
+{"code":0,"message":"OK","msg":"OK","data":{"cmd":"SPECIAL_TIPS","tips":{"gift_id":39,"title":"\u8282\u594f\u98ce\u66b4","content":"<p>\u4f60\u662f\u524d 100 \u4f4d\u8ddf\u98ce\u5927\u5e08<br \/>\u606d\u559c\u4f60\u83b7\u5f97\u4e00\u4e2a\u4ebf\u5706(7\u5929\u6709\u6548\u671f)<\/p>","mobile_content":"\u4f60\u662f\u524d 100 \u4f4d\u8ddf\u98ce\u5927\u5e08","gift_img":"http:\/\/static.hdslb.com\/live-static\/live-room\/images\/gift-section\/gift-6.png?2017011901","gift_num":1,"gift_name":"\u4ebf\u5706"}}}
+#短时间重复弹幕
+{"code":0,"msg":"msg in 1s","data":[]}
+#弹幕发送成功
+{"code":0,"msg":"","data":[]}
 
- 
 礼物数据包
 {
   'code': 0,

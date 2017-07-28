@@ -7,7 +7,7 @@ from helper.sql import *
 #addFengbao(123,111,'yefan')
 session = DBSession()
 for instance in session.query(Fengbao).order_by(Fengbao.date):#filter_by(fansnum=0): 
-	print(instance.realRoomid,instance.send_uname,instance.date)
+	print(instance.fengbao_id,instance.realRoomid,instance.send_uname,instance.content,instance.date)
 	#instance.date+=timedelta(hours=8)
 session.commit()
 session.close()

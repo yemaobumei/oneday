@@ -187,9 +187,18 @@ class Client():
 			# 'rnd':'1493972251',
 			'roomid':roomid		
 		}
-		res = self.session.post(send_url,data=data)
-		if res.status_code==200:
-			print('弹幕发送成功')
+		try:
+			res = self.session.post(send_url,data=data).json()
+			if res.get('code','')==0 and res.get('msg','')=="":
+				#短时间重复弹幕
+				# {"code":0,"msg":"msg in 1s","data":[]}
+				#弹幕发送成功
+				# {"code":0,"msg":"","data":[]}			
+				print('弹幕发送成功')
+			else:
+				print('弹幕发送失败',res.get('msg','no reason!'))
+		except Exception as e:
+			print(201,e)
 
 
 	#获取个人通知消息个数
