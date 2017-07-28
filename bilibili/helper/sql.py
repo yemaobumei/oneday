@@ -1,6 +1,6 @@
 # 在Python中, 最有名的ORM框架是SQLAlchemy. 我们来看看SQLAlchemy的用法.
 
-from sqlalchemy import Column, String,Integer, DateTime, create_engine,engine
+from sqlalchemy import Column, String,Integer, DateTime, Boolean, create_engine,engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -42,6 +42,7 @@ class Fengbao(Base):
 	send_uid = Column(Integer,nullable = True)
 	send_uname = Column(String(20),nullable = True)
 	content = Column(String(40), nullable = True)
+	status = Column(Boolean, default = False)
 	date = Column(DateTime(timezone = True), default = datetime.now())
 
 
@@ -132,13 +133,13 @@ def addSmallTv(tv_id,roomid,realRoomid):
 		print(95,e)
 
 
-def addFengbao(fengbao_id,realRoomid,send_uid,send_uname,content):
+def addFengbao(fengbao_id,realRoomid,send_uid,send_uname,content,status=False):
 	session = DBSession()
 	try:
 		queryFengbao=session.query(Fengbao).filter_by(fengbao_id=fengbao_id).first()
 		if queryFengbao:
 			return
-		session.add(Fengbao(fengbao_id=fengbao_id,realRoomid=realRoomid,send_uid=send_uid,send_uname=send_uname,content=content))
+		session.add(Fengbao(fengbao_id=fengbao_id,realRoomid=realRoomid,send_uid=send_uid,send_uname=send_uname,content=content,status=status))
 		# queryUser=session.query(User).filter_by(realRoomid=realRoomid).first()
 		# if queryUser:
 		# 	queryUser.fengbaoNum+=1

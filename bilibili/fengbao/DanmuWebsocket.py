@@ -229,15 +229,22 @@ class DanmuWebsocket():
 			# 'rnd':int(time.time()),#'1493972251',
 			'roomid':self._roomId     
 		}
-		for cookies in self.cookies_list:
-			async with  aiohttp.ClientSession(cookies=cookies) as s:
-				async with  s.post(send_url,headers=headers,data=data) as res:
-					await res.text()
-					# r = await res.text()
-					#r=json.loads(r)
-					#print('send danmu ok!',r['msg'])
-					# if res.status==200:
-					# 	print(108,msg,self._roomId)
+		try:
+			status = False
+			for cookies in self.cookies_list:
+				async with  aiohttp.ClientSession(cookies=cookies) as s:
+					async with  s.post(send_url,headers=headers,data=data) as res:
+						await res.text()
+						r = await res.text()
+						r=json.loads(r)
+						##判断是否抢风暴成功
+						if r.get('msg','')=="OK" and r.get('message','')=="OK":
+							status = True						
+		except Exception as e:
+			print("发送弹幕失败!",e)
+		
+		return status
+
 					
 	#非异步形式	
 	def senddanmu(self,msg,cookies):

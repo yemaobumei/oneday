@@ -236,10 +236,10 @@ class BeatStormClient(BaseWebSocketDanmuClient):
 					send_uname = data.get('uname','noSendname')			
 					fengbaoId = data['specialGift']['39']['id']
 					content = data['specialGift']['39']['content']
-					await self.sendDanmu(content)
+					status = await self.sendDanmu(content)
 					print(send_uname+'say:'+content)
 					if self.record:
-						addFengbao(fengbaoId,self.roomid,send_uid,send_uname,content)
+						addFengbao(fengbaoId,self.roomid,send_uid,send_uname,content,status)
 				except Exception as e:
 					print(213,e)
 			return
@@ -260,17 +260,21 @@ class BeatStormClient(BaseWebSocketDanmuClient):
 			'roomid':self.roomid     
 		}
 		try:
+			status = False
 			for cookies in self.cookies_list:
 				async with  aiohttp.ClientSession(cookies=cookies) as s:
 					async with  s.post(send_url,headers=headers,data=data) as res:
 						await res.text()
 						r = await res.text()
-						print(r)
 						r=json.loads(r)
-						
-
+						print(r)
+						##判断是否抢风暴成功
+						if r.get('msg','')=="OK" and r.get('message','')=="OK":
+							status = True						
 		except Exception as e:
-			print("发送弹幕失败!")
+			print("发送弹幕失败!",e)
+		
+		return status
 
 ##------批量房间风暴客户端管理器-----------------------------------------
 class BeatStormClientManager(BaseClientManager):
@@ -292,10 +296,11 @@ class BeatStormClientManager(BaseClientManager):
 
 if __name__ == "__main__":
 	
-###-------批量房间弹幕监控-----------------------------------------	
-	# roomList = [ 1273106, 80397 ]#771423,
-	# danmuClientManager = BaseClientManager(roomList = roomList)	
-	# danmuClientManager.start()
+# ##-------批量房间弹幕监控-----------------------------------------	
+# 	roomList = [ 1273106, 80397,1313 ]#771423,
+# 	danmuClientManager = BaseClientManager(roomList = roomList)	
+# 	danmuClientManager.start()
+
 
 ##--------批量房间风暴监控-----------------------------------------
 	import room
