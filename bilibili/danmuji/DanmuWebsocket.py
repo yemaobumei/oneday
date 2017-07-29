@@ -209,12 +209,12 @@ class DanmuWebsocket():
 
 			
 	async def HeartbeatLoop(self):
-		while self.connected == False:
-			await asyncio.sleep(0.5)
-
-		while self.connected == True:
-			await self.SendSocketData(0, 16, self._protocolversion, 2, 1, "")
-			await asyncio.sleep(30)
+		while True:
+			if self.connected == True:
+				await self.SendSocketData(0, 16, self._protocolversion, 2, 1, "")
+				await asyncio.sleep(30)			
+			else:
+				await asyncio.sleep(1)
 
 	async def OnlineHeartbeat(self):
 		heart_url = 'http://live.bilibili.com/User/userOnlineHeart'
