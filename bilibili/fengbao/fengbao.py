@@ -21,6 +21,7 @@ info = [
 	# {'username':'13390776820'},
 	# {'username':'15675178724'},
 	# {'username':'15130169870'},
+	# {'username':'1723506002@qq.com'},
 ]
 
 cookies_list = []

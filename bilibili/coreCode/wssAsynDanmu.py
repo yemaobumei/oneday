@@ -2,10 +2,12 @@
 #encoding=utf-8
 import sys,os
 sys.path.append("../")
+import concurrent
+## 核心基础库
 from helper.sql import addFengbao
 from helper.api import Client,MyError
+from helper.logger import logger
 from websockets import connect
-
 import json
 import re
 import requests
@@ -63,7 +65,7 @@ class BaseWebSocketDanmuClient():
 				self._writer.write(data)
 				await self._writer.drain()
 		except Exception as e:
-			print(32,e)	
+			logger.exception('服务器推送数据出错')	
 
 	#弹幕池心跳包	
 	async def heartBeat(self):
@@ -112,7 +114,7 @@ class BaseWebSocketDanmuClient():
 				else:
 					# await self.parseDanMu(messages)
 					return messages
-				print(tmp)
+
 				return tmp
 			elif num==5 or num==6 or num==7:
 				tmp = await self._reader.read(num2)
@@ -122,7 +124,7 @@ class BaseWebSocketDanmuClient():
 					tmp = await self._reader.read(num2)
 				else:
 					return 
-		return 
+
 	async def receiveMessageLoop(self):
 		while self.connected == True:
 			try:
@@ -130,10 +132,13 @@ class BaseWebSocketDanmuClient():
 					bmessage = await self.tcpReceiveDanmu()
 				else:
 					bmessage = await self.ws.recv()
-				if not bmessage:
+				if not bmessage:##没有消息
 					continue
-			except Exception as e:
+			except concurrent.futures._base.CancelledError:
+				pass
+			except :
 				self.connected = False
+				logger.exception("房间%s弹幕获取失败,尝试重连",self.roomid)
 				if self.useDanmuType == "tcp":
 					self._writer.close()
 				else:
@@ -153,7 +158,7 @@ class BaseWebSocketDanmuClient():
 					dic = json.loads(msg)
 					await self.handlerMessage(dic)
 		except Exception as e:
-			print(141,e)
+			logger.exception('弹幕消息处理失败')
 
 	async def handlerMessage(self,dic):
 		cmd = dic.get('cmd','')
@@ -174,59 +179,34 @@ class BaseWebSocketDanmuClient():
 			msg = "%s 赠送 %sx%s"%(giftUser,giftName,giftNum)
 			print(self.roomid,msg)
 			return
+
 	async def start(self):
 		##获取主播真实房间号
 		await self.getRealRommId()
 		##选择连接弹幕池的方式
-		if self.useDanmuType == 'ws':
-			self.ws = await connect(self.wsurl)
-		elif self.useDanmuType == "wss":
-			self.ws = await connect(self.wssurl)
-		else:
-			self._reader,self._writer = await asyncio.open_connection('livecmt-2.bilibili.com',2243)
-	
-		await self.sendJoinRoom()
-		await self.receiveMessageLoop()
-
-
-##---------批量房间弹幕基础管理器----------------------------------------
-class BaseClientManager():
-
-	def __init__(self,roomList = [ 2570641,],useDanmuType = 'ws'):
-		self.roomList = roomList
-		self.useDanmuType = useDanmuType
-
-	def _prepare(self):
-		pass
-
-	def getTasks(self):
-		tasks = []	
-		for each in self.roomList:
-			task = BaseWebSocketDanmuClient(roomid = each,useDanmuType = self.useDanmuType)
-			tasks += [ task.start(),task.heartBeat() ]
-		return tasks
-
-	def start(self):
-		tasks = self.getTasks()	
 		try:
-			loop = asyncio.get_event_loop()
-			loop.run_until_complete(asyncio.wait(tasks))
-		except KeyboardInterrupt:
-			print("手动关闭")
-		finally:
-			print(">> Cancelling tasks now")
-			for task in asyncio.Task.all_tasks():
-				task.cancel()
-			loop.run_until_complete(asyncio.sleep(1))
-			print(">> Done cancelling tasks")
-			loop.close()		
+			if self.useDanmuType == 'ws':
+				self.ws = await connect(self.wsurl)
+			elif self.useDanmuType == "wss":
+				self.ws = await connect(self.wssurl)
+			else:
+				self._reader,self._writer = await asyncio.open_connection('livecmt-2.bilibili.com',2243)
+			await self.sendJoinRoom()
+		except Exception as e:
+			logger.exception("房间%s加入失败",self.roomid)
+			await self.start()	
+		else:	
+			await self.receiveMessageLoop()
+	
 
 ##---------单个房间自动回复弹幕姬----------------------------------------------
 class DanmuJi(BaseWebSocketDanmuClient):
 	"""docstring for DanmuJi"""
 	def __init__(self,username,roomid = 2570641,useDanmuType = "ws"):
 		super(DanmuJi,self).__init__(roomid = roomid,useDanmuType = useDanmuType)
-		self.cookies,self.nickname = Client(username).cookies_login() 
+		self.username = username
+		self.LoginClient = Client(self.username)
+		self.cookies,self.nickname = self.LoginClient.cookies_login() 
 
 
 #---辅助弹幕部分--------------------------------------------------------------------------
@@ -265,10 +245,12 @@ class DanmuJi(BaseWebSocketDanmuClient):
 			'rnd':'1493972251',
 			'roomid':self.roomid   
 		}
-		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
-			async with  s.post(send_url,headers=headers,data=data) as res:
-				result = await res.text() #json字符串
-
+		try:
+			async with  aiohttp.ClientSession(cookies=self.cookies) as s:
+				async with  s.post(send_url,headers=headers,data=data) as res:
+					result = await res.text() #json字符串
+		except exception as e:
+			logger.exception('弹幕发送失败')			
 
 	#### 得到一定等级才能发30个字数的弹幕,注意-----------
 	async def send_long_danmu(self,msg):
@@ -305,7 +287,7 @@ class DanmuJi(BaseWebSocketDanmuClient):
 					temp_ratio = ratio
 					temp_key = key
 		except Exception as e:
-			print(145,e)
+			logger.exception('弹幕库比对处理失败')
 	
 		if (temp_ratio > 0.49 and len(msg) <= 10) or (temp_ratio > 0.34 and len(msg) > 10) or (temp_ratio >0.2 and len(msg)>20) :
 			await self.sendDanmu(self.database[temp_key])
@@ -327,41 +309,32 @@ class DanmuJi(BaseWebSocketDanmuClient):
 							response = json.loads(r).get('text','TuLing no Response!')			
 					await self.sendDanmu(response+'@'+username)
 				except Exception as e:
-					print(329,e)
+					logger.exception('图灵消息获取失败消息处理失败')
 
 		return
 
 	async def handlerMessage(self,dic):
 		cmd = dic.get('cmd','')
 		# if cmd == 'LIVE':
-		# 	try:
-		# 		await self.sendDanmu('小可爱晚上好,小夜猫终于等到你开播了') 
-		# 		await self.sendDanmu('欢迎来到直播间'+str(dic['roomid'])+',弹幕姬小夜猫陪伴你们左右')
-		# 	except Exception as e:
-		# 		print(286,e)
+		# 	await self.sendDanmu('小可爱晚上好,小夜猫终于等到你开播了') 
+		# 	await self.sendDanmu('欢迎来到直播间'+str(dic['roomid'])+',弹幕姬小夜猫陪伴你们左右')
 		# 	return
 		# if cmd == 'PREPARING':
-		# 	try:
-		# 		#print ('房主准备中。。。') #{'cmd': 'PREPARING', 'roomid': 2570641}
-		# 		await self.sendDanmu('各位晚安,让我们明天继续相约直播间'+str(dic['roomid'])+',明天见')
-		# 	except Exception as e:
-		# 		print(292,e) 
+		# 	#print ('房主准备中。。。') #{'cmd': 'PREPARING', 'roomid': 2570641}
+		# 	await self.sendDanmu('各位晚安,让我们明天继续相约直播间'+str(dic['roomid'])+',明天见')
 		# 	return
 		if cmd == 'DANMU_MSG':
 			self.recevie_danmu_num+=1
 			if self.recevie_danmu_num % 40 == 0:
 				le=len(self.setTimeDanmu)
 				rand=random.randint(0,le-1)
-				try:
-					await self.sendDanmu(self.setTimeDanmu[rand])
-				except Exception as e:
-					pass
+				await self.sendDanmu(self.setTimeDanmu[rand])
 			commentText = dic['info'][1]
 			commentUser = dic['info'][2][1]
 			isAdmin = dic['info'][2][2] == '1'
 			isVIP = dic['info'][2][3] == '1'
 			###----弹幕回复拓展功能-----------
-			# print(commentText)
+
 			await self.extended_func(commentText)
 			if self.nickname == commentUser:
 				return 
@@ -373,7 +346,7 @@ class DanmuJi(BaseWebSocketDanmuClient):
 				# print (311,commentUser + ' say: ' + commentText)
 				await self.robot(commentUser,commentText)
 			except Exception as e:
-				print(314,e)
+				logger.exception('弹幕消息处理失败')		
 			return
 		if cmd == 'SEND_GIFT':
 			#累计多次礼物后，情况礼物清单栏,{'a':3,'b':5}
@@ -390,7 +363,6 @@ class DanmuJi(BaseWebSocketDanmuClient):
 			gifts=['B坷垃','喵娘','节奏风暴','普通拳']
 			gifts_low=['233','666','小拳拳','亿圆']
 			res=""
-			#print (332,GiftName,GiftNum)
 
 			#单次送礼记录礼物清单内，连续多次后触发不弹幕'打包投喂'。
 			try:
@@ -411,7 +383,7 @@ class DanmuJi(BaseWebSocketDanmuClient):
 				# 	return
 				# await self.sendDanmu(res)
 			except Exception as e:
-				print(355,e,GiftUser)
+				logger.exception('赠送礼物消息处理失败')		
 			return
 
 		if cmd == 'WELCOME_GUARD' :
@@ -432,15 +404,10 @@ class DanmuJi(BaseWebSocketDanmuClient):
 
 				await self.sendDanmu(res)
 			except Exception as e:
-				print(372,e)
-				pass			
+				logger.exception('船长消息处理失败')		
 		if cmd == 'WELCOME' :
 			commentUser = dic['data']['uname']
-			try:
-				await self.sendDanmu('欢迎 ' + commentUser + ' 进入房间。。。。')
-			except Exception as e:
-				print(360,e)
-				pass
+			await self.sendDanmu('欢迎 ' + commentUser + ' 进入房间。。。。')
 			return
 	async def extended_func(self,commentText):
 		pass
@@ -462,14 +429,120 @@ class MusicClient(DanmuJi):
 					if "下载" in status:
 						os.system("ps -ef|grep ffmpeg|grep bgm|awk '{print$2}'|xargs kill -9")
 			except Exception as e:
-				print(463,e)
+				logger.exception('点歌消息处理失败')
 			return
 		if "切歌" == commentText:
 			try:
 				os.system('killall ffmpeg')
 			except Exception as e:
-				print(468,e)
-			return		
+				logger.exception('切歌失败')
+			return
+	def __init__(self,username,roomid = 2570641,useDanmuType = "ws"):
+		super(DanmuJi,self).__init__(roomid = roomid,useDanmuType = useDanmuType)
+		self.cookies,self.nickname = Client(username).cookies_login()
+###---------挂机，小电视抽奖，活动礼物抽奖--------------------------------		
+class GuaJiBaoClient(DanmuJi):
+	"""docstring for ClassName"""
+	def __init__(self,username,roomid = 2570641,useDanmuType = "ws"):
+		super(GuaJiBaoClient, self).__init__(username=username,roomid=roomid,useDanmuType=useDanmuType)
+		# self.arg = arg
+
+	###-----重写获取房间号，因为默认的房间号2570641就是真实房间号-----------------	
+	async def getRealRommId(self):
+		pass
+	##------ 直播经验--------------------------------	
+	async def OnlineHeartbeat(self):
+		heart_url = 'http://live.bilibili.com/User/userOnlineHeart'
+		while self.connected == True :
+			async with  aiohttp.ClientSession(cookies=self.cookies) as s:
+				async with  s.post(heart_url,headers=headers) as res:
+					result = await res.text()
+					print(result,self.username)
+					await asyncio.sleep(300)
+		while self.connected == False:
+			await asyncio.sleep(2)
+	async def handlerMessage(self,dic):
+		cmd = dic.get('cmd','')
+		if cmd == 'SYS_MSG':
+			try:
+				if 'tv_id' in dic:
+					tv_id = dic['tv_id']
+					real_roomid = dic['real_roomid']
+					roomid = dic['roomid']
+					URL='http://api.live.bilibili.com/SmallTV/join?roomid={0}&id={1}&_={2}'.format(real_roomid, tv_id, int(time.time()*1000))
+					await self.getAwardTv(tv_id,URL)
+					addSmallTv(tv_id,roomid,real_roomid)
+			except Exception as e:
+				logger.exception('小电视消息处理失败')
+			return
+		if cmd == 'SYS_GIFT':
+			try:
+				roomid = dic.get('roomid','')
+				if roomid:
+					await self.getAwardRaffle(roomid)
+			except Exception as e:
+				logger.exception('夏日大作战消息处理失败')
+			return
+	##---参与小电视抽奖----------------------				
+	async def getAwardTv(self,tv_id,url):		
+		async with  aiohttp.ClientSession(cookies=self.cookies) as s:
+			async with  s.get(url,headers=headers) as res:
+				text = await res.text()#{"code":0,"msg":"OK","data":{"id":20122,"dtime":179,"status":1}}
+				# if res.status==200:
+					# print('已参加小电视抽奖',tv_id)					
+	##-----水舰炮抽奖-------------------------
+	async def getAwardRaffle(self,roomid):
+		url = "http://api.live.bilibili.com/activity/v1/SummerBattle/check?roomid=%s"%(roomid)
+		async with aiohttp.ClientSession(cookies=self.cookies) as s:
+			async with s.get(url,headers=headers) as res:
+				result = await res.text()
+				result = json.loads(result)
+				if len(result['data'])>0:
+					data = result['data'][0]
+					raffleId = data.get('raffleId','')
+					if raffleId:
+						url2 = "http://api.live.bilibili.com/activity/v1/SummerBattle/join?roomid=%s&&raffleId=%s"%(roomid,raffleId)
+						url3 = "http://api.live.bilibili.com/activity/v1/SummerBattle/notice?roomid=%s&&raffleId=%s"%(roomid,raffleId)
+					else:
+						return
+					async with s.get(url2,headers=headers) as r:
+						result = await r.text()
+						result = json.loads(result)
+						if result.get('code','1') == 0:
+							print('加入夏日大作战成功!')									
+
+##---------批量房间弹幕基础管理器----------------------------------------
+class BaseClientManager():
+
+	def __init__(self,roomList = [ 2570641,],useDanmuType = 'ws'):
+		self.roomList = roomList
+		self.useDanmuType = useDanmuType
+
+	def _prepare(self):
+		pass
+
+	def getTasks(self):
+		tasks = []	
+		for each in self.roomList:
+			task = BaseWebSocketDanmuClient(roomid = each,useDanmuType = self.useDanmuType)
+			tasks += [ task.start(),task.heartBeat() ]
+		return tasks
+
+	def start(self):
+		tasks = self.getTasks()	
+		try:
+			loop = asyncio.get_event_loop()
+			loop.run_until_complete(asyncio.wait(tasks))
+		except KeyboardInterrupt:
+			print("手动关闭")
+		finally:
+			# print(">> Cancelling tasks now")
+			for task in asyncio.Task.all_tasks():
+			    task.cancel()
+			loop.run_until_complete(asyncio.sleep(1))
+			print(">> Done cancelling tasks")
+			loop.close()	
+##----------批量弹幕姬管理器---------------------------------------------					
 class DanmujiManager(BaseClientManager):
 	def __init__(self,info = [],useDanmuType = 'ws'):
 		self.info = info 
@@ -481,6 +554,8 @@ class DanmujiManager(BaseClientManager):
 			task = DanmuJi(username = each['username'],roomid = each['roomid'],useDanmuType = self.useDanmuType)
 			tasks += [ task.start(),task.heartBeat() ]
 		return tasks
+
+##----------批量点歌机管理器---------------------------------------------					
 class MusicClientManager(DanmujiManager):
 	def getTasks(self):
 		tasks = []	
@@ -489,13 +564,29 @@ class MusicClientManager(DanmujiManager):
 			tasks += [ task.start(),task.heartBeat() ]
 		return tasks
 
+##---------批量挂机宝管理器----------------------------------------------------
+class GuaJiBaoClientManager(DanmujiManager):
+	# """docstring for GuaJiBaoClientManager"""
+	# def __init__(self,info = [],useDanmuType = 'ws'):
+	# 	super(GuaJiBaoClientManager, self).__init__(info=info,useDanmuType=useDanmuType)
+	# 	# self.arg = arg
+	def getTasks(self):
+		tasks = []	
+		for each in self.info: ##[{'username':1},{'username':2}]可以不加房间信息，因为GuaJiBaoClient默认2570641
+			task = GuaJiBaoClient(username = each['username'],useDanmuType = self.useDanmuType)
+			tasks += [ task.start(),task.heartBeat(),task.OnlineHeartbeat(),task.LoginClient.do_sign() ]
+		return tasks		
+
 ##------单个房间风暴客户端-----------------------------------------
 class BeatStormClient(BaseWebSocketDanmuClient):
 
 	def __init__(self,cookies_list = [],record = False,roomid = 2570641,useDanmuType = "ws"):
 		super(BeatStormClient,self).__init__(roomid=roomid,useDanmuType = useDanmuType)
-		self.cookies_list = cookies_list 
+		self.cookies_list = cookies_list
 		self.record = record
+	###-----重写获取房间号，因为热门得到的房间号就是真实房间号-----------------	
+	async def getRealRommId(self):
+		pass
 
 	async def handlerMessage(self,dic):
 		cmd = dic.get('cmd','')
@@ -515,7 +606,7 @@ class BeatStormClient(BaseWebSocketDanmuClient):
 					if self.record:
 						addFengbao(fengbaoId,self.roomid,send_uid,send_uname,content,status)
 				except Exception as e:
-					print(213,e)
+					logger.exception('节奏风暴消息处理出错')
 			return
 		
 #---辅助弹幕部分--------------------------------------------------------------------------
@@ -526,11 +617,7 @@ class BeatStormClient(BaseWebSocketDanmuClient):
 		if len(msg) == 0:
 			return
 		data={
-			# 'color':'16772431',
-			# 'fontsize':25,
-			# 'mode':1,
 			'msg':msg,
-			# 'rnd':int(time.time()),#'1493972251',
 			'roomid':self.roomid     
 		}
 		try:
@@ -546,18 +633,28 @@ class BeatStormClient(BaseWebSocketDanmuClient):
 						if r.get('msg','')=="OK" and r.get('message','')=="OK":
 							status = True						
 		except Exception as e:
-			print("发送弹幕失败!",e)
+			logger.exception("发送弹幕失败!")
 		
 		return status
 
 ##------批量房间风暴客户端管理器-----------------------------------------
 class BeatStormClientManager(BaseClientManager):
 	"""docstring for BeatStormClientManager"""
-	def __init__(self,cookies_list = [],record = False,roomList = [2570641],useDanmuType = "ws"):
+	def __init__(self,info = [],record = False,roomList = [2570641],useDanmuType = "ws"):
 		super(BeatStormClientManager,self).__init__(roomList = roomList,useDanmuType = useDanmuType)
-		self.cookies_list = cookies_list
 		self.record = record
+		self.info = info ###账户信息  [{'username':131},{'username':123}]
+		self.cookies_list = self.getCookiesList()
 
+	def getCookiesList(self):
+		cookies_list = []
+		for each in self.info:		
+			LoginClient=Client(each['username'])
+			cookies,nickname=LoginClient.cookies_login() #<class set (1,2)>
+			if not LoginClient.isLogin:
+				raise MyError('登陆失败')
+			cookies_list.append(cookies)
+		return cookies_list	
 	def getTasks(self):
 		tasks = []	
 		for each in self.roomList:
@@ -569,56 +666,66 @@ class BeatStormClientManager(BaseClientManager):
 
 
 if __name__ == "__main__":
+	pass	
+##-------批量房间弹幕监控-----------------------------------------	
+	# roomList = [ 1273106,80397,1313,100798 ]
+	# Manager = BaseClientManager(roomList = roomList)	
+	# Manager.start()
+
+
+##---------批量房间自动回复弹幕姬--------------------------------------
+	# info = [{'username':'979365217@qq.com','roomid':2570641},]	
+	# Manager = DanmujiManager(info=info,useDanmuType='wss')
+	# Manager.start()
+
+##---------批量房间点歌机带弹幕姬功能--------------------------------
+	# info = [{'username':'979365217@qq.com','roomid':2570641},]	
+	# Manager = MusicClientManager(info = info,useDanmuType = 'ws')
+	# Manager.start()
+
+
+#---------批量账号挂机抢福利----------------------------------------
+	# info = [{'username':'979365217@qq.com','roomid':2570641},]	#不写房间号可以，默认2570641
+
+	# info = [
+	# 	{'username':'13126772351'},
+	# 	{'username':'979365217@qq.com'},
+	# 	{'username':'13375190907'},
+	# 	{'username':'13390776820'},
+	# 	{'username':'15675178724'},
+	# 	{'username':'15130169870'},
+	# 	{'username':'1723506002@qq.com'},
+	# ]
+	# Manager = GuaJiBaoClientManager(info=info,useDanmuType='wss')
+	# Manager.start()
+
+
+# ##--------批量房间风暴监控-----------------------------------------
+# 	import room
+# 	from helper.api import Client,MyError
+# 	from getTopUp import GetTopUpRoomId
 	
-# ##-------批量房间弹幕监控-----------------------------------------	
-# 	roomList = [ 1273106,80397,1313 ]#771423,
-# 	danmuClientManager = BaseClientManager(roomList = roomList)	
-# 	danmuClientManager.start()
+# 	#登录B站获取cookies	
+# 	info = [
+# 	#	{'username':'13126772351','password':'ye06021123','roomid':4416185},
+# 		{'username':'979365217@qq.com','password':'ye06021123','roomid':2570641},
+# 	#	{'username':'13375190907','password':'licca0907','roomid':2570641},
+# 	#	{'username':'13390776820','password':'wsglr3636...','roomid':2570641},
+# 	#	{'username':'15675178724','password':'zero082570X','roomid':4416185},
+# 	#	{'username':'15130169870','password':'30169870.','roomid':4416185}
+# 	]
 
 
-##---------单房间自动回复弹幕姬--------------------------------------
-	#登录B站获取cookies	
-	info = [{'username':'979365217@qq.com','roomid':2570641}]	
-	Manager = MusicClientManager(info = info,useDanmuType = 'ws')
-	Manager.start()
+# 	#获取最新热门直播房间号
+# 	try:
+# 		roomList = room.room
+# 		if len(roomList) == 0:
+# 			raise MyError("最新热门房间号为空!")
+# 	except Exception as e:
+# 		roomList = GetTopUpRoomId(0,7).start()
+# 	print(len(roomList))
 
+# 	#开启节奏风暴管理器
+# 	BSCM = BeatStormClientManager(info = info,record = True,roomList = roomList,useDanmuType = "ws")
+# 	BSCM.start()
 
-'''	
-##--------批量房间风暴监控-----------------------------------------
-	import room
-	from helper.api import Client,MyError
-	from getTopUp import GetTopUpRoomId
-	
-	#登录B站获取cookies	
-	info = [
-	#	{'username':'13126772351','password':'ye06021123','roomid':4416185},
-		{'username':'979365217@qq.com','password':'ye06021123','roomid':2570641},
-	#	{'username':'13375190907','password':'licca0907','roomid':2570641},
-	#	{'username':'13390776820','password':'wsglr3636...','roomid':2570641},
-	#	{'username':'15675178724','password':'zero082570X','roomid':4416185},
-	#	{'username':'15130169870','password':'30169870.','roomid':4416185}
-	]
-
-	cookies_list = []
-	for each in info:		
-		LoginClient=Client(each['username'],each['password'])
-		cookies,nickname=LoginClient.cookies_login() #<class set (1,2)>
-		if not LoginClient.isLogin:
-			raise MyError('登陆失败')
-		cookies_list.append(cookies)
-
-
-	#获取最新热门直播房间号
-	try:
-		roomList = room.room
-		if len(roomList) == 0:
-			raise MyError("最新热门房间号为空!")
-	except Exception as e:
-		roomList = GetTopUpRoomId(0,7).start()
-	print(len(roomList))
-
-	#开启节奏风暴管理器
-	BSCM = BeatStormClientManager(cookies_list = cookies_list,record = True,roomList = roomList,useDanmuType = "ws")
-	BSCM.start()
-
-'''
